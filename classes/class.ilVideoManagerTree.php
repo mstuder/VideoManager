@@ -1,4 +1,5 @@
 <?php
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerObject.php');
 
 /**
  * Class ilObjVideoManagerTree
@@ -22,19 +23,9 @@ class ilVideoManagerTree extends ilTree{
     {
         parent::__construct($tree_id);
         $this->setTableNames('vidm_tree','vidm_data');
-        $this->setObjectTablePK('obj_id');
+        $this->setObjectTablePK('id');
         $this->setTreeTablePK('tree');
-        $this->setRootId(ilVideoManagerObject::__getRootFolder());
+        $this->setRootId(ilVideoManagerObject::__getRootFolder()->getId());
     }
-//
-//    /**
-//     * @return ilVideoManagerTree
-//     */
-//    public static function getInstance() {
-//        if (!isset(self::$instance)) {
-//            self::$instance = new self(1);
-//        }
-//
-//        return self::$instance;
-//    }
+
 }

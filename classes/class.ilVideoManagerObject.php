@@ -49,6 +49,22 @@ class ilVideoManagerObject extends ActiveRecord{
      */
     protected $type = false;
     /**
+     * @var string
+     *
+     * @db_has_field        true
+     * @db_fieldtype        text
+     * @db_length           8
+     */
+    protected $suffix;
+    /**
+     * @var int
+     *
+     * @db_has_field        true
+     * @db_fieldtype        date
+     * @db_length           4
+     */
+    protected $create_date;
+    /**
      * @var bool
      *
      * @db_has_field        true
@@ -146,6 +162,41 @@ class ilVideoManagerObject extends ActiveRecord{
     }
 
     /**
+     * @param String $suffix
+     */
+    public function setSuffix($suffix)
+    {
+        $this->suffix = $suffix;
+    }
+
+    /**
+     * @return String
+     */
+    public function getSuffix()
+    {
+        return $this->suffix;
+    }
+
+    /**
+     * @param int $create_date
+     */
+    public function setCreateDate($create_date)
+    {
+        $this->create_date = $create_date;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCreateDate()
+    {
+        return $this->create_date;
+    }
+
+
+
+
+    /**
      * @return ActiveRecord
      */
     public static function __getRootFolder(){
@@ -160,5 +211,115 @@ class ilVideoManagerObject extends ActiveRecord{
     static function returnDbTableName()
     {
         return 'vidm_data';
+    }
+
+    /**
+     * the id of this objects parent has to be stored in $_GET['node_id'] to create it properly
+     */
+    public function create()
+    {
+        parent::create();
+
+        if($_GET['node_id'])
+        {
+            $tree = new ilVideoManagerTree(1);
+            $tree->insertNode($this->getId(), $_GET['node_id']);
+            $this->recursiveMkdir($this->getPath());
+        }
+
+    }
+
+    /**
+     * @return string f.e. for localhost: 'http://localhost/ilias_44/data/client_id/mobs/vidm/1/2/5/video_6
+     */
+    public function getHttpPath() {
+        $path = $this->getTreePath();
+        $this->type == 'vid' ? $video_prefix = 'video_' : $video_prefix = '';
+        return ilUtil::_getHttpPath().'/data/' . CLIENT_ID . '/mobs/vidm' . $path . '/' . $video_prefix . $this->getId();
+    }
+
+    /**
+     * @return string absolute http path
+     */
+    public function getAbsoluteHttpPath()
+    {
+        return $this->getHttpPath().'/'.$this->getTitle();
+    }
+
+    /**
+     * @return string absolute path
+     */
+    public function getAbsolutePath()
+    {
+        return $this->getPath().'/'.$this->getTitle();
+    }
+
+
+    /**
+     * @return string f.e.: '/var/www/ilias_44/data/client_id/mobs/vidm/1/2/5/video_6'
+     */
+    public function getPath() {
+        $path = $this->getTreePath();
+        $this->type == 'vid' ? $video_prefix = 'video_' : $video_prefix = '';
+        return ILIAS_ABSOLUTE_PATH.'/'.ILIAS_WEB_DIR.'/'.CLIENT_ID.'/mobs/vidm' . $path . '/'. $video_prefix . $this->getId();
+    }
+
+
+    /**
+     * @param string $tmp_path
+     *
+     * @return bool
+     */
+    public function uploadVideo($tmp_path) {
+        if($this->getType() != 'vid'){
+            return false;
+        }
+
+        move_uploaded_file($tmp_path, $this->getPath().'/'.$this->getTitle());
+
+        return true;
+    }
+
+
+    /**
+     * @param $path
+     *
+     * @return bool
+     */
+    protected function recursiveMkdir($path) {
+        $dirs = explode(DIRECTORY_SEPARATOR, $path);
+        $count = count($dirs);
+        $path = '';
+        for ($i = 0; $i < $count; ++$i) {
+            if ($path != '/') {
+                $path .= DIRECTORY_SEPARATOR . $dirs[$i];
+            } else {
+                $path .= $dirs[$i];
+            }
+            if (! is_dir($path)) {
+                ilUtil::makeDir(($path));
+            }
+        }
+
+        return true;
+    }
+
+
+    public function delete() {
+        parent::delete();
+        ilUtil::delDir($this->getPath());
+    }
+
+    /**
+     * @return string
+     */
+    protected function getTreePath()
+    {
+        $tree = new ilVideoManagerTree(1);
+        $path = '';
+        foreach ($tree->getPathFull($tree->getParentId($this->getId()), ilVideoManagerObject::__getRootFolder()->getId()) as $node) {
+            $path .= '/' . $node['id'];
+        }
+        return $path;
     }
 }

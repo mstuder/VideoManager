@@ -1,0 +1,20 @@
+part;var;de;en
+common;back;"Zurück";"Back"
+common;confirm;"Bestätigen";"Confirm"
+common;cancel;"Abbrechen";"Cancel"
+common;actions;"Aktionen";"Actions"
+common;delete;"Löschen";"Delete"
+common;title;"Titel";"Title"
+common;description;"Beschreibung";"Description"
+common;add;"Hinzufügen";"Add"
+common;filesize;"Grösse";"Filesize"
+admin;add_new_item;"Objekt hinzufügen";"Add new item"
+admin;add_folder;"Ordner hinzufügen";"Add new Folder"
+admin;add_video;"Video hinzufügen";"Add new video"
+admin;confirm_delete;"Sind Sie sicher, dass sie dieses Element löschen möchten?";"Are you sure you want to delete this item?"
+msg;fld_created;"Ordner wurde erfolgreich erstellt";"Folder was created"
+form;add_folder;"Ordner hinzufügen";"Add Folder"
+form;upload_vid;"Video(s) Hochladen";"Upload Video(s)"
+form;vid;"Video(s)";"Video(s)"
+
+

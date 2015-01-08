@@ -1,0 +1,20 @@
+<!-- language file start -->
+common_back#:#Zurück
+common_confirm#:#Bestätigen
+common_cancel#:#Abbrechen
+common_actions#:#Aktionen
+common_delete#:#Löschen
+common_title#:#Titel
+common_description#:#Beschreibung
+common_add#:#Hinzufügen
+common_filesize#:#Grösse
+admin_add_new_item#:#Objekt hinzufügen
+admin_add_folder#:#Ordner hinzufügen
+admin_add_video#:#Video hinzufügen
+admin_confirm_delete#:#Sind Sie sicher, dass sie dieses Element löschen möchten?
+msg_fld_created#:#Ordner wurde erfolgreich erstellt
+form_add_folder#:#Ordner hinzufügen
+form_upload_vid#:#Video(s) Hochladen
+form_vid#:#Video(s)
+#:#
+#:#

@@ -11,6 +11,8 @@ $ilDB->insert('vidm_data', array(
         'title' => array('text', 'Video Manager'),
         'description' => array('text', ''),
         'type' => array('text', 'fld'),
+        'suffix' => array('text', ''),
+        'create_date' => array('date', ''),
         'deleted' => array('integer', 0),
 ));
 ?>
