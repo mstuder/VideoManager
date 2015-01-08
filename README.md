@@ -8,6 +8,7 @@ Start at your ILIAS root directory
 mkdir -p Customizing/global/plugins/Libraries/
 cd Customizing/global/plugins/Libraries
 git clone https://github.com/studer-raimann/ActiveRecord.git
+```
 
 ####Install mediaelement
 ILIAS 4.4 does not include mediaelement. Therefore please install the latest Version of mediaelement before you install the plugin:
@@ -16,6 +17,7 @@ Start at your ILIAS root directory
 mkdir -p Customizing/global/plugins/Libraries/
 cd Customizing/global/plugins/Libraries
 git clone https://github.com/johndyer/mediaelement.git
+```
 
 ####Install the plugin
 Start at your ILIAS root directory
