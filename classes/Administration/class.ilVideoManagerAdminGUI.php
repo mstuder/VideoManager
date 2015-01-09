@@ -1,5 +1,7 @@
 <?php
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerObject.php');
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerVideo.php');
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerFolder.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerTree.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerPlugin.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/Administration/class.ilVideoManagerTreeExplorerGUI.php');
@@ -48,7 +50,7 @@ class ilVideoManagerAdminGUI{
      */
     public $tree;
     /**
-     * @var ilVideoManagerObject
+     * @var ilVideoManagerVideo|ilVideoManagerFolder
      */
     public $object;
     /**
@@ -84,7 +86,12 @@ class ilVideoManagerAdminGUI{
         {
             $_GET['node_id'] = ilVideoManagerObject::__getRootFolder()->getId();
         }
-        $this->object = ilVideoManagerObject::find($_GET['node_id']);
+        if(ilVideoManagerObject::__getTypeForId($_GET['node_id']) == 'vid')
+        {
+            $this->object = new ilVideoManagerVideo($_GET['node_id']);
+        }else{
+            $this->object = new ilVideoManagerFolder($_GET['node_id']);
+        }
         $this->prepareOutput();
 
         $cmd = $this->ctrl->getCmd('view');
@@ -249,7 +256,7 @@ class ilVideoManagerAdminGUI{
 
     function addVideo()
     {
-        $form_gui = new ilVideoManagerVideoFormGUI($this, new ilVideoManagerObject());
+        $form_gui = new ilVideoManagerVideoFormGUI($this, new ilVideoManagerVideo());
         $this->tpl->setContent($form_gui->getHTML());
     }
 
@@ -258,7 +265,7 @@ class ilVideoManagerAdminGUI{
      */
     function create()
     {
-        $form = new ilVideoManagerVideoFormGUI($this, new ilVideoManagerObject());
+        $form = new ilVideoManagerVideoFormGUI($this, new ilVideoManagerVideo());
         $form->setValuesByPost();
         $response = $form->saveObject();
         header('Vary: Accept');
@@ -350,14 +357,14 @@ class ilVideoManagerAdminGUI{
 
     function editVideo()
     {
-        $form = new ilVideoManagerVideoFormGUI($this, new ilVideoManagerObject($_GET['target_id']));
+        $form = new ilVideoManagerVideoFormGUI($this, new ilVideoManagerVideo($_GET['target_id']));
         $form->fillForm();
         $this->tpl->setContent($form->getHTML());
     }
 
     function updateVideo()
     {
-        $form = new ilVideoManagerVideoFormGUI($this, new ilVideoManagerObject($_GET['target_id']));
+        $form = new ilVideoManagerVideoFormGUI($this, new ilVideoManagerVideo($_GET['target_id']));
         $form->setValuesByPost();
         if(!$form->saveObject())
         {

@@ -1,6 +1,10 @@
 <?php
 require_once('./Services/Table/classes/class.ilTable2GUI.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerTree.php');
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerObject.php');
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerPlugin.php');
+
+
 /**
  * Class ilVideoManagerAdminTableGUI
  *
@@ -95,11 +99,8 @@ class ilVideoManagerAdminTableGUI extends ilTable2GUI{
                     $current_selection_list->addItem($this->pl->txt("common_delete"), "",
                         $this->ctrl->getLinkTargetByClass('ilvideomanageradmingui', 'confirmDelete'));
 
-                    if($row['type'] == 'fld')
-                    {
-                        $current_selection_list->addItem($this->pl->txt("common_edit"), "",
-                            $this->ctrl->getLinkTargetByClass('ilvideomanageradmingui', 'edit'));
-                    }
+                    $current_selection_list->addItem($this->pl->txt("common_edit"), "",
+                        $this->ctrl->getLinkTargetByClass('ilvideomanageradmingui', 'edit'));
 
                     $content = $current_selection_list->getHTML();
                     break;

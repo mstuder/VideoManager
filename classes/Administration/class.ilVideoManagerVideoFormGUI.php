@@ -1,5 +1,9 @@
 <?php
 require_once('./Services/Form/classes/class.ilPropertyFormGUI.php');
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerVideo.php');
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerPlugin.php');
+
+
 /**
  * Class ilVideoManagerVideoFormGUI
  *
@@ -16,15 +20,18 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI{
      */
     protected $ctrl;
     /**
-     * @var ilVideoManagerObject
+     * @var ilVideoManagerVideo
      */
     protected $video;
-
+    /**
+     * @var ilVideoManagerPlugin
+     */
+    protected $pl;
 
     /**
      * @param              $parent_gui
      */
-    public function __construct($parent_gui, ilVideoManagerObject $video) {
+    public function __construct($parent_gui, ilVideoManagerVideo $video) {
         global $ilCtrl;
         $this->parent_gui = $parent_gui;
         $this->video = $video;
@@ -43,19 +50,22 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI{
         }
         switch ($this->ctrl->getCmd()) {
             case 'edit':
-                $title = new ilTextInputGUI($this->pl->txt('vid_title'), 'title');
+                $title = new ilTextInputGUI($this->pl->txt('common_title'), 'title');
                 $title->setRequired(true);
                 $this->addItem($title);
                 $desc = new ilTextAreaInputGUI($this->pl->txt('common_description'), 'description');
                 $this->addItem($desc);
-//                $date_input = new ilDateTimeInputGUI($this->pl->txt('date'), 'create_date');
-//                $date_input->setDate(new ilDate($this->picture->getCreateDate(), IL_CAL_DATE));
+                $tags = new ilTextInputGUI($this->pl->txt('form_tags'), 'tags');
+                $this->addItem($tags);
+                $date_input = new ilDateTimeInputGUI($this->pl->txt('common_date'), 'create_date');
+//                $date_input->setDate(new ilDate($this->video->getCreateDate(), IL_CAL_DATE));
 //                $this->addItem($date_input);
 //                $vorschau = new ilCheckboxInputGUI($this->pl->txt('select_preview'), 'vorschau');
 //                $vorschau->setValue(1);
 //                $this->addItem($vorschau);
                 $this->addCommandButton('updateVideo', $this->pl->txt('common_save'));
                 $this->addCommandButton('cancel', $this->pl->txt('common_cancel'));
+                $this->ctrl->saveParameterByClass('ilvideomanageradmingui', 'target_id');
                 $this->setFormAction($this->ctrl->getFormActionByClass('ilVideoManagerAdminGUI', 'update'));
                 break;
             case 'addVideo':
@@ -78,6 +88,8 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI{
         $array = array(
             'title' => $this->video->getTitle(),
             'description' => $this->video->getDescription(),
+            'tags' => $this->video->getTags(),
+//            'create_date' => $this->video->getCreateDate(),
         );
         $this->setValuesByArray($array);
     }
@@ -93,9 +105,10 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI{
         if (! $this->checkInput()) {
             return false;
         }
-        $this->video->setTitle($this->getInput('title'));
+        $this->video->setTitle(reset(explode('.', $this->getInput('title'))));
         $this->video->setDescription($this->getInput('description'));
-        $this->video->setType('vid');
+        $this->video->setTags($this->getInput('tags'));
+//        $this->video->setCreateDate($this->getInput('create_date'));
 
 //        $this->video->setUserId($ilUser->getId());
 //        $date_array = $this->getInput('create_date');
@@ -112,12 +125,18 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI{
             return false;
         }
         if ($this->video->getId()) {
-            if ($_FILES['upload_files']['tmp_name']) {
-                $this->video->uploadVideo($_FILES['upload_files']['tmp_name']);
-                $ext = strtolower(end(explode('.', $_FILES['upload_files']['name'])));
-                $this->video->setSuffix($ext);
+            $video_file = glob($this->video->getPath().'/*.'.$this->video->getSuffix());
+            $dir = scandir($this->video->getPath());
+            foreach($dir as $file)
+            {
+                if(preg_match('/[.]*\.'.$this->video->getSuffix().'/', $file))
+                {
+                    rename($this->video->getPath().'/'.$file, $this->video->getAbsolutePath());
+                }
             }
+            rename($video_file, $this->video->getAbsolutePath(), GLOB_BRACE);
             $this->video->update();
+            $this->ctrl->redirect($this->parent_gui, 'view');
         } else {
             $ext = strtolower(end(explode('.', $_FILES['upload_files']['name'])));
             $this->video->setSuffix($ext);

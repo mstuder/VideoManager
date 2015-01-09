@@ -1,13 +1,16 @@
 part;var;de;en
+common;save;"Speichern";"Save"
 common;back;"Zurück";"Back"
 common;confirm;"Bestätigen";"Confirm"
 common;cancel;"Abbrechen";"Cancel"
 common;actions;"Aktionen";"Actions"
 common;delete;"Löschen";"Delete"
+common;edit;"Bearbeiten";"Edit"
 common;title;"Titel";"Title"
 common;description;"Beschreibung";"Description"
 common;add;"Hinzufügen";"Add"
 common;filesize;"Grösse";"Filesize"
+common;search;"Suchen";"Search
 admin;add_new_item;"Objekt hinzufügen";"Add new item"
 admin;add_folder;"Ordner hinzufügen";"Add new Folder"
 admin;add_video;"Video hinzufügen";"Add new video"
@@ -16,5 +19,10 @@ msg;fld_created;"Ordner wurde erfolgreich erstellt";"Folder was created"
 form;add_folder;"Ordner hinzufügen";"Add Folder"
 form;upload_vid;"Video(s) Hochladen";"Upload Video(s)"
 form;vid;"Video(s)";"Video(s)"
+form;tags;"Tags";"Tags"
+form;edit_vid;"Video Bearbeiten";"Edit Video"
+tbl;latest_uploads;"Zuletzt Hochgeladen";"Latest Uploads"
+tbl;related_videos;"Verwandt zu ";"Related to "
+tbl;search_results;"Suchergebnisse";"Searchresults"
 
 

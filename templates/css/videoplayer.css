@@ -1,0 +1,76 @@
+#maincontainer {
+    text-align: center;
+    width: 100%;
+    min-height: 100%;
+}
+
+#related_videos {
+    vertical-align: top;
+    width: 360px;
+    display: inline-block;
+}
+
+#leftcontent {
+    vertical-align: top;
+    width: 730px;
+    padding: 7px 0 0 2%;
+    min-height: 375px;
+    padding-bottom: 15px;
+    display: inline-block;
+}
+
+#description_container {
+    border: 1px solid #D6D6D6;
+    text-align: left;
+    width: 720px;
+    min-height: 100;
+    margin: 12px 0;
+    background-color: #F0F0F0;
+}
+
+#description_content {
+    padding: 1px 12px 12px 12px;
+    height: auto;
+}
+
+#title {
+    font-weight: bold;
+}
+
+#description {
+    padding: 0 0 15px 0;
+    margin: 0 0 15px 0;
+    border-bottom: 1px solid #000000;
+}
+
+#tags_key {
+    width:auto;
+}
+
+#tags {
+    width: auto;
+}
+
+.tags {
+    display: inline-block;
+    font-style: italic;
+    margin: 0;
+
+}
+
+#category_key {
+}
+
+#category {
+
+}
+
+.category {
+    width: auto;
+    font-style: italic;
+    display: inline-block;
+    margin: 0;
+}
+
+
+

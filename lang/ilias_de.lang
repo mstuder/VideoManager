@@ -1,13 +1,16 @@
 <!-- language file start -->
+common_save#:#Speichern
 common_back#:#Zurück
 common_confirm#:#Bestätigen
 common_cancel#:#Abbrechen
 common_actions#:#Aktionen
 common_delete#:#Löschen
+common_edit#:#Bearbeiten
 common_title#:#Titel
 common_description#:#Beschreibung
 common_add#:#Hinzufügen
 common_filesize#:#Grösse
+common_search#:#Suchen
 admin_add_new_item#:#Objekt hinzufügen
 admin_add_folder#:#Ordner hinzufügen
 admin_add_video#:#Video hinzufügen
@@ -16,5 +19,10 @@ msg_fld_created#:#Ordner wurde erfolgreich erstellt
 form_add_folder#:#Ordner hinzufügen
 form_upload_vid#:#Video(s) Hochladen
 form_vid#:#Video(s)
+form_tags#:#Tags
+form_edit_vid#:#Video Bearbeiten
+tbl_latest_uploads#:#Zuletzt Hochgeladen
+tbl_related_videos#:#Verwandt zu 
+tbl_search_results#:#Suchergebnisse
 #:#
 #:#

@@ -1,7 +1,7 @@
 <?php
 require_once('./Services/Form/classes/class.ilPropertyFormGUI.php');
-require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerObject.php');
-
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerFolder.php');
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerPlugin.php');
 
 /**
  * Class ilVideoManagerFolderFormGUI
@@ -69,21 +69,20 @@ class ilVideoManagerFolderFormGUI extends ilPropertyFormGUI{
         {
             return false;
         }
-        $newObject = new ilVideoManagerObject();
-        $newObject->setTitle($_POST['title']);
-        $newObject->setDescription($_POST['desc']);
-        $newObject->setType('fld');
-        $newObject->setCreateDate(date('Y-m-d'));
-        $newObject->create();
+        $newFolder = new ilVideoManagerFolder();
+        $newFolder->setTitle($_POST['title']);
+        $newFolder->setDescription($_POST['desc']);
+        $newFolder->setCreateDate(date('Y-m-d'));
+        $newFolder->create();
         ilUtil::sendSuccess($this->pl->txt('msg_fld_created'), true);
-        $this->ctrl->setParameterByClass('ilvideomanageradmingui', 'node_id', $newObject->getId());
+        $this->ctrl->setParameterByClass('ilvideomanageradmingui', 'node_id', $newFolder->getId());
         $this->ctrl->redirectByClass('ilvideomanageradmingui', 'view');
         return true;
     }
 
     public function fillForm()
     {
-        $folder = new ilVideoManagerObject($_GET['target_id']);
+        $folder = new ilVideoManagerFolder($_GET['target_id']);
         $array = array(
             'title' => $folder->getTitle(),
             'desc' => $folder->getDescription(),
@@ -97,10 +96,10 @@ class ilVideoManagerFolderFormGUI extends ilPropertyFormGUI{
             return false;
         }
 
-        $object = new ilVideoManagerObject($_GET['target_id']);
-        $object->setTitle($this->getInput('title'));
-        $object->setDescription($this->getInput('desc'));
-        $object->update();
+        $folder = new ilVideoManagerFolder($_GET['target_id']);
+        $folder->setTitle($this->getInput('title'));
+        $folder->setDescription($this->getInput('desc'));
+        $folder->update();
 
         return true;
     }

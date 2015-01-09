@@ -1,0 +1,26 @@
+<div id="maincontainer">
+    <div id="leftcontent">
+        <div id="videoplayer">
+            <video class="mejs-player" src="{VIDEO_SRC}" width="720" height="440"></video>
+        </div>
+        <div id="description_container">
+            <div id="description_content">
+                <h1 id="title">{TITLE}</h1>
+                <div id="description">{DESCRIPTION}</div>
+                <div id="tags" class="tags">
+                <p id="tags_key" class="tags">{TAGS_KEY}</p>
+                    <!-- BEGIN tags -->
+                    <a href="{TAG_SEARCH}" class="tags">{TAGS_VALUE}</a>
+                    <!-- END tags -->
+                </div>
+                <div id="category">
+                    <p id="category_key" class="category">{CATEGORY_KEY}</p>
+                    <a href="{CATEGORY_SEARCH}" class="category">{CATEGORY_VALUE}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="related_videos">
+        {RELATED_VIDEOS_TABLE}
+    </div>
+</div>

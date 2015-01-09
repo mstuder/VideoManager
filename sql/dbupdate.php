@@ -5,16 +5,17 @@ ilVideoManagerObject::installDB();
 ?>
 <#2>
 <?php
-global $ilDB;
-$ilDB->insert('vidm_data', array(
-        'id' => array('integer', $ilDB->nextId('vidm_data')),
-        'title' => array('text', 'Video Manager'),
-        'description' => array('text', ''),
-        'type' => array('text', 'fld'),
-        'suffix' => array('text', ''),
-        'create_date' => array('date', ''),
-        'deleted' => array('integer', 0),
-));
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerFolder.php');
+if($root_folder = ilVideoManagerFolder::__getRootFolder())
+{
+    $root_folder->setTitle('Video Manager');
+    $root_folder->update();
+}else{
+    $root_folder = new ilVideoManagerFolder();
+    $root_folder->setId(1);
+    $root_folder->setTitle('Video Manager');
+    $root_folder->create();
+}
 ?>
 <#3>
 <?php

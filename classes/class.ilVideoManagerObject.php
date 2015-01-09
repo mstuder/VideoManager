@@ -49,6 +49,14 @@ class ilVideoManagerObject extends ActiveRecord{
      */
     protected $type = false;
     /**
+     * @var String
+     *
+     * @db_has_field        true
+     * @db_fieldtype        text
+     * @db_length           256
+     */
+    protected $tags;
+    /**
      * @var string
      *
      * @db_has_field        true
@@ -146,14 +154,6 @@ class ilVideoManagerObject extends ActiveRecord{
     }
 
     /**
-     * @param String $type
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
-    }
-
-    /**
      * @return String
      */
     public function getType()
@@ -193,14 +193,33 @@ class ilVideoManagerObject extends ActiveRecord{
         return $this->create_date;
     }
 
+    /**
+     * @param String $tags
+     */
+    public function setTags($tags)
+    {
+        $this->tags = $tags;
+    }
 
+    /**
+     * @return String
+     */
+    public function getTags()
+    {
+        return $this->tags;
+    }
+
+    public function __getTypeForId($id)
+    {
+        return ilVideoManagerObject::find($id)->getType();
+    }
 
 
     /**
      * @return ActiveRecord
      */
     public static function __getRootFolder(){
-        return parent::where(array('title' => 'Video Manager'))->first();
+        return parent::where(array('id' => '1'))->first();
     }
 
     /**
@@ -230,12 +249,12 @@ class ilVideoManagerObject extends ActiveRecord{
     }
 
     /**
-     * @return string f.e. for localhost: 'http://localhost/ilias_44/data/client_id/mobs/vidm/1/2/5/video_6
+     * @return string f.e. for localhost: 'http://localhost/ilias_44/data/client_id/vidm/1/2/5/video_6
      */
     public function getHttpPath() {
         $path = $this->getTreePath();
         $this->type == 'vid' ? $video_prefix = 'video_' : $video_prefix = '';
-        return ilUtil::_getHttpPath().'/data/' . CLIENT_ID . '/mobs/vidm' . $path . '/' . $video_prefix . $this->getId();
+        return ilUtil::_getHttpPath().'/data/' . CLIENT_ID . '/vidm' . $path . '/' . $video_prefix . $this->getId();
     }
 
     /**
@@ -243,7 +262,7 @@ class ilVideoManagerObject extends ActiveRecord{
      */
     public function getAbsoluteHttpPath()
     {
-        return $this->getHttpPath().'/'.$this->getTitle();
+        return $this->getHttpPath().'/'.$this->getTitle().'.'.$this->getSuffix();
     }
 
     /**
@@ -251,35 +270,18 @@ class ilVideoManagerObject extends ActiveRecord{
      */
     public function getAbsolutePath()
     {
-        return $this->getPath().'/'.$this->getTitle();
+        return $this->getPath().'/'.$this->getTitle().'.'.$this->getSuffix();
     }
 
 
     /**
-     * @return string f.e.: '/var/www/ilias_44/data/client_id/mobs/vidm/1/2/5/video_6'
+     * @return string f.e.: '/var/www/ilias_44/data/client_id/vidm/1/2/5/video_6'
      */
     public function getPath() {
         $path = $this->getTreePath();
         $this->type == 'vid' ? $video_prefix = 'video_' : $video_prefix = '';
-        return ILIAS_ABSOLUTE_PATH.'/'.ILIAS_WEB_DIR.'/'.CLIENT_ID.'/mobs/vidm' . $path . '/'. $video_prefix . $this->getId();
+        return ILIAS_ABSOLUTE_PATH.'/'.ILIAS_WEB_DIR.'/'.CLIENT_ID.'/vidm' . $path . '/'. $video_prefix . $this->getId();
     }
-
-
-    /**
-     * @param string $tmp_path
-     *
-     * @return bool
-     */
-    public function uploadVideo($tmp_path) {
-        if($this->getType() != 'vid'){
-            return false;
-        }
-
-        move_uploaded_file($tmp_path, $this->getPath().'/'.$this->getTitle());
-
-        return true;
-    }
-
 
     /**
      * @param $path

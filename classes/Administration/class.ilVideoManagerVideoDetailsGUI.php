@@ -1,4 +1,7 @@
 <?php
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerVideo.php');
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerPlugin.php');
+
 
 /**
  * Class ilVideoManagerVideoDetailsGUI
@@ -14,7 +17,7 @@ class ilVideoManagerVideoDetailsGUI {
      */
     protected $parent_gui;
     /**
-     * @var ilVideoManagerObject
+     * @var ilVideoManagerVideo
      */
     protected $video;
     /**
@@ -31,7 +34,7 @@ class ilVideoManagerVideoDetailsGUI {
     protected $ctrl;
     /**
      * @param $parent_gui
-     * @param $video ilVideoManagerObject
+     * @param $video ilVideoManagerVideo
      */
     public function __construct($parent_gui, $video)
     {
@@ -49,6 +52,10 @@ class ilVideoManagerVideoDetailsGUI {
         $mp = $this->initMediaPlayer();
 //        $this->tpl->setLeftContent($form->getHTML());
         $this->tpl->setContent($mp.$form->getHTML());
+        ilUtil::convertImage($this->video->getAbsolutePath(), $this->video->getImagePath().".jpeg", "jpeg", "80");
+//        ilFFmpeg::extractImage($this->video->getAbsolutePath(), $this->video->getTitle().".jpeg", $this->video->getPath());
+//        echo $this->video->getPath().'/'.rtrim($this->video->getTitle(), '.'.$this->video->getSuffix());exit;
+//        ilFFmpeg::extractImage($this->video->getAbsolutePath(), rtrim($this->video->getTitle(), '.'.$this->video->getSuffix()).'.png', $this->video->getPath());
     }
 
     function initPropertiesForm()
@@ -64,6 +71,10 @@ class ilVideoManagerVideoDetailsGUI {
         $description = new ilNonEditableValueGUI($this->pl->txt('common_description'));
         $description->setValue($this->video->getDescription());
         $form->addItem($description);
+
+        $tags = new ilNonEditableValueGUI($this->pl->txt('common_tags'));
+        $tags->setValue($this->video->getTags());
+        $form->addItem($tags);
 
         $filesize = new ilNonEditableValueGUI($this->pl->txt('common_filesize'));
         $filesize->setValue(number_format(filesize($this->video->getAbsolutePath())) . " Bytes");

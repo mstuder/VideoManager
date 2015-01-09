@@ -1,5 +1,7 @@
 <?php
 require_once('./Services/UIComponent/Explorer2/classes/class.ilTreeExplorerGUI.php');
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerObject.php');
+
 /**
  * Class ilVideoManagerTreeExplorerGUI
  *
