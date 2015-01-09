@@ -57,6 +57,7 @@ class ilVideoManagerPlayVideoGUI {
     public function init()
     {
         $this->tpl->addBlockFile('ADM_CONTENT', 'video_player', 'tpl.video_player.html', 'Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager');
+        $this->tpl->setCurrentBlock('video_player');
         $this->tpl->addCss('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/css/videoplayer.css');
         $this->initMediaPlayer();
         $this->initRelatedVideosTable();
@@ -68,7 +69,7 @@ class ilVideoManagerPlayVideoGUI {
         iljQueryUtil::initjQuery($this->tpl);
         $this->tpl->addJavaScript('./Customizing/global/plugins/Libraries/mediaelement/build/mediaelement-and-player.min.js');
         $this->tpl->addCss('./Customizing/global/plugins/Libraries/mediaelement/src/css/mediaelementplayer.css');
-        $this->tpl->setCurrentBlock('video_player');
+        $this->tpl->setVariable('POSTER_SRC', $this->video->getPosterHttp());
         $this->tpl->setVariable('VIDEO_SRC', $this->video->getAbsoluteHttpPath());
     }
 
@@ -76,6 +77,9 @@ class ilVideoManagerPlayVideoGUI {
     {
         $options = array(
             'cmd' => 'related_videos',
+            'search' => array(
+                'method' => 'related'
+            ),
             'limit' => 10
         );
         $related_vids = new ilVideoManagerVideoTableGUI($this, $options, $this->video);
@@ -108,7 +112,7 @@ class ilVideoManagerPlayVideoGUI {
 
         $this->ctrl->setParameterByClass('ilVideoManagerUserGUI', 'node_id', $_GET['node_id']);
         $this->ctrl->setParameterByClass('ilVideoManagerUserGUI', 'search_value', $category->getTitle());
-        $this->ctrl->setParameterByClass('ilVideoManagerUserGUI', 'search_method', 'cat');
+        $this->ctrl->setParameterByClass('ilVideoManagerUserGUI', 'search_method', 'category');
         $this->tpl->setVariable('CATEGORY_SEARCH', $this->ctrl->getLinkTargetByClass('ilVideoManagerUserGUI', 'performSearch'));
     }
 } 

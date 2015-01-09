@@ -2,6 +2,9 @@
 require_once('./Services/Form/classes/class.ilPropertyFormGUI.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerVideo.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerPlugin.php');
+require_once('./Customizing/global/plugins/Services/Cron/CronHook/MediaConverter/classes/Media/class.mcMedia.php');
+require_once('./Services/MediaObjects/classes/class.ilFFmpeg.php');
+
 
 
 /**
@@ -125,7 +128,7 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI{
             return false;
         }
         if ($this->video->getId()) {
-            $video_file = glob($this->video->getPath().'/*.'.$this->video->getSuffix());
+//            $video_file = glob($this->video->getPath().'/*.'.$this->video->getSuffix());
             $dir = scandir($this->video->getPath());
             foreach($dir as $file)
             {
@@ -134,17 +137,24 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI{
                     rename($this->video->getPath().'/'.$file, $this->video->getAbsolutePath());
                 }
             }
-            rename($video_file, $this->video->getAbsolutePath(), GLOB_BRACE);
+//            rename($video_file, $this->video->getAbsolutePath(), GLOB_BRACE);
             $this->video->update();
             $this->ctrl->redirect($this->parent_gui, 'view');
         } else {
             $ext = strtolower(end(explode('.', $_FILES['upload_files']['name'])));
             $this->video->setSuffix($ext);
-
             $this->video->setCreateDate(date('Y-m-d'));
-
             $this->video->create();
             $this->video->uploadVideo($_FILES['upload_files']['tmp_name']);
+
+            if(($this->video->getSuffix() != 'webm'))
+            {
+//                ilFFmpeg::convert($this->video->getAbsolutePath(), 'video/webm');
+//                $mcMedia = new mcMedia();
+//                $mcMedia->uploadFile($this->video->getAbsolutePath(), $this->video->getSuffix(), 1, 1, 1, ilUtil::now());
+//                $mcMedia->uploadTemp($this->video->getAbsolutePath());
+//                $mcMedia->upload($this->video->getAbsolutePath());
+            }
 
             // create answer object
             $response = new stdClass();

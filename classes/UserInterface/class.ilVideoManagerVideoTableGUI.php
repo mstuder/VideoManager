@@ -142,10 +142,14 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI{
                             //related videos search for same tags/categories
                             $tree = new ilVideoManagerTree(1);
                             $sql .= ' AND (vidm_tree.parent = ' . $tree->getParentId($this->video->getId()); //categories names must be unique
-                            foreach(explode(' ', $this->video->getTags()) as $tag){
-                                $sql .= ' OR vidm_data.tags LIKE ' . $this->db->quote("%" . $tag . "%", 'text');
+
+                            if($this->video->getTags()){
+                                foreach(explode(' ', $this->video->getTags()) as $tag){
+                                    $sql .= ' OR vidm_data.tags LIKE ' . $this->db->quote("%" . $tag . "%", 'text');
+                                }
                             }
                             $sql .= ')';
+                            $sql .= ' AND vidm_data.id != ' . $this->video->getId();
                             break;
                         case 'category':
                             $sql .= ' AND vidm_tree.parent = ' . ilVideoManagerFolder::where(array('title' => $value['value']))->first()->getId(); //categories names must be unique
@@ -165,7 +169,7 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI{
                     break;
             }
         }
-
+var_dump($sql);
         $query = $this->db->query($sql);
         $data = array();
 
@@ -173,7 +177,7 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI{
         {
             $row = array();
             $video = new ilVideoManagerVideo($result['id']);
-            $row['img'] = ilUtil::getImagePath('HeaderIcon100.png');
+            $row['img'] = $video->getPreviewImageHttp();
             $row['title'] = $video->getTitle();
             $this->ctrl->setParameterByClass('ilvideomanagerusergui', 'node_id', $video->getId());
             $row['link'] = $this->ctrl->getLinkTargetByClass('ilvideomanagerusergui', 'playVideo');

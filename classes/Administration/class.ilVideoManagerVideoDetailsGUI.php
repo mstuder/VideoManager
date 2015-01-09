@@ -50,12 +50,13 @@ class ilVideoManagerVideoDetailsGUI {
     {
         $form = $this->initPropertiesForm();
         $mp = $this->initMediaPlayer();
-//        $this->tpl->setLeftContent($form->getHTML());
+        ilFFmpeg::convert($this->video->getAbsolutePath(), 'video/webm');
+
+//        ilFFmpeg::extractImage($this->video->getAbsolutePath(), $this->video->getTitle().'_poster.png', $this->video->getPath());
+//        file($this->video->getPreviewImage());
+//        ilUtil::resizeImage($this->video->getPoster(), $this->video->getPreviewImage(), 120, 80, true);
+
         $this->tpl->setContent($mp.$form->getHTML());
-        ilUtil::convertImage($this->video->getAbsolutePath(), $this->video->getImagePath().".jpeg", "jpeg", "80");
-//        ilFFmpeg::extractImage($this->video->getAbsolutePath(), $this->video->getTitle().".jpeg", $this->video->getPath());
-//        echo $this->video->getPath().'/'.rtrim($this->video->getTitle(), '.'.$this->video->getSuffix());exit;
-//        ilFFmpeg::extractImage($this->video->getAbsolutePath(), rtrim($this->video->getTitle(), '.'.$this->video->getSuffix()).'.png', $this->video->getPath());
     }
 
     function initPropertiesForm()
@@ -88,7 +89,7 @@ class ilVideoManagerVideoDetailsGUI {
         iljQueryUtil::initjQuery($this->tpl);
         $this->tpl->addJavaScript('./Customizing/global/plugins/Libraries/mediaelement/build/mediaelement-and-player.min.js');
         $this->tpl->addCss('./Customizing/global/plugins/Libraries/mediaelement/src/css/mediaelementplayer.css');
-        $mp = '<video class="mejs-player" src="' . $this->video->getAbsoluteHttpPath() . '" width="640" height="360"></video>';
+        $mp = '<video class="mejs-player" poster = "' . $this->video->getPosterHttp() .'" src="' . $this->video->getAbsoluteHttpPath() . '" width="640" height="360"></video>';
         return $mp;
     }
 

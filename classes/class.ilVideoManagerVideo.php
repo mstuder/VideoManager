@@ -17,7 +17,6 @@ class ilVideoManagerVideo extends ilVideoManagerObject{
     public function create()
     {
         parent::create();
-        ilUtil::convertImage($this->getAbsolutePath(), $this->getImagePath(), "jpeg", "80");
     }
 
     /**
@@ -27,8 +26,28 @@ class ilVideoManagerVideo extends ilVideoManagerObject{
      */
     public function uploadVideo($tmp_path) {
         move_uploaded_file($tmp_path, $this->getPath().'/'.$this->getTitle().'.'.$this->getSuffix());
-
+        ilFFmpeg::extractImage($this->getAbsolutePath(), $this->getTitle().'_poster.png', $this->getPath());
+        ilUtil::resizeImage($this->getPoster(), $this->getPreviewImage(), 178, 100, true); //TODO same size for all, add black frame for smaller images
         return true;
+    }
+
+    public function getPreviewImage()
+    {
+        return $this->getPath().'/'.$this->getTitle().'_preview.png';
+    }
+
+    public function getPoster()
+    {
+        return $this->getPath().'/'.$this->getTitle().'_poster.png';
+    }
+    public function getPreviewImageHttp()
+    {
+        return $this->getHttpPath().'/'.$this->getTitle().'_preview.png';
+    }
+
+    public function getPosterHttp()
+    {
+        return $this->getHttpPath().'/'.$this->getTitle().'_poster.png';
     }
 
     public function getImagePath()
