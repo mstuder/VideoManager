@@ -1,3 +1,5 @@
+/*TODO: aufräumen*/
+
 #maincontainer {
     text-align: center;
     width: 100%;
@@ -85,40 +87,6 @@
     margin: 0;
 }
 
-/* basic responsiveness (beta)
-
-   The following section targets smartphones.
-
-   iPads come with a device width of 768, the iPhone with 320, most smartphones seem to
-   use a width under 640px, so 640 seems to be a good choice here.
-   If you make any changes in this query, please add a reason to this comment and if possible an url that
-   backs this decision.
-
-   List of common devices width values: http://cssmediaqueries.com/target/
-   Google recommending 640px: https://developers.google.com/webmasters/smartphone-sites/details
-
-   */
-@media
-    only screen and (max-width: 640px)
-{
-    #leftcontent {
-        width:auto;
-    }
-
-    .mejs-player{
-        width:auto;
-        height:auto;
-    }
-
-    #description_container {
-        width:auto;
-    }
-
-    #related_videos{
-        width:auto;
-    }
-}
-
 #img_container {
     background-color: #000000;
     text-align: center;
@@ -157,7 +125,6 @@ tr.tblheader {
     padding: 5px 0px 10px 15px;
     font-weight: bold;
     font-size: 20px;
-    /*width: 100%;*/
 }
 
 

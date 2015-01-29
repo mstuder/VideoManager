@@ -36,6 +36,7 @@ class ilVideoManagerAdminTableGUI extends ilTable2GUI{
     protected $tpl;
 
     /**
+     * @param $parent_obj
      * @param int $node_id
      */
     public function __construct($parent_obj, $node_id = 0)
@@ -43,21 +44,23 @@ class ilVideoManagerAdminTableGUI extends ilTable2GUI{
         global $ilCtrl, $tpl;
         $this->ctrl = $ilCtrl;
         $this->tpl = $tpl;
+        $this->pl = ilVideoManagerPlugin::getInstance();
+        $this->tree = new ilVideoManagerTree(1);
         $this->setId('vidm_admin_tbl_'.$node_id);
         parent::__construct($parent_obj);
-        $this->pl = ilVideoManagerPlugin::getInstance();
-        $this->setPrefix('14654654');
-        $this->tree = new ilVideoManagerTree(1);
+
         if($node_id == 0)
         {
             $_GET['node_id'] ? $node_id = $_GET['node_id'] : $node_id = ilVideoManagerObject::__getRootFolder()->getId();
         }
+
         $nodes = $this->tree->getChilds($node_id);
 
         foreach($nodes as $key => $node)
         {
             $this->objects[] = new ilVideoManagerObject($node['id']);
         }
+
         $this->setFormAction($ilCtrl->getFormAction($parent_obj));
         $this->addColumn("", "", "1", true);
         $this->addColumn('', '', 1);
@@ -68,12 +71,10 @@ class ilVideoManagerAdminTableGUI extends ilTable2GUI{
         $this->setSelectAllCheckbox("id");
         $this->setTopCommands(true);
 
-
         $commands = array(
             'deleteMultiple' => $this->pl->txt('common_delete'),
             'moveMultiple' => $this->pl->txt('common_move'),
         );
-
 
         foreach($commands as $cmd => $caption){
             $this->addMultiCommand($cmd, $caption);
@@ -86,10 +87,10 @@ class ilVideoManagerAdminTableGUI extends ilTable2GUI{
     /**
      * @param array $row
      */
-    public function fillRow(array $row){
+    public function fillRow(array $row)
+    {
         $this->tpl->setVariable('ID', $row['node_id']);
         $this->tpl->setVariable('ICON', $row['icon']);
-
         $this->ctrl->clearParameters($this->parent_obj);
         $this->ctrl->setParameter($this->parent_obj, 'node_id', $row['node_id']);
         $this->tpl->setVariable('LINK', $this->ctrl->getLinkTarget($this->parent_obj, 'view'));
@@ -98,6 +99,7 @@ class ilVideoManagerAdminTableGUI extends ilTable2GUI{
         $current_selection_list = new ilAdvancedSelectionListGUI();
         $current_selection_list->setListTitle($this->pl->txt("common_actions"));
         $current_selection_list->setId($row['node_id']);
+
         $this->ctrl->setParameter($this->parent_obj, 'node_id', $_GET['node_id']);
         $this->ctrl->setParameter($this->parent_obj, 'target_id', $row['node_id']);
 
@@ -105,7 +107,7 @@ class ilVideoManagerAdminTableGUI extends ilTable2GUI{
             $this->ctrl->getLinkTargetByClass('ilvideomanageradmingui', 'confirmDelete'));
 
         $current_selection_list->addItem($this->pl->txt("common_edit"), "",
-            $this->ctrl->getLinkTargetByClass('ilvideomanageradmingui', 'edit'));
+            $this->ctrl->getLinkTargetByClass('ilvideomanageradmingui', 'edit'.$row['type']));
 
         $current_selection_list->addItem($this->pl->txt("common_move"), "",
             $this->ctrl->getLinkTargetByClass('ilvideomanageradmingui', 'cut'));
@@ -120,13 +122,9 @@ class ilVideoManagerAdminTableGUI extends ilTable2GUI{
         {
             $row = array();
 
-            //icon
             $row['icon'] = $obj->getIcon();
-            //title
             $row['title'] = $obj->getTitle();
-            //type
             $row['type'] = $obj->getType();
-            //node id
             $row['node_id'] = $obj->getId();
 
             $data[] = $row;

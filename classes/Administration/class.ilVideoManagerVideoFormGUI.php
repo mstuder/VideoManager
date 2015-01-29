@@ -31,7 +31,8 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI{
     protected $pl;
 
     /**
-     * @param              $parent_gui
+     * @param $parent_gui
+     * @param ilVideoManagerVideo $video
      */
     public function __construct($parent_gui, ilVideoManagerVideo $video) {
         global $ilCtrl;
@@ -39,49 +40,56 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI{
         $this->video = $video;
         $this->ctrl = $ilCtrl;
         $this->pl = new ilVideoManagerPlugin();
-        $this->ctrl->saveParameter($parent_gui, 'vid_id');
         $this->initForm();
     }
 
     private function initForm() {
         $this->setFormAction($this->ctrl->getFormAction($this->parent_gui));
-        if ($this->video->getId() == 0) {
-            $this->setTitle($this->pl->txt('form_upload_vid'));
-        } else {
-            $this->setTitle($this->pl->txt('form_edit_vid'));
-        }
-        switch ($this->ctrl->getCmd()) {
-            case 'edit':
+
+        switch ($this->ctrl->getCmd())
+        {
+            case 'editvid':
+                $this->setTitle($this->pl->txt('form_edit_vid'));
+
                 $title = new ilTextInputGUI($this->pl->txt('common_title'), 'title');
                 $title->setRequired(true);
                 $this->addItem($title);
+
                 $desc = new ilTextAreaInputGUI($this->pl->txt('common_description'), 'description');
                 $this->addItem($desc);
+
                 $tags = new ilTextInputGUI($this->pl->txt('form_tags'), 'tags');
                 $this->addItem($tags);
 
                 $this->addCommandButton('updateVideo', $this->pl->txt('common_save'));
                 $this->addCommandButton('cancel', $this->pl->txt('common_cancel'));
+
                 $this->ctrl->saveParameterByClass('ilvideomanageradmingui', 'target_id');
                 $this->setFormAction($this->ctrl->getFormActionByClass('ilVideoManagerAdminGUI', 'update'));
+
                 break;
+
             case 'addVideo':
+                $this->setTitle($this->pl->txt('form_upload_vid'));
                 $this->setMultipart(true);
+
                 require_once('./Services/Form/classes/class.ilDragDropFileInputGUI.php');
                 $file_input = new ilDragDropFileInputGUI($this->pl->txt('form_vid'), 'suffix');
                 $file_input->setRequired(true);
                 $file_input->setSuffixes(array( '3pgg', 'x-flv', 'mp4', 'webm' ));
                 $file_input->setCommandButtonNames('create', 'cancel');
                 $this->addItem($file_input);
+
                 $this->addCommandButton('create', $this->pl->txt('common_add'));
                 $this->addCommandButton('cancel', $this->pl->txt('common_cancel'));
                 $this->setFormAction($this->ctrl->getFormActionByClass('ilVideoManagerAdminGUI', 'create'));
+
                 break;
         }
     }
 
-
-    public function fillForm() {
+    public function fillForm()
+    {
         $array = array(
             'title' => $this->video->getTitle(),
             'description' => $this->video->getDescription(),
@@ -91,14 +99,14 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI{
         $this->setValuesByArray($array);
     }
 
-
     /**
      * @description returns whether checkinput was successful or not.
      *
      * @return bool
      */
-    public function fillObject() {
-        if (! $this->checkInput()) {
+    public function fillObject()
+    {
+        if (!$this->checkInput()) {
             return false;
         }
         $this->video->setTitle(reset(explode('.', $this->getInput('title'))));
@@ -109,21 +117,28 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI{
     }
 
 
-    public function saveObject() {
+    public function saveObject()
+    {
         if (! $this->fillObject()) {
             return false;
         }
-        if ($this->video->getId()) {
+
+        if ($this->video->getId())
+        {
+            //rename each file in the directory
             $dir = scandir($this->video->getPath());
             foreach($dir as $file)
             {
                 $suffix = array_pop(explode('.', $file));
 
                 $ending = '';
-                if(preg_match('/[.]*_poster[.]*/', $file)){
+                if(preg_match('/[.]*_poster[.]*/', $file))
+                {
                     $ending = '_poster';
 
-                }else if(preg_match('/[.]*_preview[.]*/', $file)){
+                }
+                elseif(preg_match('/[.]*_preview[.]*/', $file))
+                {
                     $ending = '_preview';
 
                 }
@@ -131,7 +146,9 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI{
             }
             $this->video->update();
             $this->ctrl->redirect($this->parent_gui, 'view');
-        } else {
+        }
+        else
+        {
             $ext = strtolower(end(explode('.', $_FILES['upload_files']['name'])));
             $this->video->setSuffix($ext);
             $this->video->setCreateDate(date('Y-m-d'));

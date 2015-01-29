@@ -1,19 +1,14 @@
 <?php
-require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerObject.php');
-require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerTree.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerPlugin.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/UserInterface/class.ilVideoManagerVideoTableGUI.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/UserInterface/class.ilVideoManagerPlayVideoGUI.php');
 require_once('./Services/Form/classes/class.ilTextInputGUI.php');
-require_once('./Services/Search/classes/class.ilSearchBaseGUI.php');
-require_once('./Services/Search/classes/class.ilSearchGUI.php');
-require_once('./Services/Form/classes/class.ilPropertyFormGUI.php');
 
 /**
  * Class ilVideoManagerUserGUI
  *
  * @ilCtrl_IsCalledBy ilVideoManagerUserGUI: ilRouterGUI
- * @ilCtrl_Calls ilVideoManagerUserGUI: ilVideoManagerVideoTableGUI, ilVideoManagerPlayVideoGUI, ilSearchGUI, ilPropertyFormGUI
+ * @ilCtrl_Calls ilVideoManagerUserGUI: ilVideoManagerVideoTableGUI, ilVideoManagerPlayVideoGUI
  */
 class ilVideoManagerUserGUI {
 
@@ -34,10 +29,6 @@ class ilVideoManagerUserGUI {
      */
     protected $toolbar;
     /**
-     * @var ilVideoManagerTree
-     */
-    public $tree;
-    /**
      * @var ilVideoManagerPlugin
      */
     protected $pl;
@@ -50,11 +41,8 @@ class ilVideoManagerUserGUI {
         $this->tpl = $tpl;
         $this->ctrl = $ilCtrl;
         $this->toolbar = $ilToolbar;
-        $this->tree = new ilVideoManagerTree(1);
 
         $this->pl->updateLanguageFiles();
-
-
     }
 
     public function executeCommand()

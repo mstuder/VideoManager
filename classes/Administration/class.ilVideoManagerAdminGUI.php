@@ -9,6 +9,7 @@ require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHoo
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/Administration/class.ilVideoManagerVideoFormGUI.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/Administration/class.ilVideoManagerVideoDetailsGUI.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/Administration/class.ilVideoManagerFolderFormGUI.php');
+require_once('./Services/MainMenu/classes/class.ilMainMenuGUI.php');
 
 /**
  * Class ilVideoManagerGUI
@@ -31,7 +32,7 @@ class ilVideoManagerAdminGUI{
     /**
      * @var ilTabsGUI
      */
-    public $tabs_gui;
+    public $tabs;
     /**
      * @var ilAccessHandler
      */
@@ -53,25 +54,21 @@ class ilVideoManagerAdminGUI{
      */
     public $object;
     /**
-     * @var ilLog
-     */
-    protected $ilLog;
-    /**
      * @var ilVideoManagerPlugin
      */
     protected $pl;
 
 
     public function __construct() {
-        global $tpl, $ilCtrl, $ilAccess, $ilToolbar, $ilLocator, $lng, $ilLog;
+        global $tpl, $ilCtrl, $ilAccess, $ilToolbar, $ilLocator, $ilTabs;
 
+        $this->tabs = $ilTabs;
         $this->pl = ilVideoManagerPlugin::getInstance();
         $this->tpl = $tpl;
         $this->ctrl = $ilCtrl;
         $this->ilAccess = $ilAccess;
         $this->ilLocator = $ilLocator;
         $this->toolbar = $ilToolbar;
-        $this->ilLog = $ilLog;
         $this->tree = new ilVideoManagerTree(1);
 
         $_GET['node_id'] ? $this->object = ilVideoManagerObject::find($_GET['node_id']) : $this->object = ilVideoManagerObject::__getRootFolder();
@@ -92,6 +89,7 @@ class ilVideoManagerAdminGUI{
             $this->object = new ilVideoManagerFolder($_GET['node_id']);
         }
         $this->prepareOutput();
+        $this->checkPermission();
 
         $cmd = $this->ctrl->getCmd('view');
 
@@ -133,8 +131,11 @@ class ilVideoManagerAdminGUI{
             case 'cancel':
                 $this->cancel();
                 break;
-            case 'edit':
-                $this->edit();
+            case 'editfld':
+                $this->editFolder();
+                break;
+            case 'editvid':
+                $this->editVideo();
                 break;
             case 'cut':
                 $this->cut();
@@ -169,8 +170,6 @@ class ilVideoManagerAdminGUI{
 
     public function showFolderContent()
     {
-        global $ilToolbar;
-
         //create 'add_item' button
         $ov_id = "il_add_new_item_ov";
         $ov_trigger_id = $ov_id."_tr";
@@ -181,7 +180,7 @@ class ilVideoManagerAdminGUI{
 
         $ov->addTrigger($ov_trigger_id, "click", $ov_trigger_id, false, "tl", "tr");        // trigger
 
-        $ilToolbar->addButton($this->pl->txt("admin_add_new_item"), "#", "", "",        // toolbar
+        $this->toolbar->addButton($this->pl->txt("admin_add_new_item"), "#", "", "",        // toolbar
             "", $ov_trigger_id, 'submit emphsubmit');
 
         include_once("./Services/UIComponent/GroupedList/classes/class.ilGroupedListGUI.php");
@@ -212,7 +211,8 @@ class ilVideoManagerAdminGUI{
         $vm_video_details->init();
     }
 
-    public function showTree() {
+    public function showTree()
+    {
         $expl_tree = new ilVideoManagerTreeExplorerGUI('vidm_explorer', 'ilVideoManagerAdminGUI', 'showTree', $this->tree);
         $expl_tree->setTypeWhiteList(array('fld', 'vid'));
         $expl_tree->setPathOpen($_GET['node_id'] ? $_GET['node_id'] : ilVideoManagerObject::__getRootFolder()->getId());
@@ -226,7 +226,8 @@ class ilVideoManagerAdminGUI{
     /**
      * invoked by executeCommand()
      */
-    public function prepareOutput(){
+    protected function prepareOutput()
+    {
         $this->addAdminLocatorItems();
         $this->tpl->setLocator();
         $this->setTitleAndDescription();
@@ -235,21 +236,11 @@ class ilVideoManagerAdminGUI{
     /**
      * called by prepare output
      */
-    public function setTitleAndDescription()
+    protected function setTitleAndDescription()
     {
-        global $tpl;
-
-        $tpl->setTitle($this->object->getTitle());
-        $tpl->setDescription($this->object->getDescription(100));
-        switch($this->object->getType())
-        {
-            case 'fld':
-                $tpl->setTitleIcon(ilUtil::getImagePath('icon_cat_b.png'));
-                break;
-            case 'vid':
-                $tpl->setTitleIcon(ilUtil::getImagePath('icon_mobs_b.png'));
-                break;
-        }
+        $this->tpl->setTitle($this->object->getTitle());
+        $this->tpl->setDescription($this->object->getDescription(100));
+        $this->tpl->setTitleIcon($this->object->getIcon());
     }
 
     /**
@@ -262,17 +253,17 @@ class ilVideoManagerAdminGUI{
         foreach ((array)$path as $key => $row) {
             $this->ctrl->setParameterByClass("ilvideomanageradmingui", 'node_id', $row["child"]);
             $this->ilLocator->addItem($row["title"], $this->ctrl->getLinkTargetByClass("ilVideoManagerAdminGUI", "view"), ilFrameTargetInfo::_getFrame("MainContent"));
-            $this->ctrl->setParameterByClass("ilVideoManagerAdminGUI", "node_id", $this->ctrl->getParameterArray($this)['node_id']);
+//            $this->ctrl->setParameterByClass("ilVideoManagerAdminGUI", "node_id", $this->ctrl->getParameterArray($this)['node_id']);
         }
     }
 
-    function addFolder()
+    protected function addFolder()
     {
         $form = new ilVideoManagerFolderFormGUI($this, 'create');
         $this->tpl->setContent($form->getHTML());
     }
 
-    function addVideo()
+    protected function addVideo()
     {
         $form_gui = new ilVideoManagerVideoFormGUI($this, new ilVideoManagerVideo());
         $this->tpl->setContent($form_gui->getHTML());
@@ -281,7 +272,7 @@ class ilVideoManagerAdminGUI{
     /**
      * @description for AJAX Drag&Drop Fileupload (Video)
      */
-    function create()
+    protected function create()
     {
         $form = new ilVideoManagerVideoFormGUI($this, new ilVideoManagerVideo());
         $form->setValuesByPost();
@@ -294,10 +285,7 @@ class ilVideoManagerAdminGUI{
 
     }
 
-    /**
-     * called by ilVideoManagerFolderFormGUI
-     */
-    function createFolder(){
+    protected function createFolder(){
         $form = new ilVideoManagerFolderFormGUI($this, 'create');
         $form->setValuesByPost();
         if(!$form->createFolder())
@@ -306,48 +294,58 @@ class ilVideoManagerAdminGUI{
         }
     }
 
-    function confirmDelete()
+    protected function confirmDelete()
     {
-        global $ilTabs, $ilCtrl;
         $items_html = '';
         if($_POST['selected_cmd'] == 'deleteMultiple')
         {
+            //none selected
+            if(!$_POST['id'])
+            {
+                $this->ctrl->redirect($this, 'view');
+            }
+
             foreach($_POST['id'] as $key => $id)
             {
                 $obj = new ilVideoManagerObject($id);
                 $items_html .= ilUtil::img($obj->getIcon(true)) . " " . $obj->getTitle() . '</br>';
             }
-        }else{
-            $this->ctrl->setParameter($this, 'node_id', $_GET['node_id']);
+        }
+        else
+        {
             $this->ctrl->setParameter($this, 'target_id', $_GET['target_id']);
             $obj = new ilVideoManagerObject($_GET['target_id']);
             $items_html = ilUtil::img($obj->getIcon(true)) . " " . $obj->getTitle() . '</br>';
         }
-        $ilTabs->clearTargets();
-        $ilTabs->setBackTarget($this->pl->txt('common_back'), $ilCtrl->getLinkTarget($this, 'view'));
+
+        $this->tabs->clearTargets();
+        $this->tabs->setBackTarget($this->pl->txt('common_back'), $this->ctrl->getLinkTarget($this, 'view'));
         ilUtil::sendQuestion($this->pl->txt('admin_confirm_delete'));
 
         $toolbar = new ilToolbarGUI();
-        $toolbar->addButton($this->pl->txt('common_confirm'), $ilCtrl->getLinkTarget($this, 'delete'));
-        $toolbar->addButton($this->pl->txt('common_cancel'), $ilCtrl->getLinkTarget($this, 'cancel'));
+        $toolbar->addButton($this->pl->txt('common_confirm'), $this->ctrl->getLinkTarget($this, 'delete'));
+        $toolbar->addButton($this->pl->txt('common_cancel'), $this->ctrl->getLinkTarget($this, 'cancel'));
 
         $this->tpl->setContent($items_html . '</br>' . $toolbar->getHTML());
     }
 
-    function cancel()
+    protected function cancel()
     {
         $this->ctrl->redirect($this, 'view');
     }
 
-    function delete()
+    protected function delete()
     {
         $ids = array();
         if($_SESSION['post_vars']['selected_cmd'] == 'deleteMultiple')
         {
             $ids = $_SESSION['post_vars']['id'];
-        }else{
+        }
+        else
+        {
             $ids[] = $_GET['target_id'];
         }
+
         foreach($ids as $id)
         {
             $subtree = $this->tree->getSubTree($this->tree->getNodeData($id));
@@ -359,31 +357,16 @@ class ilVideoManagerAdminGUI{
             }
         }
 
-
         $this->ctrl->redirect($this, 'view');
     }
 
-    function edit()
-    {
-        $object = new ilVideoManagerObject($_GET['target_id']);
-        switch($object->getType())
-        {
-            case 'fld':
-                $this->editFolder();
-                break;
-            case 'vid':
-                $this->editVideo();
-                break;
-        }
-    }
-
-    function editFolder()
+    protected function editFolder()
     {
         $form = new ilVideoManagerFolderFormGUI($this, 'edit');
         $this->tpl->setContent($form->getHTML());
     }
 
-    function saveFolder()
+    protected function saveFolder()
     {
         $form = new ilVideoManagerFolderFormGUI($this, 'edit');
         $form->setValuesByPost();
@@ -395,14 +378,14 @@ class ilVideoManagerAdminGUI{
         $this->ctrl->redirect($this, 'view');
     }
 
-    function editVideo()
+    protected function editVideo()
     {
         $form = new ilVideoManagerVideoFormGUI($this, new ilVideoManagerVideo($_GET['target_id']));
         $form->fillForm();
         $this->tpl->setContent($form->getHTML());
     }
 
-    function updateVideo()
+    protected function updateVideo()
     {
         $form = new ilVideoManagerVideoFormGUI($this, new ilVideoManagerVideo($_GET['target_id']));
         $form->setValuesByPost();
@@ -412,34 +395,48 @@ class ilVideoManagerAdminGUI{
         }
     }
 
-    function cut()
+    protected function cut()
     {
+        $this->tabs->setBackTarget($this->pl->txt('common_back'), $this->ctrl->getLinkTarget($this, 'showFolderContent'));
         ilUtil::sendInfo($this->pl->txt('msg_choose_folder'));
         $expl_tree = new ilVideoManagerTreeExplorerGUI('vidm_explorer', 'ilVideoManagerAdminGUI', 'performPaste', $this->tree);
         $expl_tree->setTypeWhiteList(array('fld'));
         $subtree = array();
+
         if($_POST['selected_cmd'] == 'moveMultiple')
         {
+            //none selected
+            if(!$_POST['id'])
+            {
+                $this->ctrl->redirect($this, 'view');
+            }
+
             foreach($_POST['id'] as $key => $id)
             {
                 $subtree = array_merge($subtree, $this->tree->getSubTree($this->tree->getNodeData($id)));
             }
-        }else{
+        }
+        else
+        {
             $subtree = $this->tree->getSubTree($this->tree->getNodeData($_GET['target_id']));
         }
+
         $expl_tree->setIgnoreSubTree($subtree);
         $this->tpl->setContent($expl_tree->getHTML());
     }
 
-    function performPaste()
+    protected function performPaste()
     {
         $ids = array();
         if($_SESSION['post_vars']['selected_cmd'] == 'moveMultiple')
         {
             $ids = $_SESSION['post_vars']['id'];
-        }else{
+        }
+        else
+        {
             $ids[] = $_GET['target_id'];
         }
+
         foreach($ids as $id)
         {
             $obj = new ilVideoManagerObject($id);
@@ -450,6 +447,15 @@ class ilVideoManagerAdminGUI{
         }
 
         $this->ctrl->redirect($this, 'view');
+    }
+
+    protected function checkPermission()
+    {
+        if(!ilMainMenuGUI::_checkAdministrationPermission())
+        {
+            ilUtil::sendFailure($this->pl->txt('msg_no_permission'), true);
+            $this->ctrl->redirectByClass('ilRouterGUI');
+        }
     }
 
     /**

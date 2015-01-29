@@ -72,14 +72,6 @@ class ilVideoManagerObject extends ActiveRecord{
      * @db_length           4
      */
     protected $create_date;
-    /**
-     * @var bool
-     *
-     * @db_has_field        true
-     * @db_fieldtype        integer
-     * @db_length           1
-     */
-    protected $deleted = false;
 
     /**
      * @param int $id
@@ -88,29 +80,12 @@ class ilVideoManagerObject extends ActiveRecord{
         parent::__construct($id);
     }
 
-
     /**
      * @param int $id
      */
     public function setId($id)
     {
         $this->id = $id;
-    }
-
-    /**
-     * @param boolean $deleted
-     */
-    public function setDeleted($deleted)
-    {
-        $this->deleted = $deleted;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function getDeleted()
-    {
-        return $this->deleted;
     }
 
     /**
@@ -239,7 +214,7 @@ class ilVideoManagerObject extends ActiveRecord{
      * @return ActiveRecord
      */
     public static function __getRootFolder(){
-        return parent::where(array('id' => '1'))->first();
+        return parent::find(1);
     }
 
     /**
@@ -286,21 +261,20 @@ class ilVideoManagerObject extends ActiveRecord{
     }
 
     /**
-     * @return string absolute path
-     */
-    public function getAbsolutePath()
-    {
-        return $this->getPath().'/'.$this->getFileName();
-    }
-
-
-    /**
      * @return string f.e.: '/var/www/ilias_44/data/client_id/vidm/1/2/5/video_6'
      */
     public function getPath() {
         $path = $this->getTreePath();
         $this->type == 'vid' ? $video_prefix = 'video_' : $video_prefix = '';
         return ILIAS_ABSOLUTE_PATH.'/'.ILIAS_WEB_DIR.'/'.CLIENT_ID.'/vidm' . $path . '/'. $video_prefix . $this->getId();
+    }
+
+    /**
+     * @return string absolute path
+     */
+    public function getAbsolutePath()
+    {
+        return $this->getPath().'/'.$this->getFileName();
     }
 
     /**
@@ -334,8 +308,6 @@ class ilVideoManagerObject extends ActiveRecord{
         }
         return $this->getTitle() . '.' . $this->getSuffix();
     }
-
-
 
     public function delete() {
         parent::delete();

@@ -2,6 +2,7 @@
 require_once('./Services/MediaObjects/classes/class.ilFFmpeg.php');
 /**
  * Class vmFFmpeg
+ *
  * @author Theodor Truffer <tt@studer-raimann.ch>
  */
 class vmFFmpeg extends \ilFFmpeg{
@@ -88,7 +89,8 @@ class vmFFmpeg extends \ilFFmpeg{
      * @param $file
      * @return int duration in seconds
      */
-    static function getDuration($file){
+    static function getDuration($file)
+    {
 
         //$time = 00:00:00.000 format
         $cmd = "-i ".ilUtil::escapeShellArg($file)." 2>&1 | grep 'Duration' | cut -d ' ' -f 4 | sed s/,//";
@@ -98,7 +100,6 @@ class vmFFmpeg extends \ilFFmpeg{
         $duration_in_seconds = $duration[0]*3600 + $duration[1]*60+ round($duration[2]);
 
         return $duration_in_seconds;
-
     }
 
 } 

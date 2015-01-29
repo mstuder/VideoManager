@@ -19,6 +19,7 @@ if($root_folder = ilVideoManagerFolder::__getRootFolder())
 ?>
 <#3>
 <?php
+global $ilDB;
 if(!$ilDB->tableExists('vidm_tree'))
 {
     $fields = array(

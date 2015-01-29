@@ -41,9 +41,12 @@ class ilVideoManagerFolderFormGUI extends ilPropertyFormGUI{
         $this->pl = ilVideoManagerPlugin::getInstance();
         $this->tpl = $tpl;
         $this->setTitle($this->pl->txt('form_add_folder'));
+
         $title = new ilTextInputGUI($this->pl->txt('common_title'), 'title');
         $title->setRequired(true);
+
         $description = new ilTextInputGUI($this->pl->txt('common_description'), 'desc');
+
         $this->setItems(array($title, $description));
         $this->setValuesByPost();
         $this->ctrl->saveParameterByClass('ilVideoManagerAdminGUI', 'target_id');
@@ -60,7 +63,7 @@ class ilVideoManagerFolderFormGUI extends ilPropertyFormGUI{
                 break;
         }
 
-        $this->addCommandButton('view', $this->pl->txt('common_cancel'));
+        $this->addCommandButton('cancel', $this->pl->txt('common_cancel'));
     }
 
     public function createFolder()
@@ -77,7 +80,6 @@ class ilVideoManagerFolderFormGUI extends ilPropertyFormGUI{
         ilUtil::sendSuccess($this->pl->txt('msg_fld_created'), true);
         $this->ctrl->setParameterByClass('ilvideomanageradmingui', 'node_id', $newFolder->getId());
         $this->ctrl->redirectByClass('ilvideomanageradmingui', 'view');
-        return true;
     }
 
     public function fillForm()

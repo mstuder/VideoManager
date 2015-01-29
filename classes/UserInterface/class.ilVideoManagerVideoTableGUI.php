@@ -2,6 +2,7 @@
 require_once('./Services/Table/classes/class.ilTable2GUI.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerPlugin.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerVideo.php');
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerTree.php');
 
 /**
  * Class ilVideoManagerVideoTableGUI
@@ -35,25 +36,19 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI{
      * @var ilVideoManagerTree
      */
     protected $tree;
-
     /**
      * @var array
      */
     protected $options;
-
     /**
      * @var int
      */
     protected $max_desc_length;
 
-    protected $available_cols = array(
-        'img',
-        'link',
-    );
-
     /**
      * @param $parent_gui
-     * @param $cmd
+     * @param array $options
+     * @param ilVideoManagerVideo $video
      */
     public function __construct($parent_gui, $options, ilVideoManagerVideo $video = NULL){
         global $ilDB, $ilCtrl;
@@ -75,7 +70,7 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI{
         $this->setEnableNumInfo(false);
 
         if($options['cmd'] == 'related_videos'){
-                $this->max_desc_length = 70;
+            $this->max_desc_length = 70;
         }else{
             $this->max_desc_length = 320;
         }
@@ -105,7 +100,7 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI{
             $this->tpl->setVariable('ID', 0);
             if($this->options['cmd'] == 'search_results' && $this->options['search']['value'])
             {
-                $this->tpl->setVariable('TBL_TITLE', $this->pl->txt('tbl_' . $this->options['cmd']) . " for '" . $this->options['search']['value'] . "'");
+                $this->tpl->setVariable('TBL_TITLE', $this->pl->txt('tbl_' . $this->options['cmd']) . " '" . $this->options['search']['value'] . "'");
 
             }else{
                 $this->tpl->setVariable('TBL_TITLE', $this->pl->txt('tbl_' . $this->options['cmd']));
@@ -131,6 +126,7 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI{
         }else{
             $sql = 'SELECT *';
         }
+
         $sql .= ' FROM vidm_data
                     JOIN vidm_tree ON (vidm_tree.child = vidm_data.id)';
 
@@ -196,7 +192,8 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI{
 
         $query = $this->db->query($sql);
 
-        if ($this->options['count']) {
+        if ($this->options['count'])
+        {
             return (int)$this->db->fetchObject($query)->count;
         }
 

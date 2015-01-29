@@ -15,21 +15,13 @@ class ilVideoManagerTreeExplorerGUI extends ilTreeExplorerGUI {
     protected $ignoreSubTree;
 
     /**
-     * Get content of a node
-     *
-     * @param mixed $a_node node array or object
-     * @return string content of the node
+     * @param mixed $node
+     * @return string
      */
     function getNodeContent($node)
     {
         $object = new ilVideoManagerObject($node['id']);
-        $icon_src = $object->getIcon(true);
-
-        if($node["child"] == $_GET["ref_id"])
-            return "<img src='".$icon_src."'></img>
-                    <span class='ilExp2NodeContent ilHighlighted'> ".$node["title"]."</span>";
-        else
-            return "<img src='".$icon_src."'></img> ".$node["title"];
+        return  ilUtil::img($object->getIcon(true))." ".$node["title"];
     }
 
     function getNodeHref($node){
@@ -45,7 +37,7 @@ class ilVideoManagerTreeExplorerGUI extends ilTreeExplorerGUI {
     }
 
     /**
-     * Preload childs
+     * Preload childs, overwrite to ignore subtree
      */
     protected function preloadChilds()
     {

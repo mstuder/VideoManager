@@ -15,10 +15,6 @@ class ilVideoManagerPlayVideoGUI {
      */
     protected $parent_gui;
     /**
-     * @var ilDB
-     */
-    protected $db;
-    /**
      * @var ilCtrl
      */
     protected $ctrl;
@@ -43,11 +39,10 @@ class ilVideoManagerPlayVideoGUI {
 
     /**
      * @param $parent_gui
-     * @param $cmd
      */
-    public function __construct($parent_gui){
-        global $ilDB, $ilCtrl, $tpl;
-        $this->db = $ilDB;
+    public function __construct($parent_gui)
+    {
+        global $ilCtrl, $tpl;
         $this->ctrl = $ilCtrl;
         $this->pl = ilVideoManagerPlugin::getInstance();
         $this->tpl = $tpl;
@@ -88,14 +83,19 @@ class ilVideoManagerPlayVideoGUI {
     function initDescription()
     {
         $this->tpl->setVariable('TITLE', $this->video->getTitle());
-        if($this->video->getDescription() && strlen($this->video->getDescription()) > 350){
+
+        if($this->video->getDescription() && strlen($this->video->getDescription()) > 350)
+        {
             $this->tpl->setVariable('DESCRIPTION', $this->video->getDescription());
             $this->tpl->setVariable('DESCRIPTION_SHORT', $this->video->getDescription(350));
             $this->tpl->setVariable('MORE', '['.$this->pl->txt('common_more').']');
             $this->tpl->setVariable('LESS', '['.$this->pl->txt('common_less').']');
-        }elseif($this->video->getDescription()){
+        }
+        elseif($this->video->getDescription())
+        {
             $this->tpl->setVariable('DESCRIPTION_SHORT', $this->video->getDescription());
         }
+
         if($tags = $this->video->getTags())
         {
             $this->tpl->setVariable('TAGS_KEY', 'Tags: ');
