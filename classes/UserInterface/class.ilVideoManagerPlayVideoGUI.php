@@ -57,8 +57,8 @@ class ilVideoManagerPlayVideoGUI {
     public function init()
     {
         $this->tpl->addBlockFile('ADM_CONTENT', 'video_player', 'tpl.video_player.html', 'Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager');
+        $this->tpl->addJavaScript('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/js/video_player.js');
         $this->tpl->setCurrentBlock('video_player');
-        $this->tpl->addCss('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/css/videoplayer.css');
         $this->initMediaPlayer();
         $this->initRelatedVideosTable();
         $this->initDescription();
@@ -66,11 +66,10 @@ class ilVideoManagerPlayVideoGUI {
 
     function initMediaPlayer()
     {
-        iljQueryUtil::initjQuery($this->tpl);
-        $this->tpl->addJavaScript('./Customizing/global/plugins/Libraries/mediaelement/build/mediaelement-and-player.min.js');
-        $this->tpl->addCss('./Customizing/global/plugins/Libraries/mediaelement/src/css/mediaelementplayer.css');
+        require_once('./Services/MediaObjects/classes/class.ilPlayerUtil.php');
+        ilPlayerUtil::initMediaElementJs();
         $this->tpl->setVariable('POSTER_SRC', $this->video->getPosterHttp());
-        $this->tpl->setVariable('VIDEO_SRC', $this->video->getAbsoluteHttpPath());
+        $this->tpl->setVariable('VIDEO_SRC', $this->video->getHttpPath().'/'.$this->video->getTitle());
     }
 
     function initRelatedVideosTable()
@@ -89,7 +88,14 @@ class ilVideoManagerPlayVideoGUI {
     function initDescription()
     {
         $this->tpl->setVariable('TITLE', $this->video->getTitle());
-        $this->tpl->setVariable('DESCRIPTION', $this->video->getDescription());
+        if($this->video->getDescription() && strlen($this->video->getDescription()) > 350){
+            $this->tpl->setVariable('DESCRIPTION', $this->video->getDescription());
+            $this->tpl->setVariable('DESCRIPTION_SHORT', $this->video->getDescription(350));
+            $this->tpl->setVariable('MORE', '['.$this->pl->txt('common_more').']');
+            $this->tpl->setVariable('LESS', '['.$this->pl->txt('common_less').']');
+        }elseif($this->video->getDescription()){
+            $this->tpl->setVariable('DESCRIPTION_SHORT', $this->video->getDescription());
+        }
         if($tags = $this->video->getTags())
         {
             $this->tpl->setVariable('TAGS_KEY', 'Tags: ');

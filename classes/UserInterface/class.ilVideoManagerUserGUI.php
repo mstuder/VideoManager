@@ -86,6 +86,7 @@ class ilVideoManagerUserGUI {
             'sort_create_date' => 'ASC',
             'limit' => 8,
         );
+        $this->tpl->addCss('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/css/search_table.css');
         $starter_gui = new ilVideoManagerVideoTableGUI($this, $options);
         $this->tpl->setContent($starter_gui->getHTML());
     }
@@ -98,6 +99,7 @@ class ilVideoManagerUserGUI {
 
     public function prepareOutput()
     {
+        $this->tpl->addCss('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/css/video_player.css');
         $this->toolbar->addInputItem(new ilTextInputGUI('search_input', 'search_value'));
         $this->toolbar->addFormButton($this->pl->txt('common_search'), 'performSearch');
         $this->toolbar->setFormAction($this->ctrl->getLinkTarget($this, 'performSearch'));
@@ -124,9 +126,13 @@ class ilVideoManagerUserGUI {
 
         $options = array(
             'cmd' => 'search_results',
-            'search' => $search
+            'search' => $search,
+            'sort_create_date' => 'ASC',
+            'limit' => 10
         );
 
+        $this->tpl->addCss('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/css/video_player.css');
+        $this->tpl->addCss('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/css/search_table.css');
 
         $search_results = new ilVideoManagerVideoTableGUI($this, $options, $video);
         $this->tpl->setContent($search_results->getHTML());

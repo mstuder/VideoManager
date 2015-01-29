@@ -6,7 +6,6 @@ require_once('./Customizing/global/plugins/Services/Cron/CronHook/MediaConverter
 require_once('./Services/MediaObjects/classes/class.ilFFmpeg.php');
 
 
-
 /**
  * Class ilVideoManagerVideoFormGUI
  *
@@ -60,12 +59,7 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI{
                 $this->addItem($desc);
                 $tags = new ilTextInputGUI($this->pl->txt('form_tags'), 'tags');
                 $this->addItem($tags);
-                $date_input = new ilDateTimeInputGUI($this->pl->txt('common_date'), 'create_date');
-//                $date_input->setDate(new ilDate($this->video->getCreateDate(), IL_CAL_DATE));
-//                $this->addItem($date_input);
-//                $vorschau = new ilCheckboxInputGUI($this->pl->txt('select_preview'), 'vorschau');
-//                $vorschau->setValue(1);
-//                $this->addItem($vorschau);
+
                 $this->addCommandButton('updateVideo', $this->pl->txt('common_save'));
                 $this->addCommandButton('cancel', $this->pl->txt('common_cancel'));
                 $this->ctrl->saveParameterByClass('ilvideomanageradmingui', 'target_id');
@@ -92,7 +86,7 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI{
             'title' => $this->video->getTitle(),
             'description' => $this->video->getDescription(),
             'tags' => $this->video->getTags(),
-//            'create_date' => $this->video->getCreateDate(),
+            'suffix' => $this->video->getSuffix(),
         );
         $this->setValuesByArray($array);
     }
@@ -104,20 +98,12 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI{
      * @return bool
      */
     public function fillObject() {
-        global $ilUser;
         if (! $this->checkInput()) {
             return false;
         }
         $this->video->setTitle(reset(explode('.', $this->getInput('title'))));
         $this->video->setDescription($this->getInput('description'));
         $this->video->setTags($this->getInput('tags'));
-//        $this->video->setCreateDate($this->getInput('create_date'));
-
-//        $this->video->setUserId($ilUser->getId());
-//        $date_array = $this->getInput('create_date');
-//        $date = $date_array['date']['y'] . '-' . $date_array['date']['m'] . '-' . $date_array['date']['d'];
-//        $this->video->setCreateDate($date); // TODO bei MultipleFileUpload Exif-Daten verwenden
-//        $this->album->setPreviewId($_GET['picture_id']);
 
         return true;
     }
@@ -128,16 +114,21 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI{
             return false;
         }
         if ($this->video->getId()) {
-//            $video_file = glob($this->video->getPath().'/*.'.$this->video->getSuffix());
             $dir = scandir($this->video->getPath());
             foreach($dir as $file)
             {
-                if(preg_match('/[.]*\.'.$this->video->getSuffix().'/', $file))
-                {
-                    rename($this->video->getPath().'/'.$file, $this->video->getAbsolutePath());
+                $suffix = array_pop(explode('.', $file));
+
+                $ending = '';
+                if(preg_match('/[.]*_poster[.]*/', $file)){
+                    $ending = '_poster';
+
+                }else if(preg_match('/[.]*_preview[.]*/', $file)){
+                    $ending = '_preview';
+
                 }
+                rename($this->video->getPath().'/'.$file, $this->video->getPath().'/'.$this->video->getTitle().$ending.'.'.$suffix);
             }
-//            rename($video_file, $this->video->getAbsolutePath(), GLOB_BRACE);
             $this->video->update();
             $this->ctrl->redirect($this->parent_gui, 'view');
         } else {
@@ -147,14 +138,8 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI{
             $this->video->create();
             $this->video->uploadVideo($_FILES['upload_files']['tmp_name']);
 
-            if(($this->video->getSuffix() != 'webm'))
-            {
-//                ilFFmpeg::convert($this->video->getAbsolutePath(), 'video/webm');
-//                $mcMedia = new mcMedia();
-//                $mcMedia->uploadFile($this->video->getAbsolutePath(), $this->video->getSuffix(), 1, 1, 1, ilUtil::now());
-//                $mcMedia->uploadTemp($this->video->getAbsolutePath());
-//                $mcMedia->upload($this->video->getAbsolutePath());
-            }
+            $mediaConverter = new mcMedia();
+            $mediaConverter->uploadFile($this->video->getTitle(), $this->video->getSuffix(), $this->video->getPath(), $this->video->getPath());
 
             // create answer object
             $response = new stdClass();

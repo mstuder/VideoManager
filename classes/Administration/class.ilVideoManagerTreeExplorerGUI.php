@@ -10,6 +10,11 @@ require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHoo
 class ilVideoManagerTreeExplorerGUI extends ilTreeExplorerGUI {
 
     /**
+     * @var array
+     */
+    protected $ignoreSubTree;
+
+    /**
      * Get content of a node
      *
      * @param mixed $a_node node array or object
@@ -18,15 +23,7 @@ class ilVideoManagerTreeExplorerGUI extends ilTreeExplorerGUI {
     function getNodeContent($node)
     {
         $object = new ilVideoManagerObject($node['id']);
-        $icon_src = '';
-        switch($object->getType()){
-            case 'vid':
-                $icon_src = ilUtil::getImagePath('icon_mobs_s.png');
-                break;
-            case 'fld':
-                $icon_src = ilUtil::getImagePath('icon_cat_s.png');
-                break;
-        }
+        $icon_src = $object->getIcon(true);
 
         if($node["child"] == $_GET["ref_id"])
             return "<img src='".$icon_src."'></img>
@@ -37,14 +34,76 @@ class ilVideoManagerTreeExplorerGUI extends ilTreeExplorerGUI {
 
     function getNodeHref($node){
         global $ilCtrl;
-        if($ilCtrl->getCmd() == "performPaste")
+        if($ilCtrl->getCmd() == "cut" || $ilCtrl->getCmd() == "moveMultiple")
         {
-            $ilCtrl->setParameterByClass("ilObjOrgUnitGUI","target_node",$node["child"]);
+            $ilCtrl->saveParameterByClass("ilVideoManagerAdminGUI", "target_id");
+            $ilCtrl->setParameterByClass("ilVideoManagerAdminGUI","node_id",$node["child"]);
+            return $ilCtrl->getLinkTargetByClass("ilVideoManagerAdminGUI", 'performPaste');
         }
         $ilCtrl->setParameterByClass("ilVideoManagerAdminGUI", "node_id", $node["child"]);
         return $ilCtrl->getLinkTargetByClass("ilVideoManagerAdminGUI", 'view');
     }
 
+    /**
+     * Preload childs
+     */
+    protected function preloadChilds()
+    {
+        $subtree = $this->tree->getSubTree($this->getRootNode());
+        foreach ($subtree as $s)
+        {
+            $wl = $this->getTypeWhiteList();
+            if (is_array($wl) && count($wl) > 0 && !in_array($s["type"], $wl))
+            {
+                continue;
+            }
+            $bl = $this->getTypeBlackList();
+            if (is_array($bl) && count($bl) > 0 && in_array($s["type"], $bl))
+            {
+                continue;
+            }
+            if (is_array($this->ignoreSubTree) && in_array($s, $this->ignoreSubTree))
+            {
+                continue;
+            }
+            $this->childs[$s["parent"]][] = $s;
+            $this->all_childs[$s["child"]] = $s;
+        }
+
+        if ($this->order_field != "")
+        {
+            foreach ($this->childs as $k => $childs)
+            {
+                $this->childs[$k] = ilUtil::sortArray($childs, $this->order_field, "asc", $this->order_field_numeric);
+            }
+        }
+
+        // sort childs and store prev/next reference
+        if ($this->order_field == "")
+        {
+            $this->all_childs =
+                ilUtil::sortArray($this->all_childs, "lft", "asc", true, true);
+            $prev = false;
+            foreach ($this->all_childs as $k => $c)
+            {
+                if ($prev)
+                {
+                    $this->all_childs[$prev]["next_node_id"] = $k;
+                }
+                $this->all_childs[$k]["prev_node_id"] = $prev;
+                $this->all_childs[$k]["next_node_id"] = false;
+                $prev = $k;
+            }
+        }
+
+        $this->preloaded = true;
+    }
+
+    public function setIgnoreSubTree(array $subtree)
+    {
+        $this->ignoreSubTree = $subtree;
+        $this->preloadChilds();
+    }
 
 
 } 

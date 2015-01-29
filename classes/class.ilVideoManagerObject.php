@@ -37,7 +37,7 @@ class ilVideoManagerObject extends ActiveRecord{
      *
      * @db_has_field        true
      * @db_fieldtype        text
-     * @db_length           256
+     * @db_length           4096
      */
     protected $description;
     /**
@@ -124,9 +124,13 @@ class ilVideoManagerObject extends ActiveRecord{
     /**
      * @return string
      */
-    public function getDescription()
+    public function getDescription($length = 0)
     {
-        return $this->description;
+        if($length==0 || strlen($this->description) <= $length)
+        {
+            return $this->description;
+        }
+        return substr($this->description, 0, $length).'...';
     }
 
     /**
@@ -209,6 +213,22 @@ class ilVideoManagerObject extends ActiveRecord{
         return $this->tags;
     }
 
+    public function getIcon($small = false)
+    {
+        if($this->getType() == 'fld')
+        {
+            $icon = 'icon_cat_';
+        }else{
+            $icon = 'icon_mobs_';
+        }
+        if(!$small)
+        {
+            return ilUtil::getImagePath($icon.'b.png');
+        }else{
+            return ilUtil::getImagePath($icon.'s.png');
+        }
+    }
+
     public function __getTypeForId($id)
     {
         return ilVideoManagerObject::find($id)->getType();
@@ -262,7 +282,7 @@ class ilVideoManagerObject extends ActiveRecord{
      */
     public function getAbsoluteHttpPath()
     {
-        return $this->getHttpPath().'/'.$this->getTitle().'.'.$this->getSuffix();
+        return $this->getHttpPath().'/'.$this->getFileName();
     }
 
     /**
@@ -270,7 +290,7 @@ class ilVideoManagerObject extends ActiveRecord{
      */
     public function getAbsolutePath()
     {
-        return $this->getPath().'/'.$this->getTitle().'.'.$this->getSuffix();
+        return $this->getPath().'/'.$this->getFileName();
     }
 
 
@@ -305,6 +325,16 @@ class ilVideoManagerObject extends ActiveRecord{
 
         return true;
     }
+
+    public function getFileName()
+    {
+        if($this->getType() == 'fld')
+        {
+            return $this->getTitle();
+        }
+        return $this->getTitle() . '.' . $this->getSuffix();
+    }
+
 
 
     public function delete() {

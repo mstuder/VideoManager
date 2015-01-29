@@ -11,19 +11,23 @@ common_description#:#Description
 common_add#:#Add
 common_filesize#:#Filesize
 common_search#:#Search
-
+common_tags#:#Tags
+common_move#:#Move
+common_more#:#more
+common_less#:#less
 admin_add_new_item#:#Add new item
 admin_add_folder#:#Add new Folder
 admin_add_video#:#Add new video
-admin_confirm_delete#:#Are you sure you want to delete this item?
+admin_confirm_delete#:#Are you sure you want to delete the following items?
 msg_fld_created#:#Folder was created
+msg_choose_folder#:#Please choose a destination folder, to which the file(s) should be moved.
 form_add_folder#:#Add Folder
 form_upload_vid#:#Upload Video(s)
 form_vid#:#Video(s)
 form_tags#:#Tags
 form_edit_vid#:#Edit Video
 tbl_latest_uploads#:#Latest Uploads
-tbl_related_videos#:#Related to 
+tbl_related_videos#:#Related Videos
 tbl_search_results#:#Searchresults
 #:#
 #:#

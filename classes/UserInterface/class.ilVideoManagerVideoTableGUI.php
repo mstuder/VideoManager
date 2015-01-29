@@ -16,10 +16,6 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI{
      */
     protected $parent_gui;
     /**
-     * @var String
-     */
-    protected $cmd;
-    /**
      * @var ilDB
      */
     protected $db;
@@ -45,6 +41,11 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI{
      */
     protected $options;
 
+    /**
+     * @var int
+     */
+    protected $max_desc_length;
+
     protected $available_cols = array(
         'img',
         'link',
@@ -63,56 +64,79 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI{
         $this->pl = ilVideoManagerPlugin::getInstance();
         $this->video = $video;
         $this->options = $options;
-        $this->setId($options['cmd'].'_tbl');
+        $this->setId('video_tbl');
+        $this->setDefaultOrderField('create_date');
 
-        switch($options['cmd'])
-        {
-            case 'search_results':
-                $this->setTitle($this->pl->txt('tbl_'.$options['cmd']));
-                break;
-            case 'latest_uploads':
-                $this->setEnableNumInfo(false);
-                $this->setTitle($this->pl->txt('tbl_'.$options['cmd']));
-                break;
-            case 'related_videos':
-                $this->setEnableNumInfo(false);
-                break;
+//        $this->setLimit($options['limit']);
+        $this->setExternalSorting(true);
+        $this->setExternalSegmentation(true);
+        $this->determineLimit();
+        $this->determineOffsetAndOrder();
+        $this->setEnableNumInfo(false);
+
+        if($options['cmd'] == 'related_videos'){
+                $this->max_desc_length = 70;
+        }else{
+            $this->max_desc_length = 320;
         }
 
         $this->setRowTemplate('tpl.video_tbl_row.html', $this->pl->getDirectory());
 
-        $this->addColumn('', '', 5);
-        $this->addColumn('', '', 800);
+        $this->addColumn('', '');
+        $this->addColumn('', '');
         $this->buildData();
+    }
+
+    public function buildData(){
+        $this->options['count'] = true;
+        $count = $this->createData();
+        $this->options['count'] = false;
+        $data = $this->createData();
+        $this->setMaxCount($count);
+        $this->setData($data);
     }
 
     public function fillRow($row)
     {
-        foreach($this->available_cols as $col){
-            $content = '';
-            switch($col){
-                case 'img':
-                    $content = '<a href="' . $row['link'] . '"><img src =
+        //first row with id 0 is the title
+        if($row['id'] == 0)
+        {
+            $this->tpl->setCurrentBlock('tbl_title');
+            $this->tpl->setVariable('ID', 0);
+            if($this->options['cmd'] == 'search_results' && $this->options['search']['value'])
+            {
+                $this->tpl->setVariable('TBL_TITLE', $this->pl->txt('tbl_' . $this->options['cmd']) . " for '" . $this->options['search']['value'] . "'");
 
-                    "' . $row['img'] . '"></a> ';
-                    break;
-                case 'link':
-                    $content = '<a href="' . $row['link'] . '">' . $row['title'] . '</a>' . '<br>'.$row['description'];
-                    break;
+            }else{
+                $this->tpl->setVariable('TBL_TITLE', $this->pl->txt('tbl_' . $this->options['cmd']));
             }
+            $this->tpl->parseCurrentBlock();
+        }else{
+            //all other rows
             $this->tpl->setCurrentBlock('td');
-            $this->tpl->setVariable('VALUE', $content);
+            $this->tpl->setVariable('ID', $row['id']);
+            $this->tpl->setVariable('IMAGE', $row['img']);
+            $this->tpl->setVariable('LINK', $row['link']);
+            $this->tpl->setVariable('TITLE', $row['title']);
+            $this->tpl->setVariable('DESCRIPTION', $row['description']);
             $this->tpl->parseCurrentBlock();
         }
     }
 
-    public function buildData()
+    public function createData()
     {
-        $sql = 'SELECT *
-                    FROM vidm_data
+        if($this->options['count'])
+        {
+            $sql = 'SELECT COUNT(vidm_data.id) AS count';
+        }else{
+            $sql = 'SELECT *';
+        }
+        $sql .= ' FROM vidm_data
                     JOIN vidm_tree ON (vidm_tree.child = vidm_data.id)';
 
         $sql .= ' WHERE vidm_data.type = ' . $this->db->quote('vid', 'text');
+
+        $this->options['limit'] = array($this->getOffset(), $this->getLimit());
 
         foreach($this->options as $option => $value)
         {
@@ -131,9 +155,9 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI{
                             foreach($value['value'] as $word)
                             {
                                 $sql .= $or;
-                                $sql .= 'vidm_data.title LIKE ' . $this->db->quote($word . "%", 'text');
-                                $sql .= ' OR vidm_data.description LIKE ' . $this->db->quote($word . "%", 'text');
-                                $sql .= ' OR vidm_data.tags LIKE ' . $this->db->quote($word . "%", 'text');
+                                $sql .= 'vidm_data.title LIKE ' . $this->db->quote("%" . $word . "%", 'text');
+                                $sql .= ' OR vidm_data.description LIKE ' . $this->db->quote("%" . $word . "%", 'text');
+                                $sql .= ' OR vidm_data.tags LIKE ' . $this->db->quote("%" . $word . "%", 'text');
                                 $or = ' OR ';
                             }
                             $sql .= ')';
@@ -165,28 +189,35 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI{
                     break;
 
                 case 'limit':
-                    $sql .= ' LIMIT ' . $value;
+                    $sql .= ' LIMIT ' . implode(',', $value);
                     break;
             }
         }
-var_dump($sql);
-        $query = $this->db->query($sql);
-        $data = array();
 
+        $query = $this->db->query($sql);
+
+        if ($this->options['count']) {
+            return (int)$this->db->fetchObject($query)->count;
+        }
+
+        $data = array();
+        $data[] = array('id' => 0);
         while($result = $this->db->fetchAssoc($query))
         {
             $row = array();
             $video = new ilVideoManagerVideo($result['id']);
             $row['img'] = $video->getPreviewImageHttp();
             $row['title'] = $video->getTitle();
+            $row['id'] = $video->getId();
+            $row['create_date'] = $video->getCreateDate();
             $this->ctrl->setParameterByClass('ilvideomanagerusergui', 'node_id', $video->getId());
             $row['link'] = $this->ctrl->getLinkTargetByClass('ilvideomanagerusergui', 'playVideo');
-            $row['description'] = $video->getDescription();
+            $row['description'] = $video->getDescription($this->max_desc_length);
 
             $data[] = $row;
         }
 
-        $this->setData($data);
+        return $data;
     }
 
 

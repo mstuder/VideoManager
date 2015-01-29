@@ -35,12 +35,6 @@ class ilVideoManagerAdminTableGUI extends ilTable2GUI{
      */
     protected $tpl;
 
-    protected $available_cols = array(
-        'icon',
-        'link',
-        'actions'
-    );
-
     /**
      * @param int $node_id
      */
@@ -52,6 +46,7 @@ class ilVideoManagerAdminTableGUI extends ilTable2GUI{
         $this->setId('vidm_admin_tbl_'.$node_id);
         parent::__construct($parent_obj);
         $this->pl = ilVideoManagerPlugin::getInstance();
+        $this->setPrefix('14654654');
         $this->tree = new ilVideoManagerTree(1);
         if($node_id == 0)
         {
@@ -63,14 +58,28 @@ class ilVideoManagerAdminTableGUI extends ilTable2GUI{
         {
             $this->objects[] = new ilVideoManagerObject($node['id']);
         }
-
-        $this->setExternalSegmentation(true);
-        $this->setRowTemplate('tpl.row_generic.html', $this->pl->getDirectory());
-
-        //TODO: column positioning (e.g. relative positioning -> actions float right
+        $this->setFormAction($ilCtrl->getFormAction($parent_obj));
+        $this->addColumn("", "", "1", true);
         $this->addColumn('', '', 1);
         $this->addColumn('', '', 800);
         $this->addColumn('', '', 15);
+        $this->setRowTemplate('tpl.admin_tbl_row.html', $this->pl->getDirectory());
+        $this->setExternalSegmentation(true);
+        $this->setSelectAllCheckbox("id");
+        $this->setTopCommands(true);
+
+
+        $commands = array(
+            'deleteMultiple' => $this->pl->txt('common_delete'),
+            'moveMultiple' => $this->pl->txt('common_move'),
+        );
+
+
+        foreach($commands as $cmd => $caption){
+            $this->addMultiCommand($cmd, $caption);
+        }
+        $this->setTopCommands($commands);
+
         $this->buildData();
     }
 
@@ -78,38 +87,30 @@ class ilVideoManagerAdminTableGUI extends ilTable2GUI{
      * @param array $row
      */
     public function fillRow(array $row){
-        foreach($this->available_cols as $col){
-            $content = '';
-            switch($col){
-                case 'icon':
-                    $content = '<img src = "' . $row['icon'] . '"> ';
-                    break;
-                case 'link':
-                    $this->ctrl->clearParameters($this->parent_obj);
-                    $this->ctrl->setParameter($this->parent_obj, 'node_id', $row['node_id']);
-                    $content = '<a href= "' . $this->ctrl->getLinkTarget($this->parent_obj, 'view') . '">' . $row['title'] . '</a>';
-                    break;
-                case 'actions':
-                    $current_selection_list = new ilAdvancedSelectionListGUI();
-                    $current_selection_list->setListTitle($this->pl->txt("common_actions"));
-                    $current_selection_list->setId($row['node_id']);
-                    $this->ctrl->setParameter($this->parent_obj, 'node_id', $_GET['node_id']);
-                    $this->ctrl->setParameter($this->parent_obj, 'target_id', $row['node_id']);
+        $this->tpl->setVariable('ID', $row['node_id']);
+        $this->tpl->setVariable('ICON', $row['icon']);
 
-                    $current_selection_list->addItem($this->pl->txt("common_delete"), "",
-                        $this->ctrl->getLinkTargetByClass('ilvideomanageradmingui', 'confirmDelete'));
+        $this->ctrl->clearParameters($this->parent_obj);
+        $this->ctrl->setParameter($this->parent_obj, 'node_id', $row['node_id']);
+        $this->tpl->setVariable('LINK', $this->ctrl->getLinkTarget($this->parent_obj, 'view'));
+        $this->tpl->setVariable('TITLE', $row['title']);
 
-                    $current_selection_list->addItem($this->pl->txt("common_edit"), "",
-                        $this->ctrl->getLinkTargetByClass('ilvideomanageradmingui', 'edit'));
+        $current_selection_list = new ilAdvancedSelectionListGUI();
+        $current_selection_list->setListTitle($this->pl->txt("common_actions"));
+        $current_selection_list->setId($row['node_id']);
+        $this->ctrl->setParameter($this->parent_obj, 'node_id', $_GET['node_id']);
+        $this->ctrl->setParameter($this->parent_obj, 'target_id', $row['node_id']);
 
-                    $content = $current_selection_list->getHTML();
-                    break;
-            }
-            $this->tpl->setCurrentBlock('td');
-            $this->tpl->setVariable('VALUE', $content);
-            $this->tpl->parseCurrentBlock();
-        }
+        $current_selection_list->addItem($this->pl->txt("common_delete"), "",
+            $this->ctrl->getLinkTargetByClass('ilvideomanageradmingui', 'confirmDelete'));
 
+        $current_selection_list->addItem($this->pl->txt("common_edit"), "",
+            $this->ctrl->getLinkTargetByClass('ilvideomanageradmingui', 'edit'));
+
+        $current_selection_list->addItem($this->pl->txt("common_move"), "",
+            $this->ctrl->getLinkTargetByClass('ilvideomanageradmingui', 'cut'));
+
+        $this->tpl->setVariable('ACTIONS', $current_selection_list->getHTML());
     }
 
     public function buildData()
@@ -120,12 +121,7 @@ class ilVideoManagerAdminTableGUI extends ilTable2GUI{
             $row = array();
 
             //icon
-            if($obj->getType() == 'fld'){
-                $row['icon'] = ilUtil::getImagePath('icon_cat_b.png');
-            }else{
-                $row['icon'] = ilUtil::getImagePath('icon_mobs_b.png');
-            }
-
+            $row['icon'] = $obj->getIcon();
             //title
             $row['title'] = $obj->getTitle();
             //type

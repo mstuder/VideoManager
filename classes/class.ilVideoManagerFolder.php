@@ -13,4 +13,6 @@ class ilVideoManagerFolder extends ilVideoManagerObject{
         parent::__construct($id);
     }
 
+
+
 } 

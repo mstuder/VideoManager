@@ -10,24 +10,15 @@ cd Customizing/global/plugins/Libraries
 git clone https://github.com/studer-raimann/ActiveRecord.git
 ```
 
-####Install mediaelement
-ILIAS 4.4 does not include mediaelement. Therefore please install the latest Version of mediaelement before you install the plugin:
-Start at your ILIAS root directory
-```bash
-mkdir -p Customizing/global/plugins/Libraries/
-cd Customizing/global/plugins/Libraries
-git clone https://github.com/johndyer/mediaelement.git
-```
-
 ####Install ffmpeg
 This plugin requires ffmpeg. If not yet installed (you can test it by typing 'ffmpeg' in a console), download it from: https://www.ffmpeg.org/download.html
-Or, if you're using Ubuntu, you can type the following commands in your terminal:
+Or, if you're using Ubuntu, you can install ffmpeg by typing the following commands in your terminal:
 ```bash
 sudo add-apt-repository 'deb http://ppa.launchpad.net/jon-severinsson/ffmpeg/ubuntu '"$(cat /etc/*-release | grep "DISTRIB_CODENAME=" | cut -d "=" -f2)"' main' && sudo apt-get update
 sudo apt-get install ffmpeg
 ```
 After installing, add the path to your installation:
-either in the ilias setup under Basic Settings -> Optional Third-Party Tools -> Path to ffmpeg, write '/usr/bin/ffmpeg'
+Either in the ilias setup under Basic Settings -> Optional Third-Party Tools -> Path to ffmpeg, write '/usr/bin/ffmpeg'
 or directly into the file ilias.ini.php -> [tools] -> ffmpeg = "/usr/bin/ffmpeg"
 
 ####Install the plugin
