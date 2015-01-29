@@ -1,0 +1,22 @@
+#leftcontent {
+    vertical-align: top;
+    width: 45%;
+    min-height: 375px;
+    padding-right: 15px;
+    display: inline-block;
+}
+
+#description {
+    width:100%;
+}
+
+.ilForm{
+    width:100%;
+}
+
+
+#videoplayer {
+    vertical-align: top;
+    width: 400px;
+    display: inline-block;
+}
