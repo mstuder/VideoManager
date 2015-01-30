@@ -21,13 +21,16 @@ admin;add_video;"Video hinzufügen";"Add new video"
 admin;confirm_delete;"Sind Sie sicher, dass sie folgende Elemente löschen möchten?";"Are you sure you want to delete the following items?"
 msg;fld_created;"Ordner wurde erfolgreich erstellt";"Folder was created"
 msg;choose_folder;"Bitte wählen Sie einen Zielordner, in welchen Sie die Datei(en) verschieben möchten.";"Please choose a destination folder, to which the file(s) should be moved."
+msg;deletion_failed;"Die Dateien konnten nicht gelöscht werden, da eine oder mehrere Dateien momentan konvertiert werden.";"File(s) could not be deleted; One or more files are still being converted."
+msg;move_failed;"Die Dateien konnten nicht verschoben werden, da eine oder mehrere Dateien momentan konvertiert werden.";"File(s) could not be moved; One or more files are still being converted."
+msg;video_converting;"Dieses Video wird zurzeit konvertiert. Versuchen Sie es gegebenfalls in einigen Minuten noch einmal.";"This video is probably not available, as it is being converted currently. If so, please try again in a few minutes.";
 form;add_folder;"Ordner hinzufügen";"Add Folder"
 form;upload_vid;"Video(s) Hochladen";"Upload Video(s)"
 form;vid;"Video(s)";"Video(s)"
 form;tags;"Tags";"Tags"
 form;edit_vid;"Video Bearbeiten";"Edit Video"
-tbl;latest_uploads;"Zuletzt Hochgeladen";"Latest Uploads"
+tbl;view;"Zuletzt Hochgeladen";"Latest Uploads"
 tbl;related_videos;"Verwandte Videos";"Related Videos"
-tbl;search_results;"Suchergebnisse";"Searchresults"
+tbl;performSearch;"Suchergebnisse";"Searchresults"
 
 

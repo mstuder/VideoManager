@@ -29,11 +29,16 @@ class ilVideoManagerVideoDetailsGUI {
      */
     protected $ctrl;
     /**
+     * @var ilVideoManagerAdminGUI
+     */
+    protected $parent_gui;
+    /**
      * @param $video ilVideoManagerVideo
      */
     public function __construct($parent_gui, $video)
     {
         global $tpl;
+        $this->parent_gui = $parent_gui;
         $this->video = $video;
         $this->pl = ilVideoManagerPlugin::getInstance();
         $this->tpl = $tpl;
@@ -41,10 +46,13 @@ class ilVideoManagerVideoDetailsGUI {
 
     public function init()
     {
+        if(!ilVideoManagerObject::__checkConverting($this->video->getId()))
+        {
+            ilUtil::sendInfo($this->pl->txt('msg_vid_converting'), true);
+        }
         $this->tpl->addBlockFile('ADM_CONTENT', 'video_details', 'tpl.video_details.html', 'Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager');
         $this->tpl->setCurrentBlock('video_details');
         $this->tpl->addCss('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/css/video_details.css');
-
         $this->initPropertiesForm();
         $this->initMediaPlayer();
     }

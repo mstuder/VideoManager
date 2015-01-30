@@ -204,7 +204,7 @@ class ilVideoManagerObject extends ActiveRecord{
         }
     }
 
-    public function __getTypeForId($id)
+    public static function __getTypeForId($id)
     {
         return ilVideoManagerObject::find($id)->getType();
     }
@@ -215,6 +215,40 @@ class ilVideoManagerObject extends ActiveRecord{
      */
     public static function __getRootFolder(){
         return parent::find(1);
+    }
+
+
+    /**
+     * @param $ids
+     * @internal param \id $items or array of ids
+     * @return bool return false if one of the items is still being converted
+     */
+    public static function __checkConverting($ids)
+    {
+        $tree = new ilVideoManagerTree(1);
+        if(!is_array($ids)){
+            $ids = array($ids);
+        }
+        foreach($ids as $id)
+        {
+            if(ilVideoManagerObject::__getTypeForId($id) ==  'vid')
+            {
+                $vid = new ilVideoManagerVideo($id);
+                if($vid->getStatusConvert() == 1 || $vid->getStatusConvert() == 2)
+                {
+                    return false;
+                }
+            }
+            elseif(ilVideoManagerObject::__getTypeForId($id) ==  'fld')
+            {
+                $childs = $tree->getSubTreeIds($id);
+                if(!ilVideoManagerObject::__checkConverting($childs))
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**

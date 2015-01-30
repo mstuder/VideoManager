@@ -1,6 +1,7 @@
 <?php
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerObject.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/Util/class.vmFFmpeg.php');
+require_once('./Customizing/global/plugins/Services/Cron/CronHook/MediaConverter/classes/Media/class.mcMedia.php');
 require_once('./Services/MediaObjects/classes/class.ilFFmpeg.php');
 /**
  * Class ilVideoManagerVideo
@@ -9,15 +10,12 @@ require_once('./Services/MediaObjects/classes/class.ilFFmpeg.php');
  */
 class ilVideoManagerVideo extends ilVideoManagerObject{
 
+    protected $MCId;
+
     public function __construct($id = 0)
     {
         $this->type = 'vid';
         parent::__construct($id);
-    }
-
-    public function create()
-    {
-        parent::create();
     }
 
     /**
@@ -55,5 +53,18 @@ class ilVideoManagerVideo extends ilVideoManagerObject{
     public function getImagePath()
     {
         return $this->getPath().'/'.rtrim($this->getTitle(), '.'.$this->getSuffix()).'_poster';
+    }
+
+    public function getStatusConvert()
+    {
+        $mediaConverter = mcMedia::where(array('trigger_obj_id' => $this->getId()))->first();
+        if($mediaConverter)
+        {
+            return $mediaConverter->getStatusConvert();
+        }
+        else
+        {
+            return false;
+        }
     }
 } 

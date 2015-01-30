@@ -305,6 +305,14 @@ class ilVideoManagerAdminGUI{
                 $this->ctrl->redirect($this, 'view');
             }
 
+            //Check if one of the items is still being converted
+            if(!ilVideoManagerObject::__checkConverting($_POST['id']))
+            {
+                ilUtil::sendFailure($this->pl->txt('msg_deletion_failed'), true);
+                $this->ctrl->redirect($this, 'view');
+            }
+
+
             foreach($_POST['id'] as $key => $id)
             {
                 $obj = new ilVideoManagerObject($id);
@@ -313,6 +321,13 @@ class ilVideoManagerAdminGUI{
         }
         else
         {
+            //Check if one of the items is still being converted
+            if(!ilVideoManagerObject::__checkConverting($_GET['target_id']))
+            {
+                ilUtil::sendFailure($this->pl->txt('msg_deletion_failed'), true);
+                $this->ctrl->redirect($this, 'view');
+            }
+
             $this->ctrl->setParameter($this, 'target_id', $_GET['target_id']);
             $obj = new ilVideoManagerObject($_GET['target_id']);
             $items_html = ilUtil::img($obj->getIcon(true)) . " " . $obj->getTitle() . '</br>';
@@ -380,6 +395,11 @@ class ilVideoManagerAdminGUI{
 
     protected function editVideo()
     {
+        if(!ilVideoManagerObject::__checkConverting($_GET['target_id']))
+        {
+            ilUtil::sendInfo($this->pl->txt('msg_edit_vid_failed'), true);
+            $this->ctrl->redirect($this, 'view');
+        }
         $form = new ilVideoManagerVideoFormGUI($this, new ilVideoManagerVideo($_GET['target_id']));
         $form->fillForm();
         $this->tpl->setContent($form->getHTML());
@@ -411,6 +431,13 @@ class ilVideoManagerAdminGUI{
                 $this->ctrl->redirect($this, 'view');
             }
 
+            //Check if one of the items is still being converted
+            if(!ilVideoManagerObject::__checkConverting($_POST['id']))
+            {
+                ilUtil::sendFailure($this->pl->txt('msg_move_failed'), true);
+                $this->ctrl->redirect($this, 'view');
+            }
+
             foreach($_POST['id'] as $key => $id)
             {
                 $subtree = array_merge($subtree, $this->tree->getSubTree($this->tree->getNodeData($id)));
@@ -418,6 +445,12 @@ class ilVideoManagerAdminGUI{
         }
         else
         {
+            //Check if one of the items is still being converted
+            if(!ilVideoManagerObject::__checkConverting($_GET['target_id']))
+            {
+                ilUtil::sendFailure($this->pl->txt('msg_move_failed'), true);
+                $this->ctrl->redirect($this, 'view');
+            }
             $subtree = $this->tree->getSubTree($this->tree->getNodeData($_GET['target_id']));
         }
 

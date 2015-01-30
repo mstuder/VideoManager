@@ -21,13 +21,16 @@ admin_add_video#:#Video hinzufügen
 admin_confirm_delete#:#Sind Sie sicher, dass sie folgende Elemente löschen möchten?
 msg_fld_created#:#Ordner wurde erfolgreich erstellt
 msg_choose_folder#:#Bitte wählen Sie einen Zielordner, in welchen Sie die Datei(en) verschieben möchten.
+msg_deletion_failed#:#Die Dateien konnten nicht gelöscht werden, da eine oder mehrere Dateien momentan konvertiert werden.
+msg_move_failed#:#Die Dateien konnten nicht verschoben werden, da eine oder mehrere Dateien momentan konvertiert werden.
+msg_video_converting#:#Dieses Video wird zurzeit konvertiert. Versuchen Sie es gegebenfalls in einigen Minuten noch einmal.
 form_add_folder#:#Ordner hinzufügen
 form_upload_vid#:#Video(s) Hochladen
 form_vid#:#Video(s)
 form_tags#:#Tags
 form_edit_vid#:#Video Bearbeiten
-tbl_latest_uploads#:#Zuletzt Hochgeladen
+tbl_view#:#Zuletzt Hochgeladen
 tbl_related_videos#:#Verwandte Videos
-tbl_search_results#:#Suchergebnisse
+tbl_performSearch#:#Suchergebnisse
 #:#
 #:#

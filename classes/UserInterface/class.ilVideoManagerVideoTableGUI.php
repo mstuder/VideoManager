@@ -63,14 +63,16 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI{
         $this->setDefaultOrderField('create_date');
 
 //        $this->setLimit($options['limit']);
-        $this->setExternalSorting(true);
-        $this->setExternalSegmentation(true);
-        $this->determineLimit();
-        $this->determineOffsetAndOrder();
+//        $this->setExternalSorting(true);
+//        $this->setExternalSegmentation(true);
+//        $this->determineLimit();
+//        $this->determineOffsetAndOrder();
         $this->setEnableNumInfo(false);
 
         if($options['cmd'] == 'related_videos'){
             $this->max_desc_length = 70;
+            $this->setExternalSegmentation(true);
+            $this->options['limit'] = 10;
         }else{
             $this->max_desc_length = 320;
         }
@@ -83,11 +85,11 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI{
     }
 
     public function buildData(){
-        $this->options['count'] = true;
-        $count = $this->createData();
-        $this->options['count'] = false;
+//        $this->options['count'] = true;
+//        $count = $this->createData();
+//        $this->options['count'] = false;
         $data = $this->createData();
-        $this->setMaxCount($count);
+//        $this->setMaxCount($count);
         $this->setData($data);
     }
 
@@ -98,13 +100,7 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI{
         {
             $this->tpl->setCurrentBlock('tbl_title');
             $this->tpl->setVariable('ID', 0);
-            if($this->options['cmd'] == 'search_results' && $this->options['search']['value'])
-            {
-                $this->tpl->setVariable('TBL_TITLE', $this->pl->txt('tbl_' . $this->options['cmd']) . " '" . $this->options['search']['value'] . "'");
-
-            }else{
-                $this->tpl->setVariable('TBL_TITLE', $this->pl->txt('tbl_' . $this->options['cmd']));
-            }
+            $this->tpl->setVariable('TBL_TITLE', $this->pl->txt('tbl_' . $this->options['cmd']));
             $this->tpl->parseCurrentBlock();
         }else{
             //all other rows
@@ -131,8 +127,6 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI{
                     JOIN vidm_tree ON (vidm_tree.child = vidm_data.id)';
 
         $sql .= ' WHERE vidm_data.type = ' . $this->db->quote('vid', 'text');
-
-        $this->options['limit'] = array($this->getOffset(), $this->getLimit());
 
         foreach($this->options as $option => $value)
         {
@@ -185,13 +179,11 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI{
                     break;
 
                 case 'limit':
-                    $sql .= ' LIMIT ' . implode(',', $value);
+                    $sql .= ' LIMIT ' . $value;
                     break;
             }
         }
-
         $query = $this->db->query($sql);
-
         if ($this->options['count'])
         {
             return (int)$this->db->fetchObject($query)->count;

@@ -21,13 +21,16 @@ admin_add_video#:#Add new video
 admin_confirm_delete#:#Are you sure you want to delete the following items?
 msg_fld_created#:#Folder was created
 msg_choose_folder#:#Please choose a destination folder, to which the file(s) should be moved.
+msg_deletion_failed#:#File(s) could not be deleted; One or more files are still being converted.
+msg_move_failed#:#File(s) could not be moved; One or more files are still being converted.
+msg_video_converting#:#This video is probably not available, as it is being converted currently. If so, please try again in a few minutes.
 form_add_folder#:#Add Folder
 form_upload_vid#:#Upload Video(s)
 form_vid#:#Video(s)
 form_tags#:#Tags
 form_edit_vid#:#Edit Video
-tbl_latest_uploads#:#Latest Uploads
+tbl_view#:#Latest Uploads
 tbl_related_videos#:#Related Videos
-tbl_search_results#:#Searchresults
+tbl_performSearch#:#Searchresults
 #:#
 #:#

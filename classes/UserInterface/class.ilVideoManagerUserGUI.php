@@ -70,7 +70,7 @@ class ilVideoManagerUserGUI {
     function view()
     {
         $options = array(
-            'cmd' => 'latest_uploads',
+            'cmd' => 'view',
             'sort_create_date' => 'ASC',
             'limit' => 8,
         );
@@ -88,7 +88,22 @@ class ilVideoManagerUserGUI {
     public function prepareOutput()
     {
         $this->tpl->addCss('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/css/video_player.css');
-        $this->toolbar->addInputItem(new ilTextInputGUI('search_input', 'search_value'));
+        $textinput = new ilTextInputGUI('search_input', 'search_value');
+
+        if(array_key_exists('search_value', $_POST)){
+            $_SESSION['search_value'] = $_POST['search_value'];
+            $this->ctrl->clearParameters($this);
+            $textinput->setValue($_POST['search_value']);
+        }elseif($_GET['search_value']){
+            $this->ctrl->saveParameter($this, 'search_method');
+            $this->ctrl->saveParameter($this, 'search_value');
+            $textinput->setValue($_GET['search_value']);
+        }elseif(array_key_exists('search_value', $_SESSION)){
+            $textinput->setValue($_SESSION['search_value']);
+        }
+
+        $this->toolbar->setId('search');
+        $this->toolbar->addInputItem($textinput);
         $this->toolbar->addFormButton($this->pl->txt('common_search'), 'performSearch');
         $this->toolbar->setFormAction($this->ctrl->getLinkTarget($this, 'performSearch'));
     }
@@ -101,27 +116,40 @@ class ilVideoManagerUserGUI {
             $video = new ilVideoManagerVideo($_GET['node_id']);
         }
 
-        if($_GET['search_value'])
+        if(array_key_exists('search_value', $_POST))
         {
-            $search = array(
-            'value' => $_GET['search_value'],
-            'method' => $_GET['search_method']);
-        }else{
             $search = array(
                 'value' => $_POST['search_value'],
                 'method' => 'all');
         }
+        elseif($_GET['search_value'])
+        {
+        $search = array(
+            'value' => $_GET['search_value'],
+            'method' => $_GET['search_method']);
+        }
+        elseif(array_key_exists('search_value', $_SESSION))
+        {
+            $search = array(
+                'value' => $_SESSION['post_vars']['search_value'],
+                'method' => 'all');
+        }
+        else
+        {
+            ilUtil::sendFailure('Error: no search value given');
+            return false;
+        }
 
         $options = array(
-            'cmd' => 'search_results',
+            'cmd' => 'performSearch',
             'search' => $search,
             'sort_create_date' => 'ASC',
-            'limit' => 10
         );
 
         $this->tpl->addCss('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/css/video_player.css');
         $this->tpl->addCss('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/css/search_table.css');
 
+        unset($_SESSION['table']);
         $search_results = new ilVideoManagerVideoTableGUI($this, $options, $video);
         $this->tpl->setContent($search_results->getHTML());
     }

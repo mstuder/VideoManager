@@ -51,6 +51,10 @@ class ilVideoManagerPlayVideoGUI {
 
     public function init()
     {
+        if(!ilVideoManagerObject::__checkConverting($this->video->getId()))
+        {
+            ilUtil::sendInfo($this->pl->txt('msg_vid_converting'), true);
+        }
         $this->tpl->addBlockFile('ADM_CONTENT', 'video_player', 'tpl.video_player.html', 'Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager');
         $this->tpl->addJavaScript('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/js/video_player.js');
         $this->tpl->setCurrentBlock('video_player');
