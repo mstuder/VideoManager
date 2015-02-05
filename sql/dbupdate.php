@@ -63,3 +63,8 @@ require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHoo
 $tree = new ilVideoManagerTree(1);
 $tree->addTree($tree->getTreeId());
 ?>
+<#4>
+<?php
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerSubscription.php');
+ilVideoManagerSubscription::installDB();
+?>

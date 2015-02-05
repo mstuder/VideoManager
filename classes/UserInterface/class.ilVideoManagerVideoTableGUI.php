@@ -166,7 +166,7 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI{
                             $sql .= ' AND vidm_data.id != ' . $this->video->getId();
                             break;
                         case 'category':
-                            $sql .= ' AND vidm_tree.parent = ' . ilVideoManagerFolder::where(array('title' => $value['value']))->first()->getId(); //categories names must be unique
+                            $sql .= ' AND vidm_tree.parent = ' . $value['value'];
                             break;
                         case 'tag':
                             $sql .= ' AND vidm_data.tags LIKE ' . $this->db->quote("%" . $value['value'] . "%", 'text');

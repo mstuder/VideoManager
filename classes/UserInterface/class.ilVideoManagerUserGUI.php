@@ -1,5 +1,6 @@
 <?php
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerPlugin.php');
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerSubscription.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/UserInterface/class.ilVideoManagerVideoTableGUI.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/UserInterface/class.ilVideoManagerPlayVideoGUI.php');
 require_once('./Services/Form/classes/class.ilTextInputGUI.php');
@@ -32,11 +33,16 @@ class ilVideoManagerUserGUI {
      * @var ilVideoManagerPlugin
      */
     protected $pl;
+    /**
+     * @var ilObjUser
+     */
+    protected $usr;
 
     public function __construct()
     {
-        global $tpl, $ilCtrl, $ilToolbar;
+        global $tpl, $ilUser, $ilCtrl, $ilToolbar;
 
+        $this->usr = $ilUser;
         $this->pl = ilVideoManagerPlugin::getInstance();
         $this->tpl = $tpl;
         $this->ctrl = $ilCtrl;
@@ -47,9 +53,15 @@ class ilVideoManagerUserGUI {
 
     public function executeCommand()
     {
-        $this->prepareOutput();
 
         $cmd = $this->ctrl->getCmd('view');
+
+        if($cmd == 'view')
+        {
+            unset($_SESSION['search_value']);
+
+        }
+        $this->prepareOutput();
 
         switch($cmd)
         {
@@ -62,6 +74,12 @@ class ilVideoManagerUserGUI {
             case 'playVideo':
                 $this->playVideo();
                 break;
+            case 'subscribe':
+                $this->subscribe();
+                break;
+            case 'unsubscribe':
+                $this->unsubscribe();
+                break;
 
         }
 
@@ -69,13 +87,15 @@ class ilVideoManagerUserGUI {
 
     function view()
     {
+
         $options = array(
             'cmd' => 'view',
             'sort_create_date' => 'ASC',
             'limit' => 8,
         );
-        $this->tpl->addCss('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/css/search_table.css');
+
         $starter_gui = new ilVideoManagerVideoTableGUI($this, $options);
+
         $this->tpl->setContent($starter_gui->getHTML());
     }
 
@@ -87,7 +107,9 @@ class ilVideoManagerUserGUI {
 
     public function prepareOutput()
     {
+        $this->tpl->addCss('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/css/search_table.css');
         $this->tpl->addCss('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/css/video_player.css');
+
         $textinput = new ilTextInputGUI('search_input', 'search_value');
 
         if(array_key_exists('search_value', $_POST)){
@@ -97,7 +119,11 @@ class ilVideoManagerUserGUI {
         }elseif($_GET['search_value']){
             $this->ctrl->saveParameter($this, 'search_method');
             $this->ctrl->saveParameter($this, 'search_value');
-            $textinput->setValue($_GET['search_value']);
+            if($_GET['search_method'] != 'category'){
+                $textinput->setValue($_GET['search_value']);
+            }else{
+                $textinput->setValue(ilVideoManagerFolder::find($_GET['search_value'])->getTitle());
+            }
         }elseif(array_key_exists('search_value', $_SESSION)){
             $textinput->setValue($_SESSION['search_value']);
         }
@@ -110,6 +136,9 @@ class ilVideoManagerUserGUI {
 
     public function performSearch()
     {
+        $this->tpl->addBlockFile('ADM_CONTENT', 'search_gui', 'tpl.search_gui.html', 'Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager');
+        $this->tpl->setCurrentBlock('search_gui');
+
         $video = null;
         if($_GET['node_id'])
         {
@@ -146,11 +175,51 @@ class ilVideoManagerUserGUI {
             'sort_create_date' => 'ASC',
         );
 
-        $this->tpl->addCss('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/css/video_player.css');
-        $this->tpl->addCss('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/css/search_table.css');
+
 
         unset($_SESSION['table']);
         $search_results = new ilVideoManagerVideoTableGUI($this, $options, $video);
-        $this->tpl->setContent($search_results->getHTML());
+        $this->tpl->setVariable('TABLE', $search_results->getHTML());
+
+        if($_GET['search_method'] == 'category' && !$_POST['search_value'])
+        {
+            $this->tpl->setVariable('CHANNEL', "Channel: '" . ilVideoManagerFolder::find($_GET['search_value'])->getTitle() . "'");
+
+            if(ilVideoManagerSubscription::isSubscribed($this->usr->getId(), $_GET['search_value']))
+            {
+                $this->ctrl->saveParameter($this, 'video_tbl_table_nav');
+                $this->tpl->setVariable('SUBSCRIBE_LINK', $this->ctrl->getLinkTarget($this, 'unsubscribe'));
+                $this->tpl->setVariable('SUBSCRIBE', $this->pl->txt('tbl_unsubscribe'));
+            }
+            else
+            {
+                $this->ctrl->saveParameter($this, 'video_tbl_table_nav');
+                $this->tpl->setVariable('SUBSCRIBE_LINK', $this->ctrl->getLinkTarget($this, 'subscribe'));
+                $this->tpl->setVariable('SUBSCRIBE', $this->pl->txt('tbl_subscribe'));
+            }
+
+        }
+    }
+
+    protected function subscribe()
+    {
+        $subscription = new ilVideoManagerSubscription();
+        $subscription->setUsrId($this->usr->getId());
+        $subscription->setCatId($_GET['search_value']);
+        $subscription->create();
+
+        ilUtil::sendSuccess($this->pl->txt('msg_subscribed_successfully'), true);
+        $this->ctrl->saveParameter($this, 'video_tbl_table_nav');
+        $this->ctrl->redirect($this, 'performSearch');
+    }
+
+    protected function unsubscribe()
+    {
+        $subscription = ilVideoManagerSubscription::where(array('usr_id' => $this->usr->getId(), 'cat_id' => $_GET['search_value']))->first();
+        $subscription->delete();
+
+        ilUtil::sendSuccess($this->pl->txt('msg_unsubscribed_successfully'), true);
+        $this->ctrl->saveParameter($this, 'video_tbl_table_nav');
+        $this->ctrl->redirect($this, 'performSearch');
     }
 } 

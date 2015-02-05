@@ -155,6 +155,8 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI{
             $this->video->create();
             $this->video->uploadVideo($_FILES['upload_files']['tmp_name']);
 
+            $this->parent_gui->notifyUsers($this->video);
+
             $mediaConverter = new mcMedia();
             $mediaConverter->uploadFile($this->video->getTitle(), $this->video->getSuffix(), $this->video->getPath(), $this->video->getPath(), $this->video->getId());
 

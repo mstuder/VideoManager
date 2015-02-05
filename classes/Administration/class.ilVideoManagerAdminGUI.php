@@ -4,6 +4,8 @@ require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHoo
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerFolder.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerTree.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerPlugin.php');
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerSubscription.php');
+require_once('./Services/Mail/classes/class.ilMail.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/Administration/class.ilVideoManagerTreeExplorerGUI.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/Administration/class.ilVideoManagerAdminTableGUI.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/Administration/class.ilVideoManagerVideoFormGUI.php');
@@ -480,6 +482,54 @@ class ilVideoManagerAdminGUI{
         }
 
         $this->ctrl->redirect($this, 'view');
+    }
+
+    public function notifyUsers($video)
+    {
+        $subscriptions = ilVideoManagerSubscription::where(array('cat_id' => $this->tree->getParentId($video->getId())));
+        $mail = new ilMail(ANONYMOUS_USER_ID);
+        foreach($subscriptions->get() as $subscription)
+        {
+            $subject = $this->getNotificationSubject($subscription);
+            $message = $this->getNotificationMessage($subscription, $video);
+            $mail->sendMail(
+                ilObjUser::_lookupLogin($subscription->getUsrId()), '', '',
+                $subject,
+                $message,
+                array(), array("system")
+            );
+        }
+    }
+
+    protected function getNotificationSubject($subscription)
+    {
+        $lng = ilObjUser::_lookupLanguage($subscription->getUsrId());
+
+        return $this->pl->txt("mail_subject_".$lng) . " '" . ilVideoManagerFolder::find($subscription->getCatId())->getTitle() . "'";
+    }
+
+    protected function getNotificationMessage($subscription, $video)
+    {
+        $lng = ilObjUser::_lookupLanguage($subscription->getUsrId());
+        $this->pl->loadLanguageModule();
+
+        $message = '';
+        $message .= ilMail::getSalutation($subscription->getUsrId(), new ilLanguage($lng));
+
+        $message .= "\n\n";
+        $message .= $this->pl->txt("mail_new_upload_".$lng);
+        $message .= "\n\n";
+        $message .= $this->pl->txt("common_category_".$lng).": ".ilVideoManagerFolder::find($subscription->getCatId())->getTitle();
+        $message .= "\n\n";
+        $message .= $this->pl->txt("common_video").': '.$video->getTitle().'';
+
+        $message .= "\n\n";
+        $message .= $this->pl->txt('mail_view_video');
+        $this->ctrl->setParameterByClass('ilVideoManagerUserGUI', 'node_id', $video->getId());
+        $message .= ' ' . ilUtil::_getHttpPath().'/'.$this->ctrl->getLinkTargetByClass('ilVideoManagerUserGUI', 'playVideo');
+
+        $message .= ilMail::_getInstallationSignature();
+        return $message;
     }
 
     protected function checkPermission()

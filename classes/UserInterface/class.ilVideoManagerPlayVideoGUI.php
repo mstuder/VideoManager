@@ -121,7 +121,7 @@ class ilVideoManagerPlayVideoGUI {
         $this->tpl->setVariable('CATEGORY_VALUE', $category->getTitle());
 
         $this->ctrl->setParameterByClass('ilVideoManagerUserGUI', 'node_id', $_GET['node_id']);
-        $this->ctrl->setParameterByClass('ilVideoManagerUserGUI', 'search_value', $category->getTitle());
+        $this->ctrl->setParameterByClass('ilVideoManagerUserGUI', 'search_value', $category->getId());
         $this->ctrl->setParameterByClass('ilVideoManagerUserGUI', 'search_method', 'category');
         $this->tpl->setVariable('CATEGORY_SEARCH', $this->ctrl->getLinkTargetByClass('ilVideoManagerUserGUI', 'performSearch'));
     }

@@ -1,3 +1,8 @@
 div.ilTableOuter {
     margin: 10px 30px;
 }
+
+#channel_header{
+    padding: 0 0 10px 10px;
+    margin: 0 0 10px 0;
+}
