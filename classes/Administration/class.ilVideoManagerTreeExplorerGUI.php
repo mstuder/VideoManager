@@ -32,8 +32,16 @@ class ilVideoManagerTreeExplorerGUI extends ilTreeExplorerGUI {
             $ilCtrl->setParameterByClass("ilVideoManagerAdminGUI","node_id",$node["child"]);
             return $ilCtrl->getLinkTargetByClass("ilVideoManagerAdminGUI", 'performPaste');
         }
-        $ilCtrl->setParameterByClass("ilVideoManagerAdminGUI", "node_id", $node["child"]);
-        return $ilCtrl->getLinkTargetByClass("ilVideoManagerAdminGUI", 'view');
+        elseif($ilCtrl->getCmd() == 'insert')
+        {
+            $ilCtrl->setParameterByClass("ilVideoManagerTMEPluginGUI", 'video_id', $node['id']);
+            return $ilCtrl->getLinkTargetByClass("ilVideoManagerTMEPluginGUI", 'create');
+        }
+        else
+        {
+            $ilCtrl->setParameterByClass("ilVideoManagerAdminGUI", "node_id", $node["child"]);
+            return $ilCtrl->getLinkTargetByClass("ilVideoManagerAdminGUI", 'view');
+        }
     }
 
     /**
@@ -91,10 +99,30 @@ class ilVideoManagerTreeExplorerGUI extends ilTreeExplorerGUI {
         $this->preloaded = true;
     }
 
+    /**
+     * @param array $subtree
+     */
     public function setIgnoreSubTree(array $subtree)
     {
         $this->ignoreSubTree = $subtree;
         $this->preloadChilds();
+    }
+
+    /**
+     * @param mixed $node
+     * @return bool
+     */
+    public function isNodeClickable($node)
+    {
+        global $ilCtrl;
+        if($ilCtrl->getCmd() != 'insert' || ilVideoManagerObject::__getTypeForId($node['id']) == 'vid')
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
 

@@ -18,6 +18,8 @@ common;less;"weniger";"less"
 common;category_de;"Kategorie";"Kategorie"
 common;category_en;"Category";"Category"
 common;video;"Video";"Video
+common;duration;"Dauer";"Duration"
+common;upload_date;"Hochgeladen am";"Upload Date"
 admin;add_new_item;"Objekt hinzufügen";"Add new item"
 admin;add_folder;"Ordner hinzufügen";"Add new Folder"
 admin;add_video;"Video hinzufügen";"Add new video"

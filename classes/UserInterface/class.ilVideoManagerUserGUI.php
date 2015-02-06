@@ -134,6 +134,18 @@ class ilVideoManagerUserGUI {
         $this->toolbar->setFormAction($this->ctrl->getLinkTarget($this, 'performSearch'));
     }
 
+//    public function search()
+//    {
+//        if(array_key_exists('search_value', $_POST)){
+//            $_SESSION['search_value'] = $_POST['search_value'];
+//            $_SESSION['search_method'] = 'all';
+//        }
+//        elseif($_GET['search_value'])
+//        {
+//            $_SESSION['search_value'] = $_GET['search_valu']
+//        }
+//    }
+
     public function performSearch()
     {
         $this->tpl->addBlockFile('ADM_CONTENT', 'search_gui', 'tpl.search_gui.html', 'Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager');
@@ -183,7 +195,7 @@ class ilVideoManagerUserGUI {
 
         if($_GET['search_method'] == 'category' && !$_POST['search_value'])
         {
-            $this->tpl->setVariable('CHANNEL', "Channel: '" . ilVideoManagerFolder::find($_GET['search_value'])->getTitle() . "'");
+            $this->tpl->setVariable('CHANNEL', $this->pl->txt('common_category').": '" . ilVideoManagerFolder::find($_GET['search_value'])->getTitle() . "'");
 
             if(ilVideoManagerSubscription::isSubscribed($this->usr->getId(), $_GET['search_value']))
             {
