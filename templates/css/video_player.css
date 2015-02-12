@@ -15,13 +15,7 @@
     width: auto;
 }
 
-.ilToolbar {
 
-}
-
-#search_value {
-
-}
 
 #videoplayer {
     box-shadow: 3px 3px 4px #D0D0D0;
@@ -30,6 +24,7 @@
 }
 
 #related_videos {
+    padding: 4px 0 0 7px;
     width:100%;
     max-width: 400px;
     display: inline-block;
@@ -45,7 +40,7 @@
     vertical-align: top;
     width: 100%;
     max-width: 730px;
-    padding: 5px 15px 0 2%;
+    padding: 5px 5px 0 2%;
     padding-bottom: 15px;
     display: inline-block;
 }
@@ -139,6 +134,17 @@ tr.tblheader {
     padding: 5px 0px 10px 15px;
     font-weight: bold;
     font-size: 20px;
+}
+
+@media
+only screen and (max-width: 640px){
+    .ilToolbar {
+        width:280px;
+    }
+
+    input#search_value {
+        width:200px;
+    }
 }
 
 
