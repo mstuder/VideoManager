@@ -135,48 +135,48 @@ class ilVideoManagerPlugin extends ilUserInterfaceHookPlugin{
      * @return bool
      */
     public function beforeActivation() {
-        // TODO: put in UIHookGUI
+//         TODO: put in UIHookGUI
         global $ilCtrl;
 
         $this->updateLanguageFiles();
 
-        foreach(ctrlmmEntry::getAll(false) as $entry)
-        {
-            if($entry->getTitle() == 'Video Manager'){
-                return self::checkPreconditions();
-            }
-        }
-
-        if(ilMainMenuGUI::_checkAdministrationPermission())
-        {
-            $entry = new ctrlmmEntryDropdown();
-            $entry->setTitle('Video Manager');
-            $entry->setTranslations(array('en' => 'Video Manager'));
-            $entry->create();
-
-            $subentry_channels = new ctrlmmEntryLink();
-            $subentry_channels->setTranslations(array('en' => 'Channels'));
-            $subentry_channels->setLink($ilCtrl->getLinkTargetByClass(array('ilroutergui', 'ilvideomanagerusergui'),  'view'));
-            $subentry_channels->setTarget('_top');
-            $subentry_channels->setParent($entry->getId());
-            $subentry_channels->create();
-
-            $subentry_admin = new ctrlmmEntryLink();
-            $subentry_admin->setTranslations(array('en' => 'Administration'));
-            $subentry_admin->setLink($ilCtrl->getLinkTargetByClass(array('ilroutergui', 'ilvideomanageradmingui'), 'view'));
-            $subentry_admin->setTarget('_top');
-            $subentry_admin->setParent($entry->getId());
-            $subentry_admin->create();
-
-
-            $entry->setEntries(array($subentry_channels, $subentry_admin));
-            $entry->update();
-        }else{
-            $entry = new ctrlmmEntryLink();
-            $entry->setTranslations(array('en' => 'Video Manager'));
-            $entry->setLink($ilCtrl->getLinkTargetByClass('ilvideomanagerusergui', 'view'));
-            $entry->create();
-        }
+//        foreach(ctrlmmEntry::get() as $entry)
+//        {
+//            if($entry->getTitle() == 'Video Manager'){
+//                return self::checkPreconditions();
+//            }
+//        }
+//
+//        if(ilMainMenuGUI::_checkAdministrationPermission())
+//        {
+//            $entry = new ctrlmmEntryDropdown();
+//            $entry->setTitle('Video Manager');
+//            $entry->setTranslations(array('en' => 'Video Manager'));
+//            $entry->create();
+//
+//            $subentry_channels = new ctrlmmEntryLink();
+//            $subentry_channels->setTranslations(array('en' => 'Channels'));
+//            $subentry_channels->setLink($ilCtrl->getLinkTargetByClass(array('ilroutergui', 'ilvideomanagerusergui'),  'view'));
+//            $subentry_channels->setTarget('_top');
+//            $subentry_channels->setParent($entry->getId());
+//            $subentry_channels->create();
+//
+//            $subentry_admin = new ctrlmmEntryLink();
+//            $subentry_admin->setTranslations(array('en' => 'Administration'));
+//            $subentry_admin->setLink($ilCtrl->getLinkTargetByClass(array('ilroutergui', 'ilvideomanageradmingui'), 'view'));
+//            $subentry_admin->setTarget('_top');
+//            $subentry_admin->setParent($entry->getId());
+//            $subentry_admin->create();
+//
+//
+//            $entry->setEntries(array($subentry_channels, $subentry_admin));
+//            $entry->update();
+//        }else{
+//            $entry = new ctrlmmEntryLink();
+//            $entry->setTranslations(array('en' => 'Video Manager'));
+//            $entry->setLink($ilCtrl->getLinkTargetByClass('ilvideomanagerusergui', 'view'));
+//            $entry->create();
+//        }
 
 
         return self::checkPreconditions();

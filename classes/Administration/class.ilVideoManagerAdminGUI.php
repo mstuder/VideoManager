@@ -6,6 +6,7 @@ require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHoo
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerPlugin.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerSubscription.php');
 require_once('./Services/Mail/classes/class.ilMail.php');
+require_once('./Services/UIComponent/Button/classes/class.ilLinkButton.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/Administration/class.ilVideoManagerTreeExplorerGUI.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/Administration/class.ilVideoManagerAdminTableGUI.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/Administration/class.ilVideoManagerVideoFormGUI.php');
@@ -172,32 +173,25 @@ class ilVideoManagerAdminGUI{
 
     public function showFolderContent()
     {
-        //create 'add_item' button
-        $ov_id = "il_add_new_item_ov";
-        $ov_trigger_id = $ov_id."_tr";
+        global $ilToolbar;
 
-        include_once "Services/UIComponent/Overlay/classes/class.ilOverlayGUI.php";
-        $ov = new ilOverlayGUI($ov_id);
-        $ov->add();
-
-        $ov->addTrigger($ov_trigger_id, "click", $ov_trigger_id, false, "tl", "tr");        // trigger
-
-        $this->toolbar->addButton($this->pl->txt("admin_add_new_item"), "#", "", "",        // toolbar
-            "", $ov_trigger_id, 'submit emphsubmit');
+        include_once("./Services/UIComponent/AdvancedSelectionList/classes/class.ilAdvancedSelectionListGUI.php");
+        $adv = new ilAdvancedSelectionListGUI();
+        $adv->setListTitle($this->pl->txt("admin_add_new_item"));
 
         include_once("./Services/UIComponent/GroupedList/classes/class.ilGroupedListGUI.php");
         $gl = new ilGroupedListGUI();
-
-        $icon_path = ilUtil::getImagePath('icon_cat_s.png');
+        $icon_path = ilUtil::getImagePath('icon_cat.svg');
         $gl->addEntry(ilUtil::img($icon_path)." ".$this->pl->txt("admin_add_folder"), $this->ctrl->getLinkTarget($this, 'addFolder'),
             "_top");
-
-        $icon_path = ilUtil::getImagePath('icon_mobs_s.png');
+        $icon_path = ilUtil::getImagePath('icon_mobs.svg');
         $gl->addEntry(ilUtil::img($icon_path) . " " .$this->pl->txt("admin_add_video"), $this->ctrl->getLinkTarget($this, 'addVideo'),
             "_top");
+        $gl->setAsDropDown(true);
 
-        $this->tpl->setVariable("SELECT_OBJTYPE_REPOS", '<div id="' . $ov_id . '" class="ilOverlay ilNoDisplay">'.$gl->getHTML().'</div>');
+        $adv->setGroupedList($gl);
 
+        $ilToolbar->addText($adv->getHTML());
         //list items
         $table = new ilVideoManagerAdminTableGUI($this);
         $this->tpl->setContent($table->getHTML());
@@ -318,7 +312,7 @@ class ilVideoManagerAdminGUI{
             foreach($_POST['id'] as $key => $id)
             {
                 $obj = new ilVideoManagerObject($id);
-                $items_html .= ilUtil::img($obj->getIcon(true)) . " " . $obj->getTitle() . '</br>';
+                $items_html .= ilUtil::img($obj->getIcon()) . " " . $obj->getTitle() . '</br>';
             }
         }
         else
@@ -332,7 +326,7 @@ class ilVideoManagerAdminGUI{
 
             $this->ctrl->setParameter($this, 'target_id', $_GET['target_id']);
             $obj = new ilVideoManagerObject($_GET['target_id']);
-            $items_html = ilUtil::img($obj->getIcon(true)) . " " . $obj->getTitle() . '</br>';
+            $items_html = ilUtil::img($obj->getIcon()) . " " . $obj->getTitle() . '</br>';
         }
 
         $this->tabs->clearTargets();

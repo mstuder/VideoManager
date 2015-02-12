@@ -1,14 +1,15 @@
-/*TODO: aufräumen*/
-
 #maincontainer {
     text-align: center;
     width: 90%;
     min-height: 100%;
     padding: 20px 0;
+    overflow:hidden;
+    margin: 0 auto;
 }
 
 #il_center_col {
-    width:auto;
+    width:100%;
+    padding: 0;
 }
 
 .il_ColumnLayout.ilClearFloat{
@@ -28,12 +29,22 @@
     width:100%;
     max-width: 400px;
     display: inline-block;
+    overflow: hidden;
+}
+
+#tbl_row {
+    padding: 4px 0 0 7px;
+    width:100%;
+    max-width: 300px;
+    display: inline-block;
+    overflow:hidden;
 }
 
 #video_tbl {
     box-shadow: 3px 3px 4px #D0D0D0;
     padding: 0 0 20px 0;
     border-collapse: separate;
+    overflow:hidden;
 }
 
 #leftcontent {
@@ -104,7 +115,7 @@
     background-color: #000000;
     text-align: center;
     padding: 12px 15px 10px 20px;
-    width: 178px;
+    /*max-width: 178px;*/
     height:100%;
     max-height: 100px;
     background-clip: content-box;
@@ -113,7 +124,8 @@
 
 #row_content {
     padding: 15px 15px 15px 15px;
-    width: auto;
+    width: 100%;
+    max-width:180px;
 }
 
 tr.tblheader {
@@ -144,6 +156,27 @@ only screen and (max-width: 640px){
 
     input#search_value {
         width:200px;
+    }
+
+    #row_content{
+        max-width:125px;
+    }
+
+    #title {
+        font-size: 10px;
+    }
+
+    #tbl_row {
+        width:110px;
+    }
+
+    #related_videos {
+        /*overflow:hidden;*/
+    }
+
+
+    #maincontainer {
+        width: 100%;
     }
 }
 

@@ -1,5 +1,4 @@
 <?php
-require_once('./Customizing/global/plugins/Libraries/ActiveRecord/class.ActiveRecord.php');
 
 /**
  * Class ilVideoManagerObject
@@ -29,7 +28,7 @@ class ilVideoManagerObject extends ActiveRecord{
      * @db_has_field        true
      * @db_is_notnull       true
      * @db_fieldtype        text
-     * @db_length           40
+     * @db_length           100
      */
     protected $title;
     /**
@@ -37,7 +36,7 @@ class ilVideoManagerObject extends ActiveRecord{
      *
      * @db_has_field        true
      * @db_fieldtype        text
-     * @db_length           4096
+     * @db_length           4000
      */
     protected $description;
     /**
@@ -188,20 +187,17 @@ class ilVideoManagerObject extends ActiveRecord{
         return $this->tags;
     }
 
-    public function getIcon($small = false)
+    public function getIcon()
     {
         if($this->getType() == 'fld')
         {
-            $icon = 'icon_cat_';
+            $icon = 'icon_cat';
         }else{
-            $icon = 'icon_mobs_';
+            $icon = 'icon_mobs';
         }
-        if(!$small)
-        {
-            return ilUtil::getImagePath($icon.'b.png');
-        }else{
-            return ilUtil::getImagePath($icon.'s.png');
-        }
+
+        return ilUtil::getImagePath($icon.'.svg');
+
     }
 
     public static function __getTypeForId($id)

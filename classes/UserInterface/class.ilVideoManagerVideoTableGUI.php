@@ -61,6 +61,7 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI{
         $this->options = $options;
         $this->setId('video_tbl');
         $this->setDefaultOrderField('create_date');
+        $this->setShowRowsSelector(false);
 
 //        $this->setLimit($options['limit']);
 //        $this->setExternalSorting(true);
