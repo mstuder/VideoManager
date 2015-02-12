@@ -10,6 +10,9 @@ cd Customizing/global/plugins/Libraries
 git clone https://github.com/studer-raimann/ActiveRecord.git
 ```
 
+####Install MediaConverter
+This plugin requires MediaConverter. Get it from https://github.com/studer-raimann/MediaConverter
+
 ####Install ffmpeg
 This plugin requires ffmpeg. If not yet installed (you can test it by typing 'ffmpeg' in a console), download it from: https://www.ffmpeg.org/download.html
 Or, if you're using Ubuntu, you can install ffmpeg by typing the following commands in your terminal:
