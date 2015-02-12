@@ -1,0 +1,150 @@
+/*TODO: aufräumen*/
+
+#maincontainer {
+    text-align: center;
+    width: 90%;
+    min-height: 100%;
+    padding: 20px 0;
+}
+
+#il_center_col {
+    width:auto;
+}
+
+.il_ColumnLayout.ilClearFloat{
+    width: auto;
+}
+
+
+
+#videoplayer {
+    box-shadow: 3px 3px 4px #D0D0D0;
+    width: inherit;
+    max-width:720px;
+}
+
+#related_videos {
+    padding: 4px 0 0 7px;
+    width:100%;
+    max-width: 400px;
+    display: inline-block;
+}
+
+#video_tbl {
+    box-shadow: 3px 3px 4px #D0D0D0;
+    padding: 0 0 20px 0;
+    border-collapse: separate;
+}
+
+#leftcontent {
+    vertical-align: top;
+    width: 100%;
+    max-width: 730px;
+    padding: 5px 5px 0 2%;
+    padding-bottom: 15px;
+    display: inline-block;
+}
+
+#description_container {
+    border: 1px solid #D6D6D6;
+    text-align: left;
+    width:100%;
+    max-width: 720px;
+    min-height: 100px;
+    margin: 12px 0;
+    background-color: #ffffff;
+    box-shadow: 3px 3px 4px #D0D0D0;
+}
+
+#description_content {
+    padding: 1px 12px 12px 12px;
+    height: auto;
+}
+
+#title {
+    font-weight: bold;
+    /*display: inline-block;*/
+}
+
+#rating
+{
+    margin-top: 12px;
+    float:right;
+}
+
+.description {
+    padding: 0 0 15px 0;
+    margin: 0 0 15px 0;
+    border-bottom: 1px solid #000000;
+}
+
+#tags_key {
+    width:auto;
+}
+
+#tags {
+    width: auto;
+}
+
+.tags {
+    display: inline-block;
+    font-style: italic;
+    margin: 0;
+
+}
+
+.category {
+    width: auto;
+    font-style: italic;
+    display: inline-block;
+    margin: 0;
+}
+
+#img_container {
+    background-color: #000000;
+    text-align: center;
+    padding: 12px 15px 10px 20px;
+    width: 178px;
+    height:100%;
+    max-height: 100px;
+    background-clip: content-box;
+}
+
+
+#row_content {
+    padding: 15px 15px 15px 15px;
+    width: auto;
+}
+
+tr.tblheader {
+    visibility: hidden;
+}
+
+.ilToolbar {
+    background-color: #ffffff;
+    box-shadow: 1px 1px 2px #D0D0D0;
+    border: 1px solid #D6D6D6;
+}
+
+#row_0 {
+    text-align: left;
+}
+
+#tbl_title {
+    padding: 5px 0px 10px 15px;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+@media
+only screen and (max-width: 640px){
+    .ilToolbar {
+        width:280px;
+    }
+
+    input#search_value {
+        width:200px;
+    }
+}
+
+

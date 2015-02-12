@@ -1,0 +1,55 @@
+<!-- language file start -->
+common_save#:#Save
+common_back#:#Back
+common_confirm#:#Confirm
+common_cancel#:#Cancel
+common_actions#:#Actions
+common_delete#:#Delete
+common_edit#:#Edit
+common_title#:#Title
+common_description#:#Description
+common_add#:#Add
+common_filesize#:#Filesize
+common_search#:#Search
+common_tags#:#Tags
+common_move#:#Move
+common_more#:#more
+common_less#:#less
+common_category_de#:#Kategorie
+common_category_en#:#Category
+common_video#:#Video
+
+common_duration#:#Duration
+common_upload_date#:#Upload Date
+common_rating#:#Rating
+admin_add_new_item#:#Add new item
+admin_add_folder#:#Add new Folder
+admin_add_video#:#Add new video
+admin_confirm_delete#:#Are you sure you want to delete the following items?
+msg_fld_created#:#Folder was created
+msg_choose_folder#:#Please choose a destination folder, to which the file(s) should be moved.
+msg_deletion_failed#:#File(s) could not be deleted; One or more files are still being converted.
+msg_move_failed#:#File(s) could not be moved; One or more files are still being converted.
+msg_edit_vid_failed#:#This video can not be edited, as it is being converted currently.
+msg_vid_converting#:#This video is probably not available, as it is being converted currently. If so, please try again in a few minutes.
+msg_subscribed_successfully#:#Subscribed successfully.
+msg_unsubscribed_successfully#:#Unsubscribed successfully.
+mail_new_upload_de#:#In einer Ihrer abonnierten Kategorien wurde ein neues Video hochgeladen: 
+mail_new_upload_en#:#A new video was uploaded in a category you're subscribed to: 
+mail_subject_de#:#Neuer Video-Upload in Kategorie  
+mail_subject_en#:#New video-upload in category 
+mail_view_video#:#Video-Link: 
+form_add_folder#:#Add Folder
+form_upload_vid#:#Upload Video(s)
+form_vid#:#Video(s)
+form_tags#:#Tags
+form_edit_vid#:#Edit Video
+form_wrong_filetype#:#Wrong Filetype
+tbl_view#:#Latest Uploads
+tbl_related_videos#:#Related Videos
+tbl_performSearch#:#Searchresults
+tbl_subscribe#:#Subscribe to this category
+tbl_unsubscribe#:#(subscribed) Unsubscribe from this category
+#:#
+#:#
+#:#

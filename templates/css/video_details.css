@@ -1,0 +1,67 @@
+#leftcontent {
+    vertical-align: top;
+    width: 45%;
+    padding: 0 15px 15px 0;
+    display: inline-block;
+}
+
+#description {
+    width:100%;
+}
+
+.ilForm{
+    width:100%;
+}
+
+#videoplayer {
+    box-shadow: 3px 3px 4px #D0D0D0;
+    width: inherit;
+    max-width:450px;
+    display: inline-block;
+}
+
+@media
+only screen and (max-width: 1220px){
+    #leftcontent {
+        width:100%;
+        max-width: 450px;
+    }
+    #mejs-player {
+        width:inherit;
+        height:inherit;
+    }
+}
+
+@media
+only screen and (max-width: 640px){
+    #videoplayer {
+        width:100%;
+        max-width:400px;
+    }
+    #leftcontent{
+        width:100%;
+        max-width:415px;
+        padding: 0;
+    }
+}
+
+@media
+only screen and (max-width: 420px){
+    #maincontainer{
+        width:100%;
+        max-width:300px;
+        text-align: center;
+    }
+    #il_center_col{
+        padding: 0;
+    }
+    #videoplayer {
+        width:100%;
+        max-width:300px;
+    }
+    #leftcontent{
+        width:100%;
+        max-width:300px;
+        padding: 0;
+    }
+}

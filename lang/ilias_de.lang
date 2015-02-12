@@ -1,0 +1,54 @@
+<!-- language file start -->
+common_save#:#Speichern
+common_back#:#Zurück
+common_confirm#:#Bestätigen
+common_cancel#:#Abbrechen
+common_actions#:#Aktionen
+common_delete#:#Löschen
+common_edit#:#Bearbeiten
+common_title#:#Titel
+common_description#:#Beschreibung
+common_add#:#Hinzufügen
+common_filesize#:#Grösse
+common_search#:#Suchen
+common_tags#:#Tags
+common_move#:#Verschieben
+common_more#:#mehr
+common_less#:#weniger
+common_category_de#:#Kategorie
+common_category_en#:#Category
+common_video#:#Video
+common_duration#:#Dauer
+common_upload_date#:#Hochgeladen am
+common_rating#:#Bewertung
+admin_add_new_item#:#Objekt hinzufügen
+admin_add_folder#:#Ordner hinzufügen
+admin_add_video#:#Video hinzufügen
+admin_confirm_delete#:#Sind Sie sicher, dass sie folgende Elemente löschen möchten?
+msg_fld_created#:#Ordner wurde erfolgreich erstellt
+msg_choose_folder#:#Bitte wählen Sie einen Zielordner, in welchen Sie die Datei(en) verschieben möchten.
+msg_deletion_failed#:#Die Dateien konnten nicht gelöscht werden, da eine oder mehrere Dateien momentan konvertiert werden.
+msg_move_failed#:#Die Dateien konnten nicht verschoben werden, da eine oder mehrere Dateien momentan konvertiert werden.
+msg_edit_vid_failed#:#Dieses Video kann momentan nicht bearbeitet werden, da es zurzeit konvertiert wird.
+msg_vid_converting#:#Dieses Video wird zurzeit konvertiert. Versuchen Sie es gegebenfalls in einigen Minuten noch einmal.
+msg_subscribed_successfully#:#Kategorie erfolgreich abonniert.
+msg_unsubscribed_successfully#:#Kategorie erfolgreich abbestellt.
+mail_new_upload_de#:#In einer Ihrer abonnierten Kategorien wurde ein neues Video hochgeladen: 
+mail_new_upload_en#:#A new video was uploaded in a category you're subscribed to: 
+mail_subject_de#:#Neuer Video-Upload in Kategorie 
+mail_subject_en#:#New video-upload in category 
+mail_view_video#:#Video-Link: 
+form_add_folder#:#Ordner hinzufügen
+form_upload_vid#:#Video(s) Hochladen
+form_vid#:#Video(s)
+form_tags#:#Tags
+form_edit_vid#:#Video Bearbeiten
+form_wrong_filetype#:#Dateityp ungültig
+tbl_view#:#Zuletzt Hochgeladen
+tbl_related_videos#:#Verwandte Videos
+tbl_performSearch#:#Suchergebnisse
+tbl_subscribe#:#Diese Kategorie abonnieren
+tbl_unsubscribe#:#(abonniert) Diese Kategorie abbestellen
+#:#
+#:#
+#:#
