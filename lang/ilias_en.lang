@@ -15,8 +15,7 @@ common_tags#:#Tags
 common_move#:#Move
 common_more#:#more
 common_less#:#less
-common_category_de#:#Kategorie
-common_category_en#:#Category
+common_category#:#Category
 common_video#:#Video
 
 common_duration#:#Duration
@@ -34,10 +33,9 @@ msg_edit_vid_failed#:#This video can not be edited, as it is being converted cur
 msg_vid_converting#:#This video is probably not available, as it is being converted currently. If so, please try again in a few minutes.
 msg_subscribed_successfully#:#Subscribed successfully.
 msg_unsubscribed_successfully#:#Unsubscribed successfully.
-mail_new_upload_de#:#In einer Ihrer abonnierten Kategorien wurde ein neues Video hochgeladen: 
-mail_new_upload_en#:#A new video was uploaded in a category you're subscribed to: 
-mail_subject_de#:#Neuer Video-Upload in Kategorie  
-mail_subject_en#:#New video-upload in category 
+msg_no_permission#:#Permission denied.
+mail_new_upload#:#A new video was uploaded in a category you're subscribed to: 
+mail_subject#:#New video-upload in category 
 mail_view_video#:#Video-Link: 
 form_add_folder#:#Add Folder
 form_upload_vid#:#Upload Video(s)

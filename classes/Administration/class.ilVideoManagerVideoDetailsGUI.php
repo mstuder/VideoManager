@@ -123,8 +123,6 @@ class ilVideoManagerVideoDetailsGUI {
         }
         $form->addItem($rating_gui);
 
-        //TODO add more
-
         $this->tpl->setVariable('DESCRIPTION', $form->getHTML());
     }
 
