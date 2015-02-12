@@ -21,7 +21,7 @@ class ilVideoManagerTreeExplorerGUI extends ilTreeExplorerGUI {
     function getNodeContent($node)
     {
         $object = new ilVideoManagerObject($node['id']);
-        return  ilUtil::img($object->getIcon(true))." ".$node["title"];
+        return  ilUtil::img($object->getIcon())." ".$node["title"];
     }
 
     function getNodeHref($node){
