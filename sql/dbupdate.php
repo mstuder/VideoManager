@@ -1,10 +1,12 @@
 <#1>
 <?php
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CtrlMainMenu/classes/class.ilCtrlMainMenuPlugin.php');
+ilCtrlMainMenuPlugin::loadActiveRecord();
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerObject.php');
 ilVideoManagerObject::installDB();
-?>
-<#2>
-<?php
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerSubscription.php');
+ilVideoManagerSubscription::installDB();
+
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerFolder.php');
 if($root_folder = ilVideoManagerFolder::__getRootFolder())
 {
@@ -16,9 +18,7 @@ if($root_folder = ilVideoManagerFolder::__getRootFolder())
     $root_folder->setTitle('Video Manager');
     $root_folder->create();
 }
-?>
-<#3>
-<?php
+
 global $ilDB;
 if(!$ilDB->tableExists('vidm_tree'))
 {
@@ -58,13 +58,8 @@ if(!$ilDB->tableExists('vidm_tree'))
     );
     $ilDB->createTable('vidm_tree', $fields);
 }
+
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerTree.php');
-require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerObject.php');
 $tree = new ilVideoManagerTree(1);
 $tree->addTree($tree->getTreeId());
-?>
-<#4>
-<?php
-require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerSubscription.php');
-ilVideoManagerSubscription::installDB();
 ?>

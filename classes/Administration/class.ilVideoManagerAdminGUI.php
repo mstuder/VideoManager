@@ -503,34 +503,33 @@ class ilVideoManagerAdminGUI{
 
     protected function getNotificationSubject($subscription)
     {
-        $lng = ilObjUser::_lookupLanguage($subscription->getUsrId());
-
-        return $this->pl->txt("mail_subject_".$lng) . " '" . ilVideoManagerFolder::find($subscription->getCatId())->getTitle() . "'";
+        $ilLanguage = $this->pl->loadLanguageForUser($subscription->getUsrId());
+        return $ilLanguage->txt("ui_uihk_video_man_mail_subject") . " '" . ilVideoManagerFolder::find($subscription->getCatId())->getTitle() . "'";
     }
 
     protected function getNotificationMessage($subscription, $video)
     {
-        $lng = ilObjUser::_lookupLanguage($subscription->getUsrId());
-        $this->pl->loadLanguageModule();
+        $ilLanguage = $this->pl->loadLanguageForUser($subscription->getUsrId());
 
         $message = '';
-        $message .= ilMail::getSalutation($subscription->getUsrId(), new ilLanguage($lng));
+        $message .= ilMail::getSalutation($subscription->getUsrId(), $ilLanguage);
 
         $message .= "\n\n";
-        $message .= $this->pl->txt("mail_new_upload_".$lng);
+        $message .= $ilLanguage->txt("ui_uihk_video_man_mail_new_upload");
         $message .= "\n\n";
-        $message .= $this->pl->txt("common_category_".$lng).": ".ilVideoManagerFolder::find($subscription->getCatId())->getTitle();
+        $message .= $ilLanguage->txt("ui_uihk_video_man_common_category").": ".ilVideoManagerFolder::find($subscription->getCatId())->getTitle();
         $message .= "\n\n";
-        $message .= $this->pl->txt("common_video").': '.$video->getTitle().'';
+        $message .= $ilLanguage->txt("ui_uihk_video_man_common_video").': '.$video->getTitle().'';
 
         $message .= "\n\n";
-        $message .= $this->pl->txt('mail_view_video');
+        $message .= $ilLanguage->txt('ui_uihk_video_man_mail_view_video');
         $this->ctrl->setParameterByClass('ilVideoManagerUserGUI', 'node_id', $video->getId());
         $message .= ' ' . ilUtil::_getHttpPath().'/'.$this->ctrl->getLinkTargetByClass('ilVideoManagerUserGUI', 'playVideo');
 
         $message .= ilMail::_getInstallationSignature();
         return $message;
     }
+
 
     protected function checkPermission()
     {

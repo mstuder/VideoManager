@@ -182,4 +182,25 @@ class ilVideoManagerPlugin extends ilUserInterfaceHookPlugin{
         return self::checkPreconditions();
     }
 
+    public static function loadActiveRecord() {
+        if (ctrlmm::is50()) {
+            require_once('./Services/ActiveRecord/class.ActiveRecord.php');
+        } else {
+            require_once('./Customizing/global/plugins/Libraries/ActiveRecord/class.ActiveRecord.php');
+        }
+    }
+
+
+    /**
+     * @param $usr_id
+     * @return ilLanguage
+     */
+    public function loadLanguageForUser($usr_id)
+    {
+        $lng = ilObjUser::_lookupLanguage($usr_id);
+        $ilLanguage = new ilLanguage($lng);
+        $ilLanguage->loadLanguageModule("ui_uihk_video_man");
+        return $ilLanguage;
+    }
+
 }

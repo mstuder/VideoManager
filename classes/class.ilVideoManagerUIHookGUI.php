@@ -15,6 +15,8 @@ require_once('./Services/MainMenu/classes/class.ilMainMenuGUI.php');
  */
 class ilVideoManagerUIHookGUI extends ilUIHookPluginGUI{
 
+    //TODO: implement hook for main menu. for now you need to create a dropdown from ctrl_main_menu to access this plugin
+
     /**
      * @var ilCtrl
      */
@@ -46,13 +48,7 @@ class ilVideoManagerUIHookGUI extends ilUIHookPluginGUI{
      * @return array
      */
     public function getHTML($a_comp, $a_part, $a_par = array()) {
-//        if($a_comp == 'Services/MainMenu' AND $a_part == 'main_menu_list_entries'){
-//            //var_dump($a_par["main_menu_gui"]);
-//        }
-//        echo $a_comp;
-//        echo"222";
-//        echo $a_part;
-//        echo"333";
+
     }
 
 } 
