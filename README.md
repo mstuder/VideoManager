@@ -11,7 +11,14 @@ git clone https://github.com/studer-raimann/ActiveRecord.git
 ```
 
 ####Install MediaConverter
-This plugin requires MediaConverter. Get it from https://github.com/studer-raimann/MediaConverter
+This plugin requires MediaConverter.
+In order to install the MediaConverter plugin go into ILIAS root folder and use:
+
+```bash
+mkdir -p Customizing/global/plugins/Services/Cron/CronHook
+cd Customizing/global/plugins/Services/Cron/CronHook
+git clone https://github.com/studer-raimann/MediaConverter.git
+```
 
 ####Install ffmpeg
 This plugin requires ffmpeg. If not yet installed (you can test it by typing 'ffmpeg' in a console), download it from: https://www.ffmpeg.org/download.html
