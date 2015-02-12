@@ -76,7 +76,7 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI{
                 require_once('./Services/Form/classes/class.ilDragDropFileInputGUI.php');
                 $file_input = new ilDragDropFileInputGUI($this->pl->txt('form_vid'), 'suffix');
                 $file_input->setRequired(true);
-                $file_input->setSuffixes(array( '3pgg', 'x-flv', 'mp4', 'webm' ));
+                $file_input->setSuffixes(array( '3gp', 'flv', 'mp4', 'webm' ));
                 $file_input->setCommandButtonNames('create', 'cancel');
                 $this->addItem($file_input);
 
@@ -149,8 +149,14 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI{
         }
         else
         {
-            $ext = strtolower(end(explode('.', $_FILES['upload_files']['name'])));
-            $this->video->setSuffix($ext);
+            $suffix = strtolower(end(explode('.', $_FILES['upload_files']['name'])));
+            if(! $this->checkSuffix($suffix)){
+                $response = new stdClass();
+                $response->error = $this->pl->txt('form_wrong_filetype') . ' (' . $suffix . ')';
+                return $response;
+            }
+
+            $this->video->setSuffix($suffix);
             $this->video->setCreateDate(date('Y-m-d'));
             $this->video->create();
             $this->video->uploadVideo($_FILES['upload_files']['tmp_name']);
@@ -172,6 +178,15 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI{
         }
 
         return true;
+    }
+
+    function checkSuffix($suffix)
+    {
+        if(in_array($suffix, array('3pgg', '3gp', 'flv', 'mp4', 'webm'))){
+            return true;
+        }
+
+        return false;
     }
 
 } 

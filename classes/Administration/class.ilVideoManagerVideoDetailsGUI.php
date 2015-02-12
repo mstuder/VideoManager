@@ -2,6 +2,7 @@
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerVideo.php');
 require_once('./Services/Form/classes/class.ilPropertyFormGUI.php');
 require_once('./Services/Form/classes/class.ilNonEditableValueGUI.php');
+require_once("./Services/Rating/classes/class.ilRating.php");
 
 /**
  * Class ilVideoManagerVideoDetailsGUI
@@ -110,6 +111,13 @@ class ilVideoManagerVideoDetailsGUI {
         $update = new ilNonEditableValueGUI($this->pl->txt('common_upload_date'));
         $update->setValue($this->video->getCreateDate());
         $form->addItem($update);
+
+        //Rating
+        $rating = new ilRating();
+        $average = $rating->getOverallRatingForObject($this->video->getId(), 'vid', 0, '-');
+        $rating_gui = new ilNonEditableValueGUI($this->pl->txt('common_rating'));
+        $rating_gui->setValue($average['avg'] . ' / 5');
+        $form->addItem($rating_gui);
 
         //TODO add more
 

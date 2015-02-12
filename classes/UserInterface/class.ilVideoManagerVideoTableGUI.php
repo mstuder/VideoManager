@@ -136,6 +136,7 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI{
                 case 'search':
                     switch($value['method'])
                     {
+                        case '':
                         case 'all':
                             $sql .= ' AND (';
                             $or = '';

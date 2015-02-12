@@ -20,6 +20,7 @@ common_category_en#:#Category
 common_video#:#Video
 common_duration#:#Dauer
 common_upload_date#:#Hochgeladen am
+common_rating#:#Bewertung
 admin_add_new_item#:#Objekt hinzufügen
 admin_add_folder#:#Ordner hinzufügen
 admin_add_video#:#Video hinzufügen
@@ -42,6 +43,7 @@ form_upload_vid#:#Video(s) Hochladen
 form_vid#:#Video(s)
 form_tags#:#Tags
 form_edit_vid#:#Video Bearbeiten
+form_wrong_filetype#:#Dateityp ungültig
 tbl_view#:#Zuletzt Hochgeladen
 tbl_related_videos#:#Verwandte Videos
 tbl_performSearch#:#Suchergebnisse

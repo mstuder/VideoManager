@@ -21,6 +21,7 @@ common_video#:#Video
 
 common_duration#:#Duration
 common_upload_date#:#Upload Date
+common_rating#:#Rating
 admin_add_new_item#:#Add new item
 admin_add_folder#:#Add new Folder
 admin_add_video#:#Add new video
@@ -43,6 +44,7 @@ form_upload_vid#:#Upload Video(s)
 form_vid#:#Video(s)
 form_tags#:#Tags
 form_edit_vid#:#Edit Video
+form_wrong_filetype#:#Wrong Filetype
 tbl_view#:#Latest Uploads
 tbl_related_videos#:#Related Videos
 tbl_performSearch#:#Searchresults

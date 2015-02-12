@@ -2,10 +2,15 @@
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerPlugin.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerVideo.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerFolder.php');
+require_once("./Services/Rating/classes/class.ilRatingGUI.php");
+
 /**
  * Class ilVideoManagerPlayVideoGUI
  *
  * @author Theodor Truffer <tt@studer-raimann.ch>
+ *
+ * @ilCtrl_Calls ilVideoManagerPlayVideoGUI: ilRatingGUI
+ * @ilCtrl_IsCalledBy ilVideoManagerPlayVideoGUI: ilRouterGUI
  *
  */
 class ilVideoManagerPlayVideoGUI {
@@ -86,6 +91,8 @@ class ilVideoManagerPlayVideoGUI {
 
     function initDescription()
     {
+        $this->initRating();
+
         $this->tpl->setVariable('TITLE', $this->video->getTitle());
 
         if($this->video->getDescription() && strlen($this->video->getDescription()) > 350)
@@ -106,10 +113,9 @@ class ilVideoManagerPlayVideoGUI {
             foreach(explode(' ', $this->video->getTags()) as $tag)
             {
                 $this->tpl->setCurrentBlock('tags');
-                $this->ctrl->setParameterByClass('ilVideoManagerUserGUI', 'node_id', $_GET['node_id']);
                 $this->ctrl->setParameterByClass('ilVideoManagerUserGUI', 'search_value', $tag);
                 $this->ctrl->setParameterByClass('ilVideoManagerUserGUI', 'search_method', 'tag');
-                $this->tpl->setVariable('TAG_SEARCH', $this->ctrl->getLinkTargetByClass('ilVideoManagerUserGUI', 'performSearch'));
+                $this->tpl->setVariable('TAG_SEARCH', $this->ctrl->getLinkTargetByClass('ilVideoManagerUserGUI', 'search'));
                 $this->tpl->setVariable('TAGS_VALUE', $tag);
                 $this->tpl->parseCurrentBlock();
             }
@@ -120,9 +126,16 @@ class ilVideoManagerPlayVideoGUI {
         $this->tpl->setVariable('CATEGORY_KEY', 'Category: ');
         $this->tpl->setVariable('CATEGORY_VALUE', $category->getTitle());
 
-        $this->ctrl->setParameterByClass('ilVideoManagerUserGUI', 'node_id', $_GET['node_id']);
         $this->ctrl->setParameterByClass('ilVideoManagerUserGUI', 'search_value', $category->getId());
         $this->ctrl->setParameterByClass('ilVideoManagerUserGUI', 'search_method', 'category');
-        $this->tpl->setVariable('CATEGORY_SEARCH', $this->ctrl->getLinkTargetByClass('ilVideoManagerUserGUI', 'performSearch'));
+        $this->tpl->setVariable('CATEGORY_SEARCH', $this->ctrl->getLinkTargetByClass('ilVideoManagerUserGUI', 'search'));
+    }
+
+    protected function initRating()
+    {
+        $this->ctrl->setParameterByClass('ilRatingGUI', 'node_id', $_GET['node_id']);
+        $rating = new ilRatingGUI();
+        $rating->setObject($this->video->getId(), 'vid');
+        $this->tpl->setVariable('RATING', $rating->getHTML());
     }
 } 
