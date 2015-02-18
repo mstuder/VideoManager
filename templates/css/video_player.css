@@ -24,11 +24,12 @@
 }
 
 #related_videos {
-    padding: 4px 0 0 7px;
+    margin: 4px 0 0 1px;
     width:100%;
     max-width: 400px;
     display: inline-block;
     overflow: hidden;
+    box-shadow: 3px 3px 4px #D0D0D0;
 }
 
 #tbl_row {
@@ -76,6 +77,8 @@
 #title {
     font-weight: bold;
     display: inline-block;
+    width:100%;
+    white-space: normal;
 }
 
 #rating
@@ -156,7 +159,12 @@ tr.tblheader {
 }
 
 @media
-only screen and (max-width: 768px){
+only screen and (max-width: 766px){
+
+    div.table-responsive {
+        margin-bottom: 0;
+        border:none;
+    }
 
     #img {
         max-width: 117px;
@@ -186,11 +194,6 @@ only screen and (max-width: 640px){
     #tbl_row {
         width:110px;
     }
-
-    #related_videos {
-        /*overflow:hidden;*/
-    }
-
 
     #maincontainer {
         width: 100%;

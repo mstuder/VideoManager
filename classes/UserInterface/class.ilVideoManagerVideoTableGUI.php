@@ -62,13 +62,8 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI{
         $this->setId('video_tbl');
         $this->setDefaultOrderField('create_date');
         $this->setShowRowsSelector(false);
-
-//        $this->setLimit($options['limit']);
-//        $this->setExternalSorting(true);
-//        $this->setExternalSegmentation(true);
-//        $this->determineLimit();
-//        $this->determineOffsetAndOrder();
-        $this->setEnableNumInfo(false);
+        $this->setFormAction($ilCtrl->getFormAction($parent_gui));
+        $this->setEnableNumInfo(true);
 
         if($options['cmd'] == 'related_videos'){
             $this->max_desc_length = 70;
