@@ -82,6 +82,7 @@
 {
     margin-top: 12px;
     float:right;
+    display:inline-block;
 }
 
 .description {
