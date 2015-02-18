@@ -7,12 +7,15 @@
         </div>
     </div>
     <div id="videoplayer">
-        <video poster="{POSTER_SRC}" style="width:100%;height:100%;background-color:black;" width="100%" height="100%" controls="controls">
-            <!-- WebM/VP8 for Firefox4, Opera, and Chrome -->
-            <source type="video/webm" src="{VIDEO_SRC}.webm" />
+        <video id="video" poster="{POSTER_SRC}" width="100%" height="100%" controls style="width:100%;height:100%;background-color:black;">
             <!-- MP4 for Safari, IE9, iPhone, iPad, Android, and Windows Phone 7 -->
             <source type="video/mp4" src="{VIDEO_SRC}.mp4" />
-            Your browser does not support the video tag.
+            <!-- WebM/VP8 for Firefox4, Opera, and Chrome -->
+            <source type="video/webm" src="{VIDEO_SRC}.webm" />
+            <!-- Ogg/Vorbis for older Firefox and Opera versions -->
+            <source type="video/ogg" src="{VIDEO_SRC}.webm" />
+            Your browser does not support the video tag. Download the videofile
+            <a href="{VIDEO_SRC}.mp4"> as mp4 </a> or <a href="{VIDEO_SRC}.webm"> as webm </a>
         </video>
     </div>
 </div>
