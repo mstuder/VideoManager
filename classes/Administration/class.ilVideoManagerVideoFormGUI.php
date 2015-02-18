@@ -120,7 +120,9 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI{
     public function saveObject()
     {
         if (! $this->fillObject()) {
-            return false;
+            $response = new stdClass();
+            $response->error = 'Checkinput Failed';
+            return $response;
         }
 
         if ($this->video->getId())

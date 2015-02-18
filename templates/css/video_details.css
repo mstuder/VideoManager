@@ -15,6 +15,7 @@
 
 #videoplayer {
     box-shadow: 3px 3px 4px #D0D0D0;
+    height:inherit;
     width: inherit;
     max-width:450px;
     margin-top:50px;
