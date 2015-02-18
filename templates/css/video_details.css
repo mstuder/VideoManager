@@ -60,9 +60,6 @@ only screen and (max-width: 640px){
         width:100%;
         max-width:400px;
     }
-    #maincontainer {
-        text-align:center;
-    }
     #leftcontent{
         width:100%;
         max-width:415px;
@@ -72,11 +69,6 @@ only screen and (max-width: 640px){
 
 @media
 only screen and (max-width: 420px){
-    #maincontainer{
-        width:100%;
-        max-width:300px;
-        text-align: center;
-    }
     #il_center_col{
         padding: 0;
     }
