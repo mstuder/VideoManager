@@ -28,10 +28,6 @@ only screen and (max-width: 1220px){
         width:100%;
         max-width: 450px;
     }
-    #mejs-player {
-        width:inherit;
-        height:inherit;
-    }
 
     #videoplayer {
         margin-top:0;
