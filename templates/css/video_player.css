@@ -75,14 +75,13 @@
 
 #title {
     font-weight: bold;
-    /*display: inline-block;*/
+    display: inline-block;
 }
 
 #rating
 {
     margin-top: 12px;
     float:right;
-    display:inline-block;
 }
 
 .description {
