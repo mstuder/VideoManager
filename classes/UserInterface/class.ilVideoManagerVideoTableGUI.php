@@ -81,11 +81,7 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI{
     }
 
     public function buildData(){
-//        $this->options['count'] = true;
-//        $count = $this->createData();
-//        $this->options['count'] = false;
         $data = $this->createData();
-//        $this->setMaxCount($count);
         $this->setData($data);
     }
 

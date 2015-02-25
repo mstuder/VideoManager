@@ -23,13 +23,16 @@
     max-width:720px;
 }
 
+div.ilTableOuter {
+    box-shadow: 3px 3px 4px #D0D0D0;
+}
+
 #related_videos {
     margin: 4px 0 0 1px;
     width:100%;
     max-width: 400px;
     display: inline-block;
     overflow: hidden;
-    box-shadow: 3px 3px 4px #D0D0D0;
 }
 
 #tbl_row {
