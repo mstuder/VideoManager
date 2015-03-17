@@ -15,6 +15,7 @@
 
 #videoplayer {
     box-shadow: 3px 3px 4px #D0D0D0;
+    height:inherit;
     width: inherit;
     max-width:450px;
     margin-top:50px;
@@ -26,10 +27,6 @@ only screen and (max-width: 1220px){
     #leftcontent {
         width:100%;
         max-width: 450px;
-    }
-    #mejs-player {
-        width:inherit;
-        height:inherit;
     }
 
     #videoplayer {
@@ -59,9 +56,6 @@ only screen and (max-width: 640px){
         width:100%;
         max-width:400px;
     }
-    #maincontainer {
-        text-align:center;
-    }
     #leftcontent{
         width:100%;
         max-width:415px;
@@ -71,11 +65,6 @@ only screen and (max-width: 640px){
 
 @media
 only screen and (max-width: 420px){
-    #maincontainer{
-        width:100%;
-        max-width:300px;
-        text-align: center;
-    }
     #il_center_col{
         padding: 0;
     }
