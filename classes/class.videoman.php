@@ -62,11 +62,16 @@ class videoman {
 	}
 
 
+	/**
+	 * @throws ilPluginException
+	 */
 	public static function loadActiveRecord() {
-		if (self::is50()) {
+		if (is_file('./Customizing/global/plugins/Libraries/ActiveRecord/class.ActiveRecord.php')) {
+			require_once('./Customizing/global/plugins/Libraries/ActiveRecord/class.ActiveRecord.php');
+		} elseif (self::is50()) {
 			require_once('./Services/ActiveRecord/class.ActiveRecord.php');
 		} else {
-			require_once('./Customizing/global/plugins/Libraries/ActiveRecord/class.ActiveRecord.php');
+			throw new ilPluginException('Please install ActiveRecord');
 		}
 	}
 }
