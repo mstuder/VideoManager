@@ -9,6 +9,21 @@ require_once('./Services/MediaObjects/classes/class.ilFFmpeg.php');
 class vmFFmpeg extends ilFFmpeg {
 
 	/**
+	 * @param $file
+	 *
+	 * @return array
+	 */
+	public static function getVideoDimension($file) {
+		$cmd = ' -i ' . ilUtil::escapeShellArg($file) . " 2>&1 | grep -o ' [0-9]*x[0-9]* '";
+		$output = self::exec($cmd);
+		$d = array();
+		list($d['width'], $d['height']) = explode('x', $output[0]);
+
+		return $d;
+	}
+
+
+	/**
 	 * Formats handled by ILIAS. Note: In general the mime types
 	 * do not reflect the complexity of media container/codec variants.
 	 * For source formats no specification is needed here. For target formats

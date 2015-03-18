@@ -328,6 +328,9 @@ class ilVideoManagerObject extends ActiveRecord {
 	}
 
 
+	/**
+	 * @return string
+	 */
 	public function getFileName() {
 		if ($this->getType() == 'fld') {
 			return $this->getTitle();
@@ -347,9 +350,17 @@ class ilVideoManagerObject extends ActiveRecord {
 	 * @return string
 	 */
 	protected function getTreePath() {
-		$tree = new ilVideoManagerTree(1);
 		$path = '';
-		foreach ($tree->getPathFull($tree->getParentId($this->getId()), ilVideoManagerObject::__getRootFolder()->getId()) as $node) {
+		if (! $this->getId()) {
+			return $path;
+		}
+		$tree = new ilVideoManagerTree(1);
+		$parent_id = $tree->getParentId($this->getId());
+
+		if (! $parent_id) {
+			return $path;
+		}
+		foreach ($tree->getPathFull($parent_id, ilVideoManagerObject::__getRootFolder()->getId()) as $node) {
 			$path .= '/' . $node['id'];
 		}
 

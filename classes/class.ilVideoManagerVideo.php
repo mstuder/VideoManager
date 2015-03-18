@@ -11,10 +11,20 @@ require_once('./Services/MediaObjects/classes/class.ilFFmpeg.php');
  */
 class ilVideoManagerVideo extends ilVideoManagerObject {
 
+	const A_WIDTH = 178;
+	const A_HEIGHT = 100;
 	/**
 	 * @var int
 	 */
 	protected $MCId;
+	/**
+	 * @var int
+	 */
+	protected $height = 0;
+	/**
+	 * @var int
+	 */
+	protected $width = 0;
 
 
 	/**
@@ -23,6 +33,11 @@ class ilVideoManagerVideo extends ilVideoManagerObject {
 	public function __construct($id = 0) {
 		$this->type = 'vid';
 		parent::__construct($id);
+		if ($id) {
+			$dimensions = vmFFmpeg::getVideoDimension($this->getPath() . '/' . $this->getFileName());
+			$this->setHeight($dimensions['height']);
+			$this->setWidth($dimensions['width']);
+		}
 	}
 
 
@@ -35,7 +50,7 @@ class ilVideoManagerVideo extends ilVideoManagerObject {
 		move_uploaded_file($tmp_path, $this->getPath() . '/' . $this->getTitle() . '.' . $this->getSuffix());
 		vmFFmpeg::extractImage($this->getAbsolutePath(), $this->getTitle()
 			. '_poster.png', $this->getPath(), (vmFFmpeg::getDuration($this->getAbsolutePath()) / 3));
-		ilUtil::resizeImage($this->getPoster(), $this->getPreviewImage(), 178, 100, true);
+		ilUtil::resizeImage($this->getPoster(), $this->getPreviewImage(), self::A_WIDTH, self::A_HEIGHT, true);
 
 		return true;
 	}
@@ -78,6 +93,38 @@ class ilVideoManagerVideo extends ilVideoManagerObject {
 	 */
 	public function getImagePath() {
 		return $this->getPath() . '/' . rtrim($this->getTitle(), '.' . $this->getSuffix()) . '_poster';
+	}
+
+
+	/**
+	 * @return int
+	 */
+	public function getHeight() {
+		return $this->height;
+	}
+
+
+	/**
+	 * @param int $height
+	 */
+	public function setHeight($height) {
+		$this->height = $height;
+	}
+
+
+	/**
+	 * @return int
+	 */
+	public function getWidth() {
+		return $this->width;
+	}
+
+
+	/**
+	 * @param int $width
+	 */
+	public function setWidth($width) {
+		$this->width = $width;
 	}
 
 
