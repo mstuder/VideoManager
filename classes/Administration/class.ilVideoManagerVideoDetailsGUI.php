@@ -79,7 +79,7 @@ class ilVideoManagerVideoDetailsGUI {
 
 		//Tags
 		$tags = new ilNonEditableValueGUI($this->pl->txt('common_tags'));
-		$tags->setValue($this->video->getTags());
+		$tags->setValue(implode(';', $this->video->getTags()));
 		if (! $tags->getValue()) {
 			$tags->setValue('-');
 		}

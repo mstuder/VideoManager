@@ -47,6 +47,7 @@ tbl;related_videos;"Verwandte Videos";"Related Videos"
 tbl;performSearch;"Suchergebnisse";"Searchresults"
 tbl;subscribe;"Diese Kategorie abonnieren";"Subscribe to this category"
 tbl;unsubscribe;"(abonniert) Diese Kategorie abbestellen";"(subscribed) Unsubscribe from this category"
-
+tbl;unsubscribe_action;Abbestellen;Unsubscribe
+tbl;subscribe_action;Abonnieren;Subscribe
 
 

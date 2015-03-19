@@ -151,8 +151,9 @@ class ilVideoManagerUserGUI {
 
 	public function performSearch() {
 		$this->tpl->addCss('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/css/search_table.css');
-		$this->tpl->addBlockFile('ADM_CONTENT', 'search_gui', 'tpl.search_gui.html', 'Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager');
-		$this->tpl->setCurrentBlock('search_gui');
+
+		$tpl = new ilTemplate('tpl.search_gui.html', true, true,'Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager');
+		$tpl->setCurrentBlock('search_gui');
 
 		if (array_key_exists('search_value', $_SESSION)) {
 			$search = array(
@@ -173,22 +174,27 @@ class ilVideoManagerUserGUI {
 
 		unset($_SESSION['table']);
 		$search_results = new ilVideoManagerVideoTableGUI($this, $options);
-		$this->tpl->setVariable('TABLE', $search_results->getHTML());
+		$tpl->setVariable('TABLE', $search_results->getHTML());
 
 		if ($_SESSION['search_method'] == 'category') {
-			$this->tpl->setVariable('CHANNEL',
+			$tpl->setVariable('CHANNEL',
 				$this->pl->txt('common_category') . ": '" . ilVideoManagerFolder::find($_SESSION['search_value'])->getTitle() . "'");
-
 			if (ilVideoManagerSubscription::isSubscribed($this->usr->getId(), $_SESSION['search_value'])) {
 				$this->ctrl->saveParameter($this, 'video_tbl_table_nav');
-				$this->tpl->setVariable('SUBSCRIBE_LINK', $this->ctrl->getLinkTarget($this, 'unsubscribe'));
-				$this->tpl->setVariable('SUBSCRIBE', $this->pl->txt('tbl_unsubscribe'));
+				$tpl->setVariable('SUBSCRIBE_LINK', $this->ctrl->getLinkTarget($this, 'unsubscribe'));
+				$tpl->setVariable('BUTTON', 'default');
+				$tpl->setVariable('ACTION_TEXT', $this->pl->txt('tbl_unsubscribe_action'));
+				$tpl->setVariable('ACTION_ICON', 'minus-sign');
 			} else {
 				$this->ctrl->saveParameter($this, 'video_tbl_table_nav');
-				$this->tpl->setVariable('SUBSCRIBE_LINK', $this->ctrl->getLinkTarget($this, 'subscribe'));
-				$this->tpl->setVariable('SUBSCRIBE', $this->pl->txt('tbl_subscribe'));
+				$tpl->setVariable('SUBSCRIBE_LINK', $this->ctrl->getLinkTarget($this, 'subscribe'));
+				$tpl->setVariable('BUTTON', 'primary');
+				$tpl->setVariable('ACTION_TEXT', $this->pl->txt('tbl_subscribe_action'));
+				$tpl->setVariable('ACTION_ICON', 'plus-sign');
 			}
 		}
+
+		$this->tpl->setContent($tpl->get());
 	}
 
 
