@@ -8,7 +8,7 @@ require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHoo
  *
  * @author Theodor Truffer <tt@studer-raimann.ch>
  *
- * @ilCtrl_IsCalledBy ilVideoManagerFolderFormGUI: ilRouterGUI
+ * @ilCtrl_IsCalledBy ilVideoManagerFolderFormGUI: ilRouterGUI, ilUIPluginRouterGUI
  */
 class ilVideoManagerFolderFormGUI extends ilPropertyFormGUI{
 

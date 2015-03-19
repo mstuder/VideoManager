@@ -1,8 +1,5 @@
 <?php
-require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CtrlMainMenu/classes/Menu/class.ctrlmmMenuGUI.php');
-require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CtrlMainMenu/classes/Entry/class.ctrlmmEntry.php');
-require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CtrlMainMenu/classes/EntryTypes/Dropdown/class.ctrlmmEntryDropdown.php');
-require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CtrlMainMenu/classes/EntryTypes/Link/class.ctrlmmEntryLink.php');
+require_once('./Services/UIComponent/classes/class.ilUserInterfaceHookPlugin.php');
 require_once('./Services/MainMenu/classes/class.ilMainMenuGUI.php');
 
 /**
@@ -10,197 +7,107 @@ require_once('./Services/MainMenu/classes/class.ilMainMenuGUI.php');
  *
  * @author Theodor Truffer <tt@studer-ramimann.ch>
  */
-class ilVideoManagerPlugin extends ilUserInterfaceHookPlugin{
+class ilVideoManagerPlugin extends ilUserInterfaceHookPlugin {
 
-    /**
-     * @return string
-     */
-    public function getCsvPath() {
-        $path = substr(__FILE__, 0, strpos(__FILE__, 'classes')) . 'lang/';
-        if (file_exists($path . 'lang_custom.csv')) {
-            $file = $path . 'lang_custom.csv';
-        } else {
-            $file = $path . 'lang.csv';
-        }
-
-        return $file;
-    }
+	/**
+	 * @var ilSubscriptionPlugin
+	 */
+	protected static $instance;
 
 
-    /**
-     * @return string
-     */
-    public function getAjaxLink() {
-        return false;
-    }
+	/**
+	 * @return ilVideoManagerPlugin
+	 */
+	public static function getInstance() {
+		if (! isset(self::$instance)) {
+			self::$instance = new self();
+		}
+
+		return self::$instance;
+	}
 
 
-    /**
-     * @param $key
-     *
-     * @return mixed
-     */
-    public function getDynamicTxt($key) {
-        return ilDynamicLanguage::getInstance($this, ilDynamicLanguage::MODE_PROD)->txt($key);
-    }
+	/**
+	 * @return string
+	 */
+	public function getPluginName() {
+		return 'VideoManager';
+	}
 
 
-    /**
-     * @var ilSubscriptionPlugin
-     */
-    protected static $instance;
+	/**
+	 * @return bool
+	 */
+	public static function checkPreconditions() {
+		require_once('class.videoman.php');
+		videoman::loadActiveRecord();
+		global $ilCtrl;
+		if (! class_exists('ActiveRecord') OR $ilCtrl->lookupClassPath('ilUIPluginRouterGUI') === NULL) {
+			return false;
+		}
+
+		return true;
+	}
 
 
-    /**
-     * @return ilVideoManagerPlugin
-     */
-    public static function getInstance() {
-        if (!isset(self::$instance)) {
-            self::$instance = new self();
-        }
+	/**
+	 * @return bool
+	 */
+	public function beforeActivation() {
+		global $ilPluginAdmin;
+		/**
+		 * @var ilPluginAdmin $ilPluginAdmin
+		 */
+		if (in_array('CtrlMainMenu', $ilPluginAdmin->getActivePluginsForSlot('Services', 'UIComponent', 'uihk'))) {
+			require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CtrlMainMenu/classes/EntryTypes/Dropdown/class.ctrlmmEntryDropdown.php');
+			require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CtrlMainMenu/classes/EntryTypes/Ctrl/class.ctrlmmEntryCtrl.php');
 
-        return self::$instance;
-    }
+			$dropdown = new ctrlmmEntryDropdown();
+			$dropdown->create();
 
+			$trans = ctrlmmTranslation::_getInstanceForLanguageKey($dropdown->getId(), 'en');
+			$trans->setTitle('Video-Manager');
+			$trans->store();
 
-    /**
-     * @return string
-     */
-    public function getPluginName() {
-        return 'VideoManager';
-    }
+			$admin = new ctrlmmEntryCtrl();
+			$admin->setParent($dropdown->getId());
+			$admin->setGuiClass('ilUIPluginRouterGUI,ilVideoManagerAdminGUI');
+			$admin->create();
 
+			$trans = ctrlmmTranslation::_getInstanceForLanguageKey($admin->getId(), 'en');
+			$trans->setTitle('Administration');
+			$trans->store();
 
-    /**
-     * @return bool
-     */
-    public static function checkPreconditions() {
-        /**
-         * @var $ilCtrl ilCtrl
-         */
-        $path = strstr(__FILE__, 'Services', true) . 'Libraries/ActiveRecord/';
-        global $ilCtrl;
-        if ($ilCtrl->lookupClassPath('ilRouterGUI') === NULL OR !is_file($path . 'class.ActiveRecord.php') OR !is_file($path
-                . 'class.ActiveRecordList.php')
-        ) {
-            return false;
-        }
+			$admin = new ctrlmmEntryCtrl();
+			$admin->setParent($dropdown->getId());
+			$admin->setGuiClass('ilUIPluginRouterGUI,ilVideoManagerUserGUI');
+			$admin->create();
 
-        return true;
-    }
+			$trans = ctrlmmTranslation::_getInstanceForLanguageKey($admin->getId(), 'en');
+			$trans->setTitle('Channels');
+			$trans->store();
+		}
 
-    public function updateLanguageFiles() {
-        setlocale(LC_ALL, 'de_DE.utf8');
-        ini_set('auto_detect_line_endings', true);
-        $path = substr(__FILE__, 0, strpos(__FILE__, 'classes')) . 'lang/';
-        if (file_exists($path . 'lang_custom.csv')) {
-            $file = $path . 'lang_custom.csv';
-        } else {
-            $file = $path . 'lang.csv';
-        }
-        $keys = array();
-        $new_lines = array();
-
-        foreach (file($file) as $n => $row) {
-            if ($n == 0) {
-                $keys = str_getcsv($row, ";");
-                continue;
-            }
-            $data = str_getcsv($row, ";");;
-            foreach ($keys as $i => $k) {
-                if ($k != 'var' AND $k != 'part') {
-                    if ($data[1] != '') {
-                        $new_lines[$k][] = $data[0] . '_' . $data[1] . '#:#' . $data[$i];
-                    } else {
-                        $new_lines[$k][] = $data[0] . '#:#' . $data[$i];
-                    }
-                }
-            }
-        }
-        $start = '<!-- language file start -->' . PHP_EOL;
-        $status = true;
-
-        foreach ($new_lines as $lng_key => $lang) {
-            $status = file_put_contents($path . 'ilias_' . $lng_key . '.lang', $start . implode(PHP_EOL, $lang));
-        }
-
-        if (!$status) {
-            ilUtil::sendFailure('Language-Files coul\'d not be written');
-        }
-        $this->updateLanguages();
-    }
+		return self::checkPreconditions();
+	}
 
 
-    /**
-     * @return bool
-     */
-    public function beforeActivation() {
-//         TODO: put in UIHookGUI
-        global $ilCtrl;
-
-        $this->updateLanguageFiles();
-
-//        foreach(ctrlmmEntry::get() as $entry)
-//        {
-//            if($entry->getTitle() == 'Video Manager'){
-//                return self::checkPreconditions();
-//            }
-//        }
-//
-//        if(ilMainMenuGUI::_checkAdministrationPermission())
-//        {
-//            $entry = new ctrlmmEntryDropdown();
-//            $entry->setTitle('Video Manager');
-//            $entry->setTranslations(array('en' => 'Video Manager'));
-//            $entry->create();
-//
-//            $subentry_channels = new ctrlmmEntryLink();
-//            $subentry_channels->setTranslations(array('en' => 'Channels'));
-//            $subentry_channels->setLink($ilCtrl->getLinkTargetByClass(array('ilroutergui', 'ilvideomanagerusergui'),  'view'));
-//            $subentry_channels->setTarget('_top');
-//            $subentry_channels->setParent($entry->getId());
-//            $subentry_channels->create();
-//
-//            $subentry_admin = new ctrlmmEntryLink();
-//            $subentry_admin->setTranslations(array('en' => 'Administration'));
-//            $subentry_admin->setLink($ilCtrl->getLinkTargetByClass(array('ilroutergui', 'ilvideomanageradmingui'), 'view'));
-//            $subentry_admin->setTarget('_top');
-//            $subentry_admin->setParent($entry->getId());
-//            $subentry_admin->create();
-//
-//
-//            $entry->setEntries(array($subentry_channels, $subentry_admin));
-//            $entry->update();
-//        }else{
-//            $entry = new ctrlmmEntryLink();
-//            $entry->setTranslations(array('en' => 'Video Manager'));
-//            $entry->setLink($ilCtrl->getLinkTargetByClass('ilvideomanagerusergui', 'view'));
-//            $entry->create();
-//        }
+	protected function afterActivation() {
+		//		if(ilPl)
+		//		parent::afterActivation(); // TODO: Change the autogenerated stub
+	}
 
 
-        return self::checkPreconditions();
-    }
+	/**
+	 * @param $usr_id
+	 *
+	 * @return ilLanguage
+	 */
+	public function loadLanguageForUser($usr_id) {
+		$lng = ilObjUser::_lookupLanguage($usr_id);
+		$ilLanguage = new ilLanguage($lng);
+		$ilLanguage->loadLanguageModule("ui_uihk_video_man");
 
-    public static function loadActiveRecord() {
-        if (ctrlmm::is50()) {
-            require_once('./Services/ActiveRecord/class.ActiveRecord.php');
-        } else {
-            require_once('./Customizing/global/plugins/Libraries/ActiveRecord/class.ActiveRecord.php');
-        }
-    }
-
-
-    /**
-     * @param $usr_id
-     * @return ilLanguage
-     */
-    public function loadLanguageForUser($usr_id)
-    {
-        $lng = ilObjUser::_lookupLanguage($usr_id);
-        $ilLanguage = new ilLanguage($lng);
-        $ilLanguage->loadLanguageModule("ui_uihk_video_man");
-        return $ilLanguage;
-    }
-
+		return $ilLanguage;
+	}
 }

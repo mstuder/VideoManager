@@ -10,7 +10,7 @@ require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHoo
  *
  * @author Theodor Truffer <tt@studer-raimann.ch>
  *
- * @ilCtrl_IsCalledBy ilVideoManagerAdminTableGUI: ilRouterGUI
+ * @ilCtrl_IsCalledBy ilVideoManagerAdminTableGUI: ilRouterGUI, ilUIPluginRouterGUI
  */
 class ilVideoManagerAdminTableGUI extends ilTable2GUI{
 
