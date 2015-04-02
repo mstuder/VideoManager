@@ -1,6 +1,13 @@
 <div id="main_container">
-    <div id="channel_header">
-        <h1 id="channel">{CHANNEL}</h1><a href="{SUBSCRIBE_LINK}">{SUBSCRIBE}</a>
-    </div>
-    <div id="table_gui">{TABLE}</div>
+	<!-- BEGIN header -->
+	<div class="panel panel-default">
+		<div class="panel-body">
+			<h1 id="channel" class="">{CHANNEL}</h1>
+			<a class="btn btn-{BUTTON}" type="button" href="{SUBSCRIBE_LINK}">
+				{ACTION_TEXT} <span class="badge"><span class="glyphicon glyphicon-{ACTION_ICON}" aria-hidden="true"></span></span>
+			</a>
+		</div>
+	</div>
+	<!-- END header -->
+	<div id="table_gui">{TABLE}</div>
 </div>

@@ -173,13 +173,14 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI {
 					break;
 			}
 		}
+//		echo $sql;
 		$query = $this->db->query($sql);
 		if ($this->options['count']) {
 			return (int)$this->db->fetchObject($query)->count;
 		}
 
 		$data = array();
-		$data[] = array( 'id' => 0 );
+//		$data[] = array( 'id' => 0 );
 		while ($result = $this->db->fetchAssoc($query)) {
 			$row = array();
 			$video = new ilVideoManagerVideo($result['id']);
@@ -193,6 +194,9 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI {
 
 			$data[] = $row;
 		}
+
+//		var_dump($data); // FSX
+//		echo '<pre>' . print_r($data, 1) . '</pre>';
 
 		return $data;
 	}
