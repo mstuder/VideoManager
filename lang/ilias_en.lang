@@ -37,9 +37,9 @@ form_tags#:#Tags
 form_upload_vid#:#Upload Video(s)
 form_vid#:#Video(s)
 form_wrong_filetype#:#Wrong Filetype
-mail_new_upload#:#A new video was uploaded in a category you're subscribed to: 
+mail_new_upload#:#A new video was uploaded in a category to which you have subscribed: 
 mail_subject#:#New video-upload in category 
-mail_view_video#:#Video-Link: 
+mail_view_video#:#Direct link
 msg_choose_folder#:#Please choose a destination folder, to which the file(s) should be moved.
 msg_deletion_failed#:#File(s) could not be deleted; One or more files are still being converted.
 msg_edit_vid_failed#:#This video can not be edited, as it is being converted currently.

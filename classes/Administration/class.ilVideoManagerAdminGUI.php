@@ -15,10 +15,12 @@ require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHoo
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/Administration/class.ilVideoManagerFolderFormGUI.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/Subscription/class.vidmSubscription.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/Count/class.vidmCountTableGUI.php');
+
 /**
  * Class ilVideoManagerGUI
  *
  * @author            Theodor Truffer <tt@studer-raimann.ch>
+ * @author            Fabian Schmid <fs@studer-raimann.ch>
  *
  * @ilCtrl_IsCalledBy ilVideoManagerAdminGUI: ilRouterGUI, ilUIPluginRouterGUI
  * @ilCtrl_Calls      ilVideoManagerAdminGUI: ilVideoManagerAdminTableGUI, vidmSubscriptionGUI
@@ -193,7 +195,7 @@ class ilVideoManagerAdminGUI {
 		$adv->setListTitle($this->pl->txt("admin_add_new_item"));
 		$adv->setPullRight(true);
 
-		if(vidmSubscription::isActive()) {
+		if (vidmSubscription::isActive()) {
 			$b = ilLinkButton::getInstance();
 			$b->setUrl($this->ctrl->getLinkTarget($this, self::CMD_SHOW_STATISTICS));
 			$b->setCaption('ui_uihk_video_man_admin_view_statistics');
@@ -481,14 +483,25 @@ class ilVideoManagerAdminGUI {
 	}
 
 
-	protected function getNotificationSubject($subscription) {
+	/**
+	 * @param vidmSubscription $subscription
+	 *
+	 * @return string
+	 */
+	protected function getNotificationSubject(vidmSubscription $subscription) {
 		$ilLanguage = $this->pl->loadLanguageForUser($subscription->getUsrId());
 
 		return $ilLanguage->txt("ui_uihk_video_man_mail_subject") . " '" . ilVideoManagerFolder::find($subscription->getCatId())->getTitle() . "'";
 	}
 
 
-	protected function getNotificationMessage($subscription, $video) {
+	/**
+	 * @param vidmSubscription    $subscription
+	 * @param ilVideoManagerVideo $video
+	 *
+	 * @return string
+	 */
+	protected function getNotificationMessage(vidmSubscription $subscription, ilVideoManagerVideo $video) {
 		$ilLanguage = $this->pl->loadLanguageForUser($subscription->getUsrId());
 
 		$message = '';
@@ -500,11 +513,13 @@ class ilVideoManagerAdminGUI {
 		$message .= $ilLanguage->txt("ui_uihk_video_man_common_category") . ": " . ilVideoManagerFolder::find($subscription->getCatId())->getTitle();
 		$message .= "\n\n";
 		$message .= $ilLanguage->txt("ui_uihk_video_man_common_video") . ': ' . $video->getTitle() . '';
+		$message .= "\n\n";
+		$message .= $ilLanguage->txt("ui_uihk_video_man_common_description") . ': ' . $video->getDescription() . '';
 
 		$message .= "\n\n";
-		$message .= $ilLanguage->txt('ui_uihk_video_man_mail_view_video');
+		$message .= $ilLanguage->txt('ui_uihk_video_man_mail_view_video') . ': ';
 		$this->ctrl->setParameterByClass('ilVideoManagerUserGUI', self::PARAM_NODE_ID, $video->getId());
-		$message .= ' ' . ilUtil::_getHttpPath() . '/' . $this->ctrl->getLinkTargetByClass('ilVideoManagerUserGUI', 'playVideo');
+		$message .= ilUtil::_getHttpPath() . '/' . $this->ctrl->getLinkTargetByClass('ilVideoManagerUserGUI', 'playVideo');
 
 		$message .= ilMail::_getInstallationSignature();
 

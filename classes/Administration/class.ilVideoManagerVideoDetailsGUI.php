@@ -9,6 +9,7 @@ require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHoo
  * Class ilVideoManagerVideoDetailsGUI
  *
  * @author            Theodor Truffer <tt@studer-raimann.ch>
+ * @author            Fabian Schmid <fs@studer-raimann.ch>
  *
  * @ilCtrl_IsCalledBy ilVideoManagerVideoDetailsGUI: ilRouterGUI, ilUIPluginRouterGUI
  */
