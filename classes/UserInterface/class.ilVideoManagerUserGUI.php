@@ -1,6 +1,6 @@
 <?php
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerPlugin.php');
-require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerSubscription.php');
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/Subscription/class.vidmSubscription.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/UserInterface/class.ilVideoManagerVideoTableGUI.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/UserInterface/class.ilVideoManagerPlayVideoGUI.php');
 require_once('./Services/Form/classes/class.ilTextInputGUI.php');
@@ -198,7 +198,7 @@ class ilVideoManagerUserGUI {
 
 
 	protected function subscribe() {
-		$subscription = new ilVideoManagerSubscription();
+		$subscription = new vidmSubscription();
 		$subscription->setUsrId($this->usr->getId());
 		$subscription->setCatId($_GET[self::SUB_CAT_ID]);
 		$subscription->create();
@@ -216,7 +216,7 @@ class ilVideoManagerUserGUI {
 
 
 	protected function unsubscribe() {
-		$existing = ilVideoManagerSubscription::where(array( 'usr_id' => $this->usr->getId(), 'cat_id' => $_GET[self::SUB_CAT_ID] ))->get();
+		$existing = vidmSubscription::where(array( 'usr_id' => $this->usr->getId(), 'cat_id' => $_GET[self::SUB_CAT_ID] ))->get();
 		foreach ($existing as $subscription) {
 			$subscription->delete();
 		}

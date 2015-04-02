@@ -152,7 +152,7 @@ class ilVideoManagerPlayVideoGUI {
 
 
 	protected function subscribe() {
-		$subscription = new ilVideoManagerSubscription();
+		$subscription = new vidmSubscription();
 		$subscription->setUsrId($this->usr->getId());
 		$subscription->setCatId($_GET[ilVideoManagerUserGUI::SUB_CAT_ID]);
 		$subscription->create();
@@ -166,7 +166,7 @@ class ilVideoManagerPlayVideoGUI {
 	protected function unsubscribe() {
 		$cat_id = $_GET[ilVideoManagerUserGUI::SUB_CAT_ID];
 		$user_id = $this->usr->getId();
-		foreach (ilVideoManagerSubscription::where(array( 'usr_id' => $user_id, 'cat_id' => $cat_id ))->get() as $subscription) {
+		foreach (vidmSubscription::where(array( 'usr_id' => $user_id, 'cat_id' => $cat_id ))->get() as $subscription) {
 			$subscription->delete();
 		}
 

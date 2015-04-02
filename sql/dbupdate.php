@@ -4,8 +4,7 @@ require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHoo
 ilCtrlMainMenuPlugin::loadActiveRecord();
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerObject.php');
 ilVideoManagerObject::installDB();
-require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerSubscription.php');
-ilVideoManagerSubscription::installDB();
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.vidmSubscription.phpbscription::installDB();
 
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerFolder.php');
 if($root_folder = ilVideoManagerFolder::__getRootFolder())

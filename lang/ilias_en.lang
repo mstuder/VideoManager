@@ -9,6 +9,7 @@ admin_form_button_cancel#:#Cancel
 admin_form_button_save#:#Save
 admin_form_title#:#Settings
 admin_roles#:#Allowed roles for administration
+admin_view_statistics#:#Show Statistics
 common_actions#:#Actions
 common_add#:#Add
 common_back#:#Back
@@ -52,6 +53,7 @@ player_category_key#:#Channel:
 player_sub_tooltip#:#After your subscription, you will receive an automatic e-mail every time a new video is uploaded to this channel.
 player_tags_key#:#Tags:
 player_views_key#:#Views:
+stats_views#:#Views
 tbl_performSearch#:#Searchresults
 tbl_related_videos#:#Related Videos
 tbl_subscribe#:#Subscribe to this category

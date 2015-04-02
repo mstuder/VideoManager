@@ -9,6 +9,7 @@ admin_form_button_cancel#:#Abbrechen
 admin_form_button_save#:#Speichern
 admin_form_title#:#Einstellungen
 admin_roles#:#Berechtigte Rollen für Administration
+admin_view_statistics#:#Statistik anzeigen
 common_actions#:#Aktionen
 common_add#:#Hinzufügen
 common_back#:#Zurück
@@ -52,6 +53,7 @@ player_category_key#:#Channel:
 player_sub_tooltip#:#Nach dem Abonnieren erhalten Sie automatisch eine E-mail, wenn ein neues Video zu diesem Channel hinzugefügt wurde.
 player_tags_key#:#Tags:
 player_views_key#:#Views:
+stats_views#:#Views
 tbl_performSearch#:#Suchergebnisse
 tbl_related_videos#:#Verwandte Videos
 tbl_subscribe#:#Diese Kategorie abonnieren

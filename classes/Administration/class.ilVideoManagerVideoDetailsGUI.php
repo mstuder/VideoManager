@@ -3,6 +3,7 @@ require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHoo
 require_once('./Services/Form/classes/class.ilPropertyFormGUI.php');
 require_once('./Services/Form/classes/class.ilNonEditableValueGUI.php');
 require_once("./Services/Rating/classes/class.ilRating.php");
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/Count/class.vidmCount.php');
 
 /**
  * Class ilVideoManagerVideoDetailsGUI
@@ -39,7 +40,6 @@ class ilVideoManagerVideoDetailsGUI {
 	 * @param $video ilVideoManagerVideo
 	 */
 	public function __construct($parent_gui, $video) {
-		global $tpl;
 		$this->parent_gui = $parent_gui;
 		$this->video = $video;
 		$this->pl = ilVideoManagerPlugin::getInstance();
@@ -107,7 +107,7 @@ class ilVideoManagerVideoDetailsGUI {
 		$update->setValue($this->video->getCreateDate());
 		$form->addItem($update);
 
-		//Rating
+		// Rating
 		$rating = new ilRating();
 		$average = $rating->getOverallRatingForObject($this->video->getId(), 'vid', 0, '-');
 		$rating_gui = new ilNonEditableValueGUI($this->pl->txt('common_rating'));
@@ -117,6 +117,12 @@ class ilVideoManagerVideoDetailsGUI {
 			$rating_gui->setValue('-');
 		}
 		$form->addItem($rating_gui);
+
+		if (vidmCount::isActive()) {
+			$views = new ilNonEditableValueGUI($this->pl->txt('stats_views'));
+			$views->setValue(vidmCount::count($this->video->getId()));
+			$form->addItem($views);
+		}
 
 		$this->tpl->setVariable('DESCRIPTION', $form->getHTML());
 	}

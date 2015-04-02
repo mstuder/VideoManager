@@ -9,8 +9,8 @@ videoman::loadActiveRecord();
  */
 class ilVideoManagerObject extends ActiveRecord {
 
-	const TYPE_FOLDER = 'fld';
-	const TYPE_VIDEO = 'vid';
+	const TYPE_VID = 'vid';
+	const TYPE_FLD = 'fld';
 	/**
 	 * @var int
 	 *
@@ -191,7 +191,7 @@ class ilVideoManagerObject extends ActiveRecord {
 
 
 	public function getIcon() {
-		if ($this->getType() == 'fld') {
+		if ($this->getType() == self::TYPE_FLD) {
 			$icon = 'icon_cat';
 		} else {
 			$icon = 'icon_mobs';
@@ -201,13 +201,18 @@ class ilVideoManagerObject extends ActiveRecord {
 	}
 
 
+	/**
+	 * @param $id
+	 *
+	 * @return mixed
+	 */
 	public static function __getTypeForId($id) {
 		return ilVideoManagerObject::find($id)->getType();
 	}
 
 
 	/**
-	 * @return ActiveRecord
+	 * @return ilVideoManagerObject
 	 */
 	public static function __getRootFolder() {
 		return parent::find(1);
@@ -225,12 +230,12 @@ class ilVideoManagerObject extends ActiveRecord {
 			$ids = array( $ids );
 		}
 		foreach ($ids as $id) {
-			if (ilVideoManagerObject::__getTypeForId($id) == 'vid') {
+			if (ilVideoManagerObject::__getTypeForId($id) == self::TYPE_VID) {
 				$vid = new ilVideoManagerVideo($id);
 				if ($vid->getStatusConvert() == 1 || $vid->getStatusConvert() == 2) {
 					return false;
 				}
-			} elseif (ilVideoManagerObject::__getTypeForId($id) == 'fld') {
+			} elseif (ilVideoManagerObject::__getTypeForId($id) == self::TYPE_FLD) {
 				$childs = $tree->getSubTreeIds($id);
 				if (! ilVideoManagerObject::__checkConverting($childs)) {
 					return false;
@@ -271,7 +276,7 @@ class ilVideoManagerObject extends ActiveRecord {
 	 */
 	public function getHttpPath() {
 		$path = $this->getTreePath();
-		$this->type == 'vid' ? $video_prefix = 'video_' : $video_prefix = '';
+		$this->type == self::TYPE_VID ? $video_prefix = 'video_' : $video_prefix = '';
 
 		return ilUtil::_getHttpPath() . '/data/' . CLIENT_ID . '/vidm' . $path . '/' . $video_prefix . $this->getId();
 	}
@@ -290,7 +295,7 @@ class ilVideoManagerObject extends ActiveRecord {
 	 */
 	public function getPath() {
 		$path = $this->getTreePath();
-		$this->type == 'vid' ? $video_prefix = 'video_' : $video_prefix = '';
+		$this->type == self::TYPE_VID ? $video_prefix = 'video_' : $video_prefix = '';
 
 		return ILIAS_ABSOLUTE_PATH . '/' . ILIAS_WEB_DIR . '/' . CLIENT_ID . '/vidm' . $path . '/' . $video_prefix . $this->getId();
 	}
@@ -332,7 +337,7 @@ class ilVideoManagerObject extends ActiveRecord {
 	 * @return string
 	 */
 	public function getFileName() {
-		if ($this->getType() == 'fld') {
+		if ($this->getType() == self::TYPE_FLD) {
 			return $this->getTitle();
 		}
 
@@ -374,11 +379,12 @@ class ilVideoManagerObject extends ActiveRecord {
 	 * @return null
 	 */
 	public function sleep($field_name) {
-		switch($field_name) {
+		switch ($field_name) {
 			case 'tags':
 				return json_encode($this->{$field_name});
 				break;
 		}
+
 		return NULL;
 	}
 
@@ -390,7 +396,7 @@ class ilVideoManagerObject extends ActiveRecord {
 	 * @return mixed
 	 */
 	public function wakeUp($field_name, $field_value) {
-		switch($field_name) {
+		switch ($field_name) {
 			case 'tags':
 				return json_decode($field_value);
 				break;
