@@ -1,6 +1,7 @@
 <?php
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.videoman.php');
 videoman::loadActiveRecord();
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/Config/class.vidmConfig.php');
 
 /**
  * Class vidmCount
@@ -52,8 +53,13 @@ class vidmCount extends ActiveRecord {
 	/**
 	 * @param $video_id
 	 * @param $user_id
+	 *
+	 * @return bool
 	 */
 	public static function up($video_id, $user_id) {
+		if (! self::isActive()) {
+			return false;
+		}
 		$obj = new self();
 		$obj->setUserId($user_id);
 		$obj->setVideoId($video_id);
@@ -67,7 +73,19 @@ class vidmCount extends ActiveRecord {
 	 * @return int
 	 */
 	public static function count($video_id) {
+		if (! self::isActive()) {
+			return false;
+		}
+
 		return self::where(array( 'video_id' => $video_id ))->count();
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public static function isActive() {
+		return vidmConfig::get(vidmConfig::F_ACTIVATE_VIEW_LOG);
 	}
 
 

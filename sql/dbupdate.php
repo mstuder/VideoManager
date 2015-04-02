@@ -63,3 +63,16 @@ require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHoo
 $tree = new ilVideoManagerTree(1);
 $tree->addTree($tree->getTreeId());
 ?>
+<#2>
+<?php
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/Count/class.vidmCount.php');
+vidmCount::installDB();
+?>
+<#3>
+<?php
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/Config/class.vidmConfig.php');
+vidmConfig::installDB();
+vidmConfig::set(vidmConfig::F_ACTIVATE_SUBSCRIPTION, true);
+vidmConfig::set(vidmConfig::F_ACTIVATE_VIEW_LOG, true);
+vidmConfig::set(vidmConfig::F_ROLES, array( 2 ));
+?>

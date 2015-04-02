@@ -1,54 +1,61 @@
 <!-- language file start -->
-common_save#:#Save
-common_back#:#Back
-common_confirm#:#Confirm
-common_cancel#:#Cancel
-common_actions#:#Actions
-common_delete#:#Delete
-common_edit#:#Edit
-common_title#:#Title
-common_description#:#Description
-common_add#:#Add
-common_filesize#:#Filesize
-common_search#:#Search
-common_tags#:#Tags
-common_move#:#Move
-common_more#:#more
-common_less#:#less
-common_category#:#Category
-common_video#:#Video
-
-common_duration#:#Duration
-common_upload_date#:#Upload Date
-common_rating#:#Rating
-admin_add_new_item#:#Add new item
+admin_activate_subscription#:#Activate channel subscriptions
+admin_activate_view_log#:#Log View Count
 admin_add_folder#:#Add new Folder
+admin_add_new_item#:#Add new item
 admin_add_video#:#Add new video
 admin_confirm_delete#:#Are you sure you want to delete the following items?
-msg_fld_created#:#Folder was created
-msg_choose_folder#:#Please choose a destination folder, to which the file(s) should be moved.
-msg_deletion_failed#:#File(s) could not be deleted; One or more files are still being converted.
-msg_move_failed#:#File(s) could not be moved; One or more files are still being converted.
-msg_edit_vid_failed#:#This video can not be edited, as it is being converted currently.
-msg_vid_converting#:#This video is probably not available, as it is being converted currently. If so, please try again in a few minutes.
-msg_subscribed_successfully#:#Subscribed successfully.
-msg_unsubscribed_successfully#:#Unsubscribed successfully.
-msg_no_permission#:#Permission denied.
+admin_form_button_cancel#:#Cancel
+admin_form_button_save#:#Save
+admin_form_title#:#Settings
+admin_roles#:#Allowed roles for administration
+common_actions#:#Actions
+common_add#:#Add
+common_back#:#Back
+common_cancel#:#Cancel
+common_category#:#Category
+common_confirm#:#Confirm
+common_delete#:#Delete
+common_description#:#Description
+common_duration#:#Duration
+common_edit#:#Edit
+common_filesize#:#Filesize
+common_less#:#less
+common_more#:#more
+common_move#:#Move
+common_rating#:#Rating
+common_save#:#Save
+common_search#:#Search
+common_tags#:#Tags
+common_title#:#Title
+common_upload_date#:#Upload Date
+common_video#:#Video
+form_add_folder#:#Add Folder
+form_edit_vid#:#Edit Video
+form_tags#:#Tags
+form_upload_vid#:#Upload Video(s)
+form_vid#:#Video(s)
+form_wrong_filetype#:#Wrong Filetype
 mail_new_upload#:#A new video was uploaded in a category you're subscribed to: 
 mail_subject#:#New video-upload in category 
 mail_view_video#:#Video-Link: 
-form_add_folder#:#Add Folder
-form_upload_vid#:#Upload Video(s)
-form_vid#:#Video(s)
-form_tags#:#Tags
-form_edit_vid#:#Edit Video
-form_wrong_filetype#:#Wrong Filetype
-tbl_view#:#Latest Uploads
-tbl_related_videos#:#Related Videos
+msg_choose_folder#:#Please choose a destination folder, to which the file(s) should be moved.
+msg_deletion_failed#:#File(s) could not be deleted; One or more files are still being converted.
+msg_edit_vid_failed#:#This video can not be edited, as it is being converted currently.
+msg_fld_created#:#Folder was created
+msg_move_failed#:#File(s) could not be moved; One or more files are still being converted.
+msg_no_permission#:#Permission denied.
+msg_subscribed_successfully#:#Subscribed successfully.
+msg_unsubscribed_successfully#:#Unsubscribed successfully.
+msg_vid_converting#:#This video is probably not available, as it is being converted currently. If so, please try again in a few minutes.
+player_category_key#:#Channel:
+player_sub_tooltip#:#After your subscription, you will receive an automatic e-mail every time a new video is uploaded to this channel.
+player_tags_key#:#Tags:
+player_views_key#:#Views:
 tbl_performSearch#:#Searchresults
+tbl_related_videos#:#Related Videos
 tbl_subscribe#:#Subscribe to this category
+tbl_subscribe_action#:#Subscribe
 tbl_unsubscribe#:#(subscribed) Unsubscribe from this category
 tbl_unsubscribe_action#:#Unsubscribe
-tbl_subscribe_action#:#Subscribe
-#:#
-#:#
+tbl_view#:#Latest Uploads
