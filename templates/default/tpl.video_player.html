@@ -26,16 +26,21 @@
                     <a onclick="return toggle()">{MORE}</a>
                 </p>
 
-                <div id="tags" class="tags">
+                <div id="tags" class="tags vidm_metainfo">
                 <p id="tags_key" class="tags">{TAGS_KEY}</p>
                     <!-- BEGIN tags -->
                     <a href="{TAG_SEARCH}" class="tags"><span class="label label-default">{TAGS_VALUE}</span></a>
                     <!-- END tags -->
                 </div>
                 <div id="category">
-                    <p id="category_key" class="category">{CATEGORY_KEY}</p>
+                    <p id="category_key" class="category vidm_metainfo">{CATEGORY_KEY}</p>
                     <a href="{CATEGORY_SEARCH}" class="category"><span class="label label-primary">{CATEGORY_VALUE}</span></a>
+	                {SUBSCRIPTION_BUTTON}
                 </div>
+	            <div id="vidm_views" class="vidm_metainfo">
+		            <p id="vidm_views_key" class="category">{VIEWS_KEY}</p>
+		            <span class="label label-primary">{VIEWS}</span>
+	            </div>
             </div>
         </div>
     </div>

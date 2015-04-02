@@ -3,6 +3,8 @@ require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHoo
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerVideo.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerFolder.php');
 require_once("./Services/Rating/classes/class.ilRatingGUI.php");
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/Count/class.vidmCount.php');
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/Subscription/class.vidmSubscriptionButtonGUI.php');
 
 /**
  * Class ilVideoManagerPlayVideoGUI
@@ -45,12 +47,14 @@ class ilVideoManagerPlayVideoGUI {
 	 * @param $parent_gui
 	 */
 	public function __construct($parent_gui) {
-		global $ilCtrl, $tpl;
+		global $ilCtrl, $ilUser;
 		$this->ctrl = $ilCtrl;
+		$this->parent_gui = $parent_gui;
 		$this->pl = ilVideoManagerPlugin::getInstance();
-//		$this->tpl = $tpl;
-		$this->tpl = new ilTemplate('tpl.video_player.html',false, false, 'Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager');;
+		//		$this->tpl = $tpl;
+		$this->tpl = new ilTemplate('tpl.video_player.html', false, false, 'Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager');
 		$this->video = new ilVideoManagerVideo($_GET['node_id']);
+		vidmCount::up($this->video->getId(), $ilUser->getId());
 	}
 
 
@@ -104,7 +108,7 @@ class ilVideoManagerPlayVideoGUI {
 		}
 
 		if ($tags = $this->video->getTags()) {
-			$this->tpl->setVariable('TAGS_KEY', 'Tags: ');
+			$this->tpl->setVariable('TAGS_KEY', $this->pl->txt('player_tags_key'));
 			foreach ($this->video->getTags() as $tag) {
 				$this->tpl->setCurrentBlock('tags');
 				$this->ctrl->setParameterByClass('ilVideoManagerUserGUI', 'search_value', $tag);
@@ -117,8 +121,21 @@ class ilVideoManagerPlayVideoGUI {
 
 		$tree = new ilVideoManagerTree(1);
 		$category = new ilVideoManagerFolder($tree->getParentId($this->video->getId()));
-		$this->tpl->setVariable('CATEGORY_KEY', 'Category: ');
+		$this->tpl->setVariable('CATEGORY_KEY', $this->pl->txt('player_category_key'));
 		$this->tpl->setVariable('CATEGORY_VALUE', $category->getTitle());
+
+		if (vidmConfig::get(vidmConfig::F_ACTIVATE_SUBSCRIPTION)) {
+			$sub = new vidmSubscriptionButtonGUI();
+			$sub->setSize(vidmSubscriptionButtonGUI::SIZE_SMALL);
+			$this->ctrl->saveParameter($this->parent_gui, 'node_id');
+			$sub->generate($category, ilVideoManagerUserGUI::CMD_PLAY_VIDEO);
+			$this->tpl->setVariable('SUBSCRIPTION_BUTTON', $sub->getHTML($category));
+		}
+
+		if (vidmCount::isActive()) {
+			$this->tpl->setVariable('VIEWS_KEY', $this->pl->txt('player_views_key'));
+			$this->tpl->setVariable('VIEWS', vidmCount::count($this->video->getId()));
+		}
 
 		$this->ctrl->setParameterByClass('ilVideoManagerUserGUI', 'search_value', $category->getId());
 		$this->ctrl->setParameterByClass('ilVideoManagerUserGUI', 'search_method', 'category');
@@ -131,5 +148,30 @@ class ilVideoManagerPlayVideoGUI {
 		$rating = new ilRatingGUI();
 		$rating->setObject($this->video->getId(), 'vid');
 		$this->tpl->setVariable('RATING', $rating->getHTML());
+	}
+
+
+	protected function subscribe() {
+		$subscription = new ilVideoManagerSubscription();
+		$subscription->setUsrId($this->usr->getId());
+		$subscription->setCatId($_GET[ilVideoManagerUserGUI::SUB_CAT_ID]);
+		$subscription->create();
+
+		ilUtil::sendSuccess($this->pl->txt('msg_subscribed_successfully'), true);
+		$this->ctrl->saveParameter($this, 'video_tbl_table_nav');
+		$this->ctrl->redirect($this, 'performSearch');
+	}
+
+
+	protected function unsubscribe() {
+		$cat_id = $_GET[ilVideoManagerUserGUI::SUB_CAT_ID];
+		$user_id = $this->usr->getId();
+		foreach (ilVideoManagerSubscription::where(array( 'usr_id' => $user_id, 'cat_id' => $cat_id ))->get() as $subscription) {
+			$subscription->delete();
+		}
+
+		ilUtil::sendSuccess($this->pl->txt('msg_unsubscribed_successfully'), true);
+		$this->ctrl->saveParameter($this, 'video_tbl_table_nav');
+		$this->ctrl->redirect($this, 'performSearch');
 	}
 } 
