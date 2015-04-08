@@ -105,7 +105,7 @@ class ilVideoManagerPlayVideoGUI {
 
 		if ($tags = $this->video->getTags()) {
 			$this->tpl->setVariable('TAGS_KEY', 'Tags: ');
-			foreach (explode(' ', $this->video->getTags()) as $tag) {
+			foreach ($this->video->getTags() as $tag) {
 				$this->tpl->setCurrentBlock('tags');
 				$this->ctrl->setParameterByClass('ilVideoManagerUserGUI', 'search_value', $tag);
 				$this->ctrl->setParameterByClass('ilVideoManagerUserGUI', 'search_method', 'tag');

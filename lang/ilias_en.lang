@@ -48,6 +48,7 @@ tbl_related_videos#:#Related Videos
 tbl_performSearch#:#Searchresults
 tbl_subscribe#:#Subscribe to this category
 tbl_unsubscribe#:#(subscribed) Unsubscribe from this category
-#:#
+tbl_unsubscribe_action#:#Unsubscribe
+tbl_subscribe_action#:#Subscribe
 #:#
 #:#

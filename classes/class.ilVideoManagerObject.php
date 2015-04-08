@@ -49,13 +49,13 @@ class ilVideoManagerObject extends ActiveRecord {
 	 */
 	protected $type = false;
 	/**
-	 * @var String
+	 * @var array
 	 *
 	 * @db_has_field        true
 	 * @db_fieldtype        text
 	 * @db_length           256
 	 */
-	protected $tags;
+	protected $tags = array();
 	/**
 	 * @var string
 	 *
@@ -175,7 +175,7 @@ class ilVideoManagerObject extends ActiveRecord {
 
 
 	/**
-	 * @param String $tags
+	 * @param array $tags
 	 */
 	public function setTags($tags) {
 		$this->tags = $tags;
@@ -183,7 +183,7 @@ class ilVideoManagerObject extends ActiveRecord {
 
 
 	/**
-	 * @return String
+	 * @return array
 	 */
 	public function getTags() {
 		return $this->tags;
@@ -365,5 +365,35 @@ class ilVideoManagerObject extends ActiveRecord {
 		}
 
 		return $path;
+	}
+
+
+	/**
+	 * @param $field_name
+	 *
+	 * @return null
+	 */
+	public function sleep($field_name) {
+		switch($field_name) {
+			case 'tags':
+				return json_encode($this->{$field_name});
+				break;
+		}
+		return NULL;
+	}
+
+
+	/**
+	 * @param $field_name
+	 * @param $field_value
+	 *
+	 * @return mixed
+	 */
+	public function wakeUp($field_name, $field_value) {
+		switch($field_name) {
+			case 'tags':
+				return json_decode($field_value);
+				break;
+		}
 	}
 }

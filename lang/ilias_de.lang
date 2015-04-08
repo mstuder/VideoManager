@@ -47,6 +47,7 @@ tbl_related_videos#:#Verwandte Videos
 tbl_performSearch#:#Suchergebnisse
 tbl_subscribe#:#Diese Kategorie abonnieren
 tbl_unsubscribe#:#(abonniert) Diese Kategorie abbestellen
-#:#
+tbl_unsubscribe_action#:#Abbestellen
+tbl_subscribe_action#:#Abonnieren
 #:#
 #:#
