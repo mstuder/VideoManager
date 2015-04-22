@@ -17,6 +17,8 @@ class ilVideoManagerUserGUI {
 	const SUB_CAT_ID = 'sub_cat_id';
 	const CMD_PERFORM_SEARCH = 'performSearch';
 	const CMD_PLAY_VIDEO = 'playVideo';
+	const CMD_SUBSCRIBE = 'subscribe';
+	const CMD_UNSUBSCRIBE = 'unsubscribe';
 	/**
 	 * @var ilCtrl
 	 */
@@ -85,10 +87,10 @@ class ilVideoManagerUserGUI {
 					case self::CMD_PLAY_VIDEO:
 						$this->playVideo();
 						break;
-					case 'subscribe':
+					case self::CMD_SUBSCRIBE:
 						$this->subscribe();
 						break;
-					case 'unsubscribe':
+					case self::CMD_UNSUBSCRIBE:
 						$this->unsubscribe();
 						break;
 				}
@@ -217,6 +219,9 @@ class ilVideoManagerUserGUI {
 
 	protected function unsubscribe() {
 		$existing = vidmSubscription::where(array( 'usr_id' => $this->usr->getId(), 'cat_id' => $_GET[self::SUB_CAT_ID] ))->get();
+		/**
+		 * @var $subscription vidmSubscription
+		 */
 		foreach ($existing as $subscription) {
 			$subscription->delete();
 		}

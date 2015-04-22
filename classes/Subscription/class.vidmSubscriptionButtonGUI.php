@@ -207,6 +207,7 @@ class vidmSubscriptionButtonGUI {
 		$ilCtrl->setParameterByClass('ilVideoManagerUserGUI', ilVideoManagerUserGUI::SUB_CAT_ID, $ilVideoManagerFolder->getId());
 		$ilCtrl->setParameterByClass('ilVideoManagerUserGUI', 'fallbackCmd', $fallback_cmd);
 		$this->setTooltip($pl->txt('player_sub_tooltip'));
+		$ilCtrl->saveParameterByClass('ilVideoManagerUserGUI', 'node_id');
 
 		if (vidmSubscription::isSubscribed($ilUser->getId(), $ilVideoManagerFolder->getId())) {
 			$this->setIcon(self::ICON_UNSUBSCRIBE);

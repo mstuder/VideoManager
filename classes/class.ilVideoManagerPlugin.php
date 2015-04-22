@@ -1,50 +1,13 @@
 <?php
 require_once('./Services/UIComponent/classes/class.ilUserInterfaceHookPlugin.php');
 require_once('./Services/MainMenu/classes/class.ilMainMenuGUI.php');
-require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/Subscription/classes/class.ilDynamicLanguage.php');
+// require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/Subscription/classes/class.ilDynamicLanguage.php');
 /**
  * Class ilVideoManagerPlugin
  *
  * @author Theodor Truffer <tt@studer-ramimann.ch>
  */
-class ilVideoManagerPlugin extends ilUserInterfaceHookPlugin implements ilDynamicLanguageInterface {
-
-	/**
-	 * @return string
-	 */
-		public function getCsvPath() {
-		$path = substr(__FILE__, 0, strpos(__FILE__, 'classes')) . 'lang/';
-		if (file_exists($path . 'lang_custom.csv')) {
-			$file = $path . 'lang_custom.csv';
-		} else {
-			$file = $path . 'lang.csv';
-		}
-
-		return $file;
-	}
-
-
-	/**
-	 * @return string
-	 */
-	public function getAjaxLink() {
-		return false;
-	}
-
-
-	/**
-	 * @param $key
-	 *
-	 * @return mixed
-	 */
-	public function txt($key) {
-		return ilDynamicLanguage::getInstance($this, ilDynamicLanguage::MODE_DEV)->txt($key);
-	}
-
-
-
-
-
+class ilVideoManagerPlugin extends ilUserInterfaceHookPlugin { // implements ilDynamicLanguageInterface
 
 
 
@@ -149,4 +112,36 @@ class ilVideoManagerPlugin extends ilUserInterfaceHookPlugin implements ilDynami
 
 		return $ilLanguage;
 	}
+
+	//	/**
+	//	 * @return string
+	//	 */
+	//		public function getCsvPath() {
+	//		$path = substr(__FILE__, 0, strpos(__FILE__, 'classes')) . 'lang/';
+	//		if (file_exists($path . 'lang_custom.csv')) {
+	//			$file = $path . 'lang_custom.csv';
+	//		} else {
+	//			$file = $path . 'lang.csv';
+	//		}
+	//
+	//		return $file;
+	//	}
+	//
+	//
+	//	/**
+	//	 * @return string
+	//	 */
+	//	public function getAjaxLink() {
+	//		return false;
+	//	}
+	//
+	//
+	//	/**
+	//	 * @param $key
+	//	 *
+	//	 * @return mixed
+	//	 */
+	//	public function txt($key) {
+	//		return ilDynamicLanguage::getInstance($this, ilDynamicLanguage::MODE_DEV)->txt($key);
+	//	}
 }
