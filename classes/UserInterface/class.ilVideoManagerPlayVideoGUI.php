@@ -63,12 +63,14 @@ class ilVideoManagerPlayVideoGUI {
 			ilUtil::sendInfo($this->pl->txt('msg_vid_converting'), true);
 		}
 		$this->tpl->addJavaScript('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/js/video_player.js');
-		$this->tpl->setCurrentBlock('video_player');
+//		$this->tpl->setCurrentBlock('video_player');
+
 		$this->initMediaPlayer();
 		$this->initRelatedVideosTable();
 		$this->initDescription();
 		global $tpl;
 		$tpl->setContent($this->tpl->get());
+		$tpl->setTitle('Play Video');
 	}
 
 

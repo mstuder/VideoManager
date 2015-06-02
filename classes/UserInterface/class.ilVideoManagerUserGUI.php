@@ -111,10 +111,11 @@ class ilVideoManagerUserGUI {
 
 		$options = array(
 			'cmd' => 'view',
-			'sort_create_date' => 'ASC',
+			'sort_create_date' => 'DESC',
 			'limit' => 8,
 		);
 
+		$this->tpl->setTitle('Recently Uploaded');
 		$starter_gui = new ilVideoManagerVideoTableGUI($this, $options);
 
 		$this->tpl->setContent($starter_gui->getHTML());
@@ -158,7 +159,8 @@ class ilVideoManagerUserGUI {
 		$this->tpl->addCss('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/css/search_table.css');
 
 		$tpl = new ilTemplate('tpl.search_gui.html', true, true, 'Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager');
-		$tpl->setCurrentBlock('search_gui');
+//		$tpl->setCurrentBlock('search_gui');
+		$this->tpl->setTitle('Results for: '.$_SESSION['search_value']);
 
 		if (array_key_exists('search_value', $_SESSION)) {
 			$search = array(
