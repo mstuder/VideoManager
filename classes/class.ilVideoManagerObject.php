@@ -310,6 +310,31 @@ class ilVideoManagerObject extends ActiveRecord {
 
 
 	/**
+	 * @return int
+	 */
+	public function getFolderSize() {
+		$total_size = 0;
+		$files = scandir($this->getPath());
+		$cleanPath = rtrim($this->getPath(), '/') . '/';
+
+		foreach ($files as $t) {
+			if ($t <> "." && $t <> "..") {
+				$currentFile = $cleanPath . $t;
+				if (is_dir($currentFile)) {
+//					$size = foldersize($currentFile);
+//					$total_size += $size;
+				} else {
+					$size = filesize($currentFile);
+					$total_size += $size;
+				}
+			}
+		}
+
+		return $total_size;
+	}
+
+
+	/**
 	 * @param $path
 	 *
 	 * @return bool

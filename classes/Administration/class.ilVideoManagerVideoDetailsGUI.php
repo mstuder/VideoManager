@@ -53,7 +53,7 @@ class ilVideoManagerVideoDetailsGUI {
 			ilUtil::sendInfo($this->pl->txt('msg_vid_converting'), true);
 		}
 
-		$this->tpl->setCurrentBlock('video_details');
+		//		$this->tpl->setCurrentBlock('video_details');
 		$this->tpl->addCss('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/css/video_details.css');
 		$this->initPropertiesForm();
 		$this->initMediaPlayer();
@@ -93,13 +93,15 @@ class ilVideoManagerVideoDetailsGUI {
 
 		//Filesize
 		$filesize = new ilNonEditableValueGUI($this->pl->txt('common_filesize'));
-		if (filesize($this->video->getAbsolutePath()) < 1000) {
-			$filesize->setValue(number_format(filesize($this->video->getAbsolutePath()), 1, '.', "'") . " Bytes");
-		} elseif (filesize($this->video->getAbsolutePath()) < 1000000) {
-			$filesize->setValue(number_format(filesize($this->video->getAbsolutePath()) / 1000, 1, '.', "'") . " KB");
+
+		if ($this->video->getFolderSize() < 1000) {
+			$filesize->setValue(number_format($this->video->getFolderSize(), 1, '.', "'") . " Bytes");
+			$form->addItem($filesize);
+		} elseif ($this->video->getFolderSize() < 1000000) {
+			$filesize->setValue(number_format($this->video->getFolderSize() / 1000, 1, '.', "'") . " KB");
 			$form->addItem($filesize);
 		} else {
-			$filesize->setValue(number_format(filesize($this->video->getAbsolutePath()) / 1000000, 1, '.', "'") . " MB");
+			$filesize->setValue(number_format($this->video->getFolderSize() / 1000000, 1, '.', "'") . " MB");
 			$form->addItem($filesize);
 		}
 
