@@ -148,7 +148,7 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI {
 							$sql .= ' AND (vidm_tree.parent = ' . $tree->getParentId($this->video->getId()); //categories names must be unique
 
 							if ($this->video->getTags()) {
-								foreach (explode(' ', $this->video->getTags()) as $tag) {
+								foreach ($this->video->getTags() as $tag) {
 									$sql .= ' OR vidm_data.tags LIKE ' . $this->db->quote("%" . $tag . "%", 'text');
 								}
 							}
@@ -173,14 +173,13 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI {
 					break;
 			}
 		}
-//		echo $sql;
+		// echo $sql;
 		$query = $this->db->query($sql);
 		if ($this->options['count']) {
 			return (int)$this->db->fetchObject($query)->count;
 		}
 
 		$data = array();
-//		$data[] = array( 'id' => 0 );
 		while ($result = $this->db->fetchAssoc($query)) {
 			$row = array();
 			$video = new ilVideoManagerVideo($result['id']);
@@ -194,9 +193,6 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI {
 
 			$data[] = $row;
 		}
-
-//		var_dump($data); // FSX
-//		echo '<pre>' . print_r($data, 1) . '</pre>';
 
 		return $data;
 	}
