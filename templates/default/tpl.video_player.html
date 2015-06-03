@@ -1,9 +1,13 @@
+<link rel="stylesheet" type="text/css" href="./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/lib/build/mediaelementplayer.min.css" media="screen">
+<script type="text/javascript" src="./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/lib/build/mediaelement-and-player.min.js"></script>
+
 <div id="maincontainer">
     <div id="leftcontent">
         <div id="videoplayer">
             <video poster="{POSTER_SRC}" height="100%" controls style="width:100%;height:inherit;background-color:black;">
                 <!-- MP4 for Safari, IE9, iPhone, iPad, Android, and Windows Phone 7 -->
                 <source src="{VIDEO_SRC}.mp4" type="video/mp4" />
+	            <!--<source src="{VIDEO_SRC}.mp4" type="application/x-mpegURL" />-->
                 <!-- WebM/VP8 for Firefox4, Opera, and Chrome -->
                 <source src="{VIDEO_SRC}.webm" type="video/webm" />
                 <!-- Ogg/Vorbis for older Firefox and Opera versions -->
@@ -11,6 +15,11 @@
                 Your browser does not support the video tag.
             </video>
         </div>
+
+	    <script>
+		    $('video').mediaelementplayer();
+	    </script>
+
         <div id="description_container">
             <div id="description_content">
 

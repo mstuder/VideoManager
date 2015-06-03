@@ -62,7 +62,7 @@ class ilVideoManagerPlayVideoGUI {
 		if (! ilVideoManagerObject::__checkConverting($this->video->getId())) {
 			ilUtil::sendInfo($this->pl->txt('msg_vid_converting'), true);
 		}
-		$this->tpl->addJavaScript('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/js/video_player.js');
+//		$this->tpl->addJavaScript('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/js/video_player.js');
 //		$this->tpl->setCurrentBlock('video_player');
 
 		$this->initMediaPlayer();
@@ -75,8 +75,8 @@ class ilVideoManagerPlayVideoGUI {
 
 
 	protected function initMediaPlayer() {
-		require_once('./Services/MediaObjects/classes/class.ilPlayerUtil.php');
-		ilPlayerUtil::initMediaElementJs();
+//		require_once('./Services/MediaObjects/classes/class.ilPlayerUtil.php');
+//		ilPlayerUtil::initMediaElementJs();
 		$this->tpl->setVariable('POSTER_SRC', $this->video->getPosterHttp());
 		$this->tpl->setVariable('VIDEO_SRC', $this->video->getHttpPath() . '/' . $this->video->getTitle());
 	}

@@ -159,8 +159,16 @@ class ilVideoManagerUserGUI {
 		$this->tpl->addCss('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/css/search_table.css');
 
 		$tpl = new ilTemplate('tpl.search_gui.html', true, true, 'Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager');
-//		$tpl->setCurrentBlock('search_gui');
-		$this->tpl->setTitle('Results for: '.$_SESSION['search_value']);
+		//		$tpl->setCurrentBlock('search_gui');
+		if ($_SESSION['search_method'] == 'category') {
+			/**
+			 * @var $cat ilVideoManagerFolder
+			 */
+			$cat = ilVideoManagerFolder::find($_SESSION['search_value']);
+			$this->tpl->setTitle('Results for Channel: ' . $cat->getTitle());
+		} else {
+			$this->tpl->setTitle('Results for: ' . $_SESSION['search_value']);
+		}
 
 		if (array_key_exists('search_value', $_SESSION)) {
 			$search = array(
