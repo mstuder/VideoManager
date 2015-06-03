@@ -112,12 +112,11 @@ class ilVideoManagerUserGUI {
 		$options = array(
 			'cmd' => 'view',
 			'sort_create_date' => 'DESC',
-			'limit' => 8,
+			'limit' => 10,
 		);
 
 		$this->tpl->setTitle('Recently Uploaded');
 		$starter_gui = new ilVideoManagerVideoTableGUI($this, $options);
-
 		$this->tpl->setContent($starter_gui->getHTML());
 	}
 
@@ -139,6 +138,10 @@ class ilVideoManagerUserGUI {
 		$this->toolbar->addInputItem($textinput);
 		$this->toolbar->addFormButton($this->pl->txt('common_search'), 'search');
 		$this->toolbar->setFormAction($this->ctrl->getLinkTarget($this, 'search'));
+		global $ilUser;
+		if($ilUser->getId() == 6) {
+			$this->toolbar->addButton('Recently Uploaded', $this->ctrl->getLinkTarget($this, 'view'));
+		}
 	}
 
 

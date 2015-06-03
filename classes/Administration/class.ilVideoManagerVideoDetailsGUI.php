@@ -54,10 +54,11 @@ class ilVideoManagerVideoDetailsGUI {
 		}
 
 		//		$this->tpl->setCurrentBlock('video_details');
-		$this->tpl->addCss('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/css/video_details.css');
+
 		$this->initPropertiesForm();
 		$this->initMediaPlayer();
 		global $tpl;
+		$tpl->addCss('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/css/video_details.css');
 		$tpl->setContent($this->tpl->get());
 	}
 
@@ -132,8 +133,8 @@ class ilVideoManagerVideoDetailsGUI {
 
 
 	protected function initMediaPlayer() {
-		require_once('./Services/MediaObjects/classes/class.ilPlayerUtil.php');
-		ilPlayerUtil::initMediaElementJs();
+//		require_once('./Services/MediaObjects/classes/class.ilPlayerUtil.php');
+//		ilPlayerUtil::initMediaElementJs();
 		$this->tpl->setVariable('POSTER_SRC', $this->video->getPosterHttp());
 		$this->tpl->setVariable('VIDEO_SRC', $this->video->getHttpPath() . '/' . $this->video->getTitle());
 	}

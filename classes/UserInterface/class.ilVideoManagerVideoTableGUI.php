@@ -62,15 +62,16 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI {
 		$this->video = $video;
 		$this->options = $options;
 		$this->setId('video_tbl');
-		$this->setDefaultOrderField('create_date');
+		$this->setDefaultOrderField('sort');
 		$this->setShowRowsSelector(false);
 		$this->setFormAction($ilCtrl->getFormAction($parent_gui));
 		$this->setEnableNumInfo(true);
-
+		$this->setExternalSorting(true);
+		$this->setEnableNumInfo(false);
 		if ($options['cmd'] == 'related_videos') {
 			$this->max_desc_length = 70;
 			$this->setExternalSegmentation(true);
-			$this->options['limit'] = 10;
+			$this->options['limit'] = 5;
 		} else {
 			$this->max_desc_length = 320;
 		}
@@ -173,16 +174,19 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI {
 					break;
 			}
 		}
-		// echo $sql;
+
 		$query = $this->db->query($sql);
 		if ($this->options['count']) {
 			return (int)$this->db->fetchObject($query)->count;
 		}
 
 		$data = array();
+		$x = 0;
 		while ($result = $this->db->fetchAssoc($query)) {
 			$row = array();
 			$video = new ilVideoManagerVideo($result['id']);
+			$row['sort'] = $x;
+			$x++;
 			$row['img'] = $video->getPreviewImageHttp();
 			$row['title'] = $video->getTitle();
 			$row['id'] = $video->getId();
