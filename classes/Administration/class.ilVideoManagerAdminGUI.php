@@ -7,24 +7,34 @@ require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHoo
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerFolder.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerTree.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerPlugin.php');
-require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.ilVideoManagerSubscription.php');
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/Subscription/class.vidmSubscription.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/Administration/class.ilVideoManagerTreeExplorerGUI.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/Administration/class.ilVideoManagerAdminTableGUI.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/Administration/class.ilVideoManagerVideoFormGUI.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/Administration/class.ilVideoManagerVideoDetailsGUI.php');
 require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/Administration/class.ilVideoManagerFolderFormGUI.php');
-require_once('./Services/MainMenu/classes/class.ilMainMenuGUI.php');
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/Subscription/class.vidmSubscription.php');
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/Count/class.vidmCountTableGUI.php');
 
 /**
  * Class ilVideoManagerGUI
  *
  * @author            Theodor Truffer <tt@studer-raimann.ch>
+ * @author            Fabian Schmid <fs@studer-raimann.ch>
  *
  * @ilCtrl_IsCalledBy ilVideoManagerAdminGUI: ilRouterGUI, ilUIPluginRouterGUI
- * @ilCtrl_Calls      ilVideoManagerAdminGUI: ilVideoManagerAdminTableGUI
+ * @ilCtrl_Calls      ilVideoManagerAdminGUI: ilVideoManagerAdminTableGUI, vidmSubscriptionGUI
  */
 class ilVideoManagerAdminGUI {
 
+	const CMD_VIEW = 'view';
+	const CMD_ADD_FOLDER = 'addFolder';
+	const CMD_ADD_VIDEO = 'addVideo';
+	const CMD_SHOW_FOLDER_CONTENT = 'showFolderContent';
+	const PARAM_NODE_ID = 'node_id';
+	const CMD_CREATE = 'create';
+	const CMD_EDIT = 'edit';
+	const CMD_SHOW_STATISTICS = 'showStatistics';
 	/**
 	 * @var ilCtrl
 	 */
@@ -75,23 +85,23 @@ class ilVideoManagerAdminGUI {
 		$this->toolbar = $ilToolbar;
 		$this->tree = new ilVideoManagerTree(1);
 
-		$_GET['node_id'] ? $this->object = ilVideoManagerObject::find($_GET['node_id']) : $this->object = ilVideoManagerObject::__getRootFolder();
+		$_GET[self::PARAM_NODE_ID] ? $this->object = ilVideoManagerObject::find($_GET[self::PARAM_NODE_ID]) : $this->object = ilVideoManagerObject::__getRootFolder();
 	}
 
 
 	public function executeCommand() {
-		if (! $_GET['node_id']) {
-			$_GET['node_id'] = ilVideoManagerObject::__getRootFolder()->getId();
+		if (! $_GET[self::PARAM_NODE_ID]) {
+			$_GET[self::PARAM_NODE_ID] = ilVideoManagerObject::__getRootFolder()->getId();
 		}
-		if (ilVideoManagerObject::__getTypeForId($_GET['node_id']) == 'vid') {
-			$this->object = new ilVideoManagerVideo($_GET['node_id']);
+		if (ilVideoManagerObject::__getTypeForId($_GET[self::PARAM_NODE_ID]) == 'vid') {
+			$this->object = new ilVideoManagerVideo($_GET[self::PARAM_NODE_ID]);
 		} else {
-			$this->object = new ilVideoManagerFolder($_GET['node_id']);
+			$this->object = new ilVideoManagerFolder($_GET[self::PARAM_NODE_ID]);
 		}
 		$this->prepareOutput();
 		$this->checkPermission();
 
-		$cmd = $this->ctrl->getCmd('view');
+		$cmd = $this->ctrl->getCmd(self::CMD_VIEW);
 
 		//Otherwise move-Objects would not work
 		if ($cmd != "cut" && $cmd != "moveMultiple") {
@@ -99,17 +109,17 @@ class ilVideoManagerAdminGUI {
 		}
 
 		switch ($cmd) {
-			case 'addFolder':
+			case self::CMD_ADD_FOLDER:
 				$this->addFolder();
 				break;
-			case 'addVideo':
+			case self::CMD_ADD_VIDEO:
 				$this->addVideo();
 				break;
-			case 'create':
+			case self::CMD_CREATE:
 				$this->create();
 				break;
 			case 'createFolder':
-				$_POST['create_type'] = 'fld';
+				$_POST['create_type'] = ilVideoManagerObject::TYPE_FLD;
 				$this->createFolder();
 				break;
 			case 'showTree':
@@ -145,7 +155,7 @@ class ilVideoManagerAdminGUI {
 			case 'performPaste':
 				$this->performPaste();
 				break;
-			case 'view':
+			case self::CMD_VIEW:
 				$this->view();
 				break;
 			default:
@@ -164,10 +174,10 @@ class ilVideoManagerAdminGUI {
 
 	public function view() {
 		switch ($this->object->getType()) {
-			case 'fld':
+			case ilVideoManagerObject::TYPE_FLD:
 				$this->showFolderContent();
 				break;
-			case 'vid':
+			case ilVideoManagerObject::TYPE_VID:
 				$this->showVideoDetails();
 				break;
 		}
@@ -176,19 +186,31 @@ class ilVideoManagerAdminGUI {
 
 	public function showFolderContent() {
 		global $ilToolbar;
+		/**
+		 * @var $ilToolbar ilToolbarGUI
+		 */
 
 		include_once("./Services/UIComponent/AdvancedSelectionList/classes/class.ilAdvancedSelectionListGUI.php");
 		$adv = new ilAdvancedSelectionListGUI();
 		$adv->setListTitle($this->pl->txt("admin_add_new_item"));
+		$adv->setPullRight(true);
+
+		if (vidmSubscription::isActive()) {
+			$b = ilLinkButton::getInstance();
+			$b->setUrl($this->ctrl->getLinkTarget($this, self::CMD_SHOW_STATISTICS));
+			$b->setCaption('ui_uihk_video_man_admin_view_statistics');
+			$ilToolbar->addButtonInstance($b);
+		}
 
 		include_once("./Services/UIComponent/GroupedList/classes/class.ilGroupedListGUI.php");
 		$gl = new ilGroupedListGUI();
 		$icon_path = ilUtil::getImagePath('icon_cat.svg');
-		$gl->addEntry(ilUtil::img($icon_path) . " " . $this->pl->txt("admin_add_folder"), $this->ctrl->getLinkTarget($this, 'addFolder'), "_top");
+		$gl->addEntry(ilUtil::img($icon_path) . " "
+			. $this->pl->txt("admin_add_folder"), $this->ctrl->getLinkTarget($this, self::CMD_ADD_FOLDER), "_top");
 		$icon_path = ilUtil::getImagePath('icon_mobs.svg');
-		$gl->addEntry(ilUtil::img($icon_path) . " " . $this->pl->txt("admin_add_video"), $this->ctrl->getLinkTarget($this, 'addVideo'), "_top");
+		$gl->addEntry(ilUtil::img($icon_path) . " "
+			. $this->pl->txt("admin_add_video"), $this->ctrl->getLinkTarget($this, self::CMD_ADD_VIDEO), "_top");
 		$gl->setAsDropDown(true);
-
 		$adv->setGroupedList($gl);
 
 		$ilToolbar->addText($adv->getHTML());
@@ -201,8 +223,8 @@ class ilVideoManagerAdminGUI {
 	public function showVideoDetails() {
 		global $ilTabs;
 		$parent_id = $this->tree->getParentId($this->object->getId());
-		$this->ctrl->setParameter($this, 'node_id', $parent_id);
-		$ilTabs->setBackTarget($this->pl->txt('common_back'), $this->ctrl->getLinkTarget($this, 'showFolderContent'));
+		$this->ctrl->setParameter($this, self::PARAM_NODE_ID, $parent_id);
+		$ilTabs->setBackTarget($this->pl->txt('common_back'), $this->ctrl->getLinkTarget($this, self::CMD_SHOW_FOLDER_CONTENT));
 		$vm_video_details = new ilVideoManagerVideoDetailsGUI($this, $this->object);
 		$vm_video_details->init();
 	}
@@ -210,12 +232,12 @@ class ilVideoManagerAdminGUI {
 
 	public function showTree() {
 		$expl_tree = new ilVideoManagerTreeExplorerGUI('vidm_explorer', 'ilVideoManagerAdminGUI', 'showTree', $this->tree);
-		$expl_tree->setTypeWhiteList(array( 'fld', 'vid' ));
-		$expl_tree->setPathOpen($_GET['node_id'] ? $_GET['node_id'] : ilVideoManagerObject::__getRootFolder()->getId());
+		$expl_tree->setTypeWhiteList(array( ilVideoManagerObject::TYPE_FLD, ilVideoManagerObject::TYPE_VID ));
+		$expl_tree->setPathOpen($_GET[self::PARAM_NODE_ID] ? $_GET[self::PARAM_NODE_ID] : ilVideoManagerObject::__getRootFolder()->getId());
 		if (! $expl_tree->handleCommand()) {
 			$this->tpl->setLeftNavContent($expl_tree->getHTML());
 		}
-		$this->ctrl->setParameterByClass('ilVideoManagerAdminGUI', 'node_id', $this->object->getId());
+		$this->ctrl->setParameterByClass('ilVideoManagerAdminGUI', self::PARAM_NODE_ID, $this->object->getId());
 	}
 
 
@@ -243,19 +265,18 @@ class ilVideoManagerAdminGUI {
 	 * called by prepare output
 	 */
 	protected function addAdminLocatorItems() {
-		$_GET['node_id'] ? $end_node = $_GET['node_id'] : $end_node = ilVideoManagerObject::__getRootFolder()->getId();
+		$_GET[self::PARAM_NODE_ID] ? $end_node = $_GET[self::PARAM_NODE_ID] : $end_node = ilVideoManagerObject::__getRootFolder()->getId();
 		$path = $this->tree->getPathFull($end_node, ilVideoManagerObject::__getRootFolder()->getId());
 		// add item for each node on path
 		foreach ((array)$path as $key => $row) {
-			$this->ctrl->setParameterByClass("ilvideomanageradmingui", 'node_id', $row["child"]);
-			$this->ilLocator->addItem($row["title"], $this->ctrl->getLinkTargetByClass("ilVideoManagerAdminGUI", "view"), ilFrameTargetInfo::_getFrame("MainContent"));
-			//            $this->ctrl->setParameterByClass("ilVideoManagerAdminGUI", "node_id", $this->ctrl->getParameterArray($this)['node_id']);
+			$this->ctrl->setParameterByClass("ilvideomanageradmingui", self::PARAM_NODE_ID, $row["child"]);
+			$this->ilLocator->addItem($row["title"], $this->ctrl->getLinkTargetByClass("ilVideoManagerAdminGUI", self::CMD_VIEW), ilFrameTargetInfo::_getFrame("MainContent"));
 		}
 	}
 
 
 	protected function addFolder() {
-		$form = new ilVideoManagerFolderFormGUI($this, 'create');
+		$form = new ilVideoManagerFolderFormGUI($this, self::CMD_CREATE);
 		$this->tpl->setContent($form->getHTML());
 	}
 
@@ -282,7 +303,7 @@ class ilVideoManagerAdminGUI {
 
 
 	protected function createFolder() {
-		$form = new ilVideoManagerFolderFormGUI($this, 'create');
+		$form = new ilVideoManagerFolderFormGUI($this, self::CMD_CREATE);
 		$form->setValuesByPost();
 		if (! $form->createFolder()) {
 			$this->addFolder();
@@ -295,13 +316,13 @@ class ilVideoManagerAdminGUI {
 		if ($_POST['selected_cmd'] == 'deleteMultiple') {
 			//none selected
 			if (! $_POST['id']) {
-				$this->ctrl->redirect($this, 'view');
+				$this->ctrl->redirect($this, self::CMD_VIEW);
 			}
 
 			//Check if one of the items is still being converted
 			if (! ilVideoManagerObject::__checkConverting($_POST['id'])) {
 				ilUtil::sendFailure($this->pl->txt('msg_deletion_failed'), true);
-				$this->ctrl->redirect($this, 'view');
+				$this->ctrl->redirect($this, self::CMD_VIEW);
 			}
 
 			foreach ($_POST['id'] as $key => $id) {
@@ -312,7 +333,7 @@ class ilVideoManagerAdminGUI {
 			//Check if one of the items is still being converted
 			if (! ilVideoManagerObject::__checkConverting($_GET['target_id'])) {
 				ilUtil::sendFailure($this->pl->txt('msg_deletion_failed'), true);
-				$this->ctrl->redirect($this, 'view');
+				$this->ctrl->redirect($this, self::CMD_VIEW);
 			}
 
 			$this->ctrl->setParameter($this, 'target_id', $_GET['target_id']);
@@ -321,7 +342,7 @@ class ilVideoManagerAdminGUI {
 		}
 
 		$this->tabs->clearTargets();
-		$this->tabs->setBackTarget($this->pl->txt('common_back'), $this->ctrl->getLinkTarget($this, 'view'));
+		$this->tabs->setBackTarget($this->pl->txt('common_back'), $this->ctrl->getLinkTarget($this, self::CMD_VIEW));
 		ilUtil::sendQuestion($this->pl->txt('admin_confirm_delete'));
 
 		$toolbar = new ilToolbarGUI();
@@ -333,7 +354,7 @@ class ilVideoManagerAdminGUI {
 
 
 	protected function cancel() {
-		$this->ctrl->redirect($this, 'view');
+		$this->ctrl->redirect($this, self::CMD_VIEW);
 	}
 
 
@@ -354,31 +375,31 @@ class ilVideoManagerAdminGUI {
 			}
 		}
 
-		$this->ctrl->redirect($this, 'view');
+		$this->ctrl->redirect($this, self::CMD_VIEW);
 	}
 
 
 	protected function editFolder() {
-		$form = new ilVideoManagerFolderFormGUI($this, 'edit');
+		$form = new ilVideoManagerFolderFormGUI($this, self::CMD_EDIT);
 		$this->tpl->setContent($form->getHTML());
 	}
 
 
 	protected function saveFolder() {
-		$form = new ilVideoManagerFolderFormGUI($this, 'edit');
+		$form = new ilVideoManagerFolderFormGUI($this, self::CMD_EDIT);
 		$form->setValuesByPost();
 		$this->ctrl->saveParameterByClass('ilVideoManagerFolderFormGUI', 'target_id');
 		if (! $form->saveFolder()) {
 			$this->editFolder();
 		}
-		$this->ctrl->redirect($this, 'view');
+		$this->ctrl->redirect($this, self::CMD_VIEW);
 	}
 
 
 	protected function editVideo() {
 		if (! ilVideoManagerObject::__checkConverting($_GET['target_id'])) {
 			ilUtil::sendInfo($this->pl->txt('msg_edit_vid_failed'), true);
-			$this->ctrl->redirect($this, 'view');
+			$this->ctrl->redirect($this, self::CMD_VIEW);
 		}
 		$form = new ilVideoManagerVideoFormGUI($this, new ilVideoManagerVideo($_GET['target_id']));
 		$form->fillForm();
@@ -396,7 +417,7 @@ class ilVideoManagerAdminGUI {
 
 
 	protected function cut() {
-		$this->tabs->setBackTarget($this->pl->txt('common_back'), $this->ctrl->getLinkTarget($this, 'showFolderContent'));
+		$this->tabs->setBackTarget($this->pl->txt('common_back'), $this->ctrl->getLinkTarget($this, self::CMD_SHOW_FOLDER_CONTENT));
 		ilUtil::sendInfo($this->pl->txt('msg_choose_folder'));
 		$expl_tree = new ilVideoManagerTreeExplorerGUI('vidm_explorer', 'ilVideoManagerAdminGUI', 'performPaste', $this->tree);
 		$expl_tree->setTypeWhiteList(array( 'fld' ));
@@ -405,13 +426,13 @@ class ilVideoManagerAdminGUI {
 		if ($_POST['selected_cmd'] == 'moveMultiple') {
 			//none selected
 			if (! $_POST['id']) {
-				$this->ctrl->redirect($this, 'view');
+				$this->ctrl->redirect($this, self::CMD_VIEW);
 			}
 
 			//Check if one of the items is still being converted
 			if (! ilVideoManagerObject::__checkConverting($_POST['id'])) {
 				ilUtil::sendFailure($this->pl->txt('msg_move_failed'), true);
-				$this->ctrl->redirect($this, 'view');
+				$this->ctrl->redirect($this, self::CMD_VIEW);
 			}
 
 			foreach ($_POST['id'] as $key => $id) {
@@ -421,7 +442,7 @@ class ilVideoManagerAdminGUI {
 			//Check if one of the items is still being converted
 			if (! ilVideoManagerObject::__checkConverting($_GET['target_id'])) {
 				ilUtil::sendFailure($this->pl->txt('msg_move_failed'), true);
-				$this->ctrl->redirect($this, 'view');
+				$this->ctrl->redirect($this, self::CMD_VIEW);
 			}
 			$subtree = $this->tree->getSubTree($this->tree->getNodeData($_GET['target_id']));
 		}
@@ -443,16 +464,16 @@ class ilVideoManagerAdminGUI {
 			$obj = new ilVideoManagerObject($id);
 			$old_path = $obj->getPath();
 			$this->tree->_removeEntry(1, $id, 'vidm_tree');
-			$this->tree->insertNode($id, $_GET['node_id']);
+			$this->tree->insertNode($id, $_GET[self::PARAM_NODE_ID]);
 			rename($old_path, $obj->getPath());
 		}
 
-		$this->ctrl->redirect($this, 'view');
+		$this->ctrl->redirect($this, self::CMD_VIEW);
 	}
 
 
 	public function notifyUsers($video) {
-		$subscriptions = ilVideoManagerSubscription::where(array( 'cat_id' => $this->tree->getParentId($video->getId()) ));
+		$subscriptions = vidmSubscription::where(array( 'cat_id' => $this->tree->getParentId($video->getId()) ));
 		$mail = new ilMail(ANONYMOUS_USER_ID);
 		foreach ($subscriptions->get() as $subscription) {
 			$subject = $this->getNotificationSubject($subscription);
@@ -462,14 +483,25 @@ class ilVideoManagerAdminGUI {
 	}
 
 
-	protected function getNotificationSubject($subscription) {
+	/**
+	 * @param vidmSubscription $subscription
+	 *
+	 * @return string
+	 */
+	protected function getNotificationSubject(vidmSubscription $subscription) {
 		$ilLanguage = $this->pl->loadLanguageForUser($subscription->getUsrId());
 
 		return $ilLanguage->txt("ui_uihk_video_man_mail_subject") . " '" . ilVideoManagerFolder::find($subscription->getCatId())->getTitle() . "'";
 	}
 
 
-	protected function getNotificationMessage($subscription, $video) {
+	/**
+	 * @param vidmSubscription    $subscription
+	 * @param ilVideoManagerVideo $video
+	 *
+	 * @return string
+	 */
+	protected function getNotificationMessage(vidmSubscription $subscription, ilVideoManagerVideo $video) {
 		$ilLanguage = $this->pl->loadLanguageForUser($subscription->getUsrId());
 
 		$message = '';
@@ -481,15 +513,24 @@ class ilVideoManagerAdminGUI {
 		$message .= $ilLanguage->txt("ui_uihk_video_man_common_category") . ": " . ilVideoManagerFolder::find($subscription->getCatId())->getTitle();
 		$message .= "\n\n";
 		$message .= $ilLanguage->txt("ui_uihk_video_man_common_video") . ': ' . $video->getTitle() . '';
+		$message .= "\n\n";
+		$message .= $ilLanguage->txt("ui_uihk_video_man_common_description") . ': ' . $video->getDescription() . '';
 
 		$message .= "\n\n";
-		$message .= $ilLanguage->txt('ui_uihk_video_man_mail_view_video');
-		$this->ctrl->setParameterByClass('ilVideoManagerUserGUI', 'node_id', $video->getId());
-		$message .= ' ' . ilUtil::_getHttpPath() . '/' . $this->ctrl->getLinkTargetByClass('ilVideoManagerUserGUI', 'playVideo');
+		$message .= $ilLanguage->txt('ui_uihk_video_man_mail_view_video') . ': ';
+		$this->ctrl->setParameterByClass('ilVideoManagerUserGUI', self::PARAM_NODE_ID, $video->getId());
+		$message .= ilUtil::_getHttpPath() . '/' . $this->ctrl->getLinkTargetByClass('ilVideoManagerUserGUI', 'playVideo');
 
 		$message .= ilMail::_getInstallationSignature();
 
 		return $message;
+	}
+
+
+	protected function showStatistics() {
+		$this->tabs->setBackTarget($this->pl->txt('common_back'), $this->ctrl->getLinkTarget($this, self::CMD_SHOW_FOLDER_CONTENT));
+		$stats = new vidmCountTableGUI($this, $this->tree, $this->object);
+		$this->tpl->setContent($stats->getHTML());
 	}
 
 

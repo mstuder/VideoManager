@@ -1,13 +1,13 @@
 <?php
-require_once('class.videoman.php');
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/class.videoman.php');
 videoman::loadActiveRecord();
-
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/Config/class.vidmConfig.php');
 /**
- * Class ilVideoManagerSubscription
+ * Class vidmSubscription
  *
  * @author Theodor Truffer <tt@studer-raimann.ch>
  */
-class ilVideoManagerSubscription extends ActiveRecord {
+class vidmSubscription extends ActiveRecord {
 
 	/**
 	 * @var int
@@ -57,7 +57,7 @@ class ilVideoManagerSubscription extends ActiveRecord {
 
 
 	/**
-	 * @param int $fld_id
+	 * @param $cat_id
 	 */
 	public function setCatId($cat_id) {
 		$this->cat_id = $cat_id;
@@ -88,8 +88,51 @@ class ilVideoManagerSubscription extends ActiveRecord {
 	}
 
 
+	/**
+	 * @param $usr_id
+	 * @param $cat_id
+	 *
+	 * @return bool
+	 */
 	public static function isSubscribed($usr_id, $cat_id) {
-		return (bool)ilVideoManagerSubscription::where(array( 'usr_id' => $usr_id, 'cat_id' => $cat_id ))->first();
+		return (bool)self::where(array( 'usr_id' => $usr_id, 'cat_id' => $cat_id ))->hasSets();
+	}
+
+
+	/**
+	 * @param $usr_id
+	 * @param $cat_id
+	 *
+	 * @return bool
+	 */
+	public function subscribe($usr_id, $cat_id) {
+		if (self::isSubscribed($usr_id, $cat_id)) {
+			return false;
+		}
+		$obj = new self();
+		$obj->setCatId($cat_id);
+		$obj->setUsrId($usr_id);
+		$obj->create();
+
+		return true;
+	}
+
+
+	/**
+	 * @return string
+	 */
+	public static function isActive() {
+		return vidmConfig::get(vidmConfig::F_ACTIVATE_SUBSCRIPTION);
+	}
+
+
+	/**
+	 * @param $cat_id
+	 */
+	public static function deleteAllForCatId($cat_id) {
+		global $ilDB;
+		$q = 'DELETE FROM ' . self::returnDbTableName() . ' WHERE cat_id = ' . $ilDB->quote($cat_id, 'integer');
+		$ilDB->manipulate($q);
 	}
 
 

@@ -3,11 +3,13 @@ require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHoo
 require_once('./Services/Form/classes/class.ilPropertyFormGUI.php');
 require_once('./Services/Form/classes/class.ilNonEditableValueGUI.php');
 require_once("./Services/Rating/classes/class.ilRating.php");
+require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/classes/Count/class.vidmCount.php');
 
 /**
  * Class ilVideoManagerVideoDetailsGUI
  *
  * @author            Theodor Truffer <tt@studer-raimann.ch>
+ * @author            Fabian Schmid <fs@studer-raimann.ch>
  *
  * @ilCtrl_IsCalledBy ilVideoManagerVideoDetailsGUI: ilRouterGUI, ilUIPluginRouterGUI
  */
@@ -39,7 +41,6 @@ class ilVideoManagerVideoDetailsGUI {
 	 * @param $video ilVideoManagerVideo
 	 */
 	public function __construct($parent_gui, $video) {
-		global $tpl;
 		$this->parent_gui = $parent_gui;
 		$this->video = $video;
 		$this->pl = ilVideoManagerPlugin::getInstance();
@@ -52,11 +53,12 @@ class ilVideoManagerVideoDetailsGUI {
 			ilUtil::sendInfo($this->pl->txt('msg_vid_converting'), true);
 		}
 
-		$this->tpl->setCurrentBlock('video_details');
-		$this->tpl->addCss('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/css/video_details.css');
+		//		$this->tpl->setCurrentBlock('video_details');
+
 		$this->initPropertiesForm();
 		$this->initMediaPlayer();
 		global $tpl;
+		$tpl->addCss('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/css/video_details.css');
 		$tpl->setContent($this->tpl->get());
 	}
 
@@ -92,13 +94,15 @@ class ilVideoManagerVideoDetailsGUI {
 
 		//Filesize
 		$filesize = new ilNonEditableValueGUI($this->pl->txt('common_filesize'));
-		if (filesize($this->video->getAbsolutePath()) < 1000) {
-			$filesize->setValue(number_format(filesize($this->video->getAbsolutePath()), 1, '.', "'") . " Bytes");
-		} elseif (filesize($this->video->getAbsolutePath()) < 1000000) {
-			$filesize->setValue(number_format(filesize($this->video->getAbsolutePath()) / 1000, 1, '.', "'") . " KB");
+
+		if ($this->video->getFolderSize() < 1000) {
+			$filesize->setValue(number_format($this->video->getFolderSize(), 1, '.', "'") . " Bytes");
+			$form->addItem($filesize);
+		} elseif ($this->video->getFolderSize() < 1000000) {
+			$filesize->setValue(number_format($this->video->getFolderSize() / 1000, 1, '.', "'") . " KB");
 			$form->addItem($filesize);
 		} else {
-			$filesize->setValue(number_format(filesize($this->video->getAbsolutePath()) / 1000000, 1, '.', "'") . " MB");
+			$filesize->setValue(number_format($this->video->getFolderSize() / 1000000, 1, '.', "'") . " MB");
 			$form->addItem($filesize);
 		}
 
@@ -107,7 +111,7 @@ class ilVideoManagerVideoDetailsGUI {
 		$update->setValue($this->video->getCreateDate());
 		$form->addItem($update);
 
-		//Rating
+		// Rating
 		$rating = new ilRating();
 		$average = $rating->getOverallRatingForObject($this->video->getId(), 'vid', 0, '-');
 		$rating_gui = new ilNonEditableValueGUI($this->pl->txt('common_rating'));
@@ -118,13 +122,19 @@ class ilVideoManagerVideoDetailsGUI {
 		}
 		$form->addItem($rating_gui);
 
+		if (vidmCount::isActive()) {
+			$views = new ilNonEditableValueGUI($this->pl->txt('stats_views'));
+			$views->setValue(vidmCount::count($this->video->getId()));
+			$form->addItem($views);
+		}
+
 		$this->tpl->setVariable('DESCRIPTION', $form->getHTML());
 	}
 
 
 	protected function initMediaPlayer() {
-		require_once('./Services/MediaObjects/classes/class.ilPlayerUtil.php');
-		ilPlayerUtil::initMediaElementJs();
+//		require_once('./Services/MediaObjects/classes/class.ilPlayerUtil.php');
+//		ilPlayerUtil::initMediaElementJs();
 		$this->tpl->setVariable('POSTER_SRC', $this->video->getPosterHttp());
 		$this->tpl->setVariable('VIDEO_SRC', $this->video->getHttpPath() . '/' . $this->video->getTitle());
 	}
