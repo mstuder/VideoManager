@@ -111,6 +111,7 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI {
 
 
 	public function createData() {
+		$tree = new ilVideoManagerTree(1);
 		if ($this->options['count']) {
 			$sql = 'SELECT COUNT(vidm_data.id) AS count';
 		} else {
@@ -121,6 +122,10 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI {
                     JOIN vidm_tree ON (vidm_tree.child = vidm_data.id)';
 
 		$sql .= ' WHERE vidm_data.type = ' . $this->db->quote('vid', 'text');
+
+		if($hidden_nodes = $tree->getHiddenNodes()) {
+			$sql .= ' AND vidm_data.id NOT IN (' . implode(',', $hidden_nodes) . ')';
+		}
 
 		foreach ($this->options as $option => $value) {
 			switch ($option) {
@@ -145,7 +150,6 @@ class ilVideoManagerVideoTableGUI extends ilTable2GUI {
 							break;
 						case 'related':
 							//related videos search for same tags/categories
-							$tree = new ilVideoManagerTree(1);
 							$sql .= ' AND (vidm_tree.parent = ' . $tree->getParentId($this->video->getId()); //categories names must be unique
 
 							if ($this->video->getTags()) {

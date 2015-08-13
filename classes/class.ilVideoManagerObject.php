@@ -72,6 +72,14 @@ class ilVideoManagerObject extends ActiveRecord {
 	 * @db_length           4
 	 */
 	protected $create_date;
+	/**
+	 * @var int
+	 *
+	 * @db_has_field        true
+	 * @db_fieldtype        integer
+	 * @db_length           1
+	 */
+	protected $hidden;
 
 
 	/**
@@ -187,6 +195,22 @@ class ilVideoManagerObject extends ActiveRecord {
 	 */
 	public function getTags() {
 		return $this->tags;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getHidden()
+	{
+		return $this->hidden;
+	}
+
+	/**
+	 * @param int $hidden
+	 */
+	public function setHidden($hidden)
+	{
+		$this->hidden = $hidden;
 	}
 
 
