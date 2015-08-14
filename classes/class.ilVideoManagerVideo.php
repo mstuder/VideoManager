@@ -46,10 +46,15 @@ class ilVideoManagerVideo extends ilVideoManagerObject {
 	 *
 	 * @return bool
 	 */
-	public function uploadVideo($tmp_path) {
+	public function uploadVideo($tmp_path, $image_at_second = -1) {
 		move_uploaded_file($tmp_path, $this->getPath() . '/' . $this->getTitle() . '.' . $this->getSuffix());
+
+		$video_duration = vmFFmpeg::getDuration($this->getAbsolutePath());
+		if ($image_at_second < 0 || $image_at_second > $video_duration) {
+			$image_at_second = $video_duration / 3;
+		}
 		vmFFmpeg::extractImage($this->getAbsolutePath(), $this->getTitle()
-			. '_poster.png', $this->getPath(), (vmFFmpeg::getDuration($this->getAbsolutePath()) / 3));
+			. '_poster.png', $this->getPath(), $image_at_second);
 		ilUtil::resizeImage($this->getPoster(), $this->getPreviewImage(), self::A_WIDTH, self::A_HEIGHT, true);
 
 		return true;

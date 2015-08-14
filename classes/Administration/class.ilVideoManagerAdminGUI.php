@@ -298,7 +298,7 @@ class ilVideoManagerAdminGUI {
 		header('Content-type: text/plain');
 		require_once('./Services/JSON/classes/class.ilJsonUtil.php');
 		echo ilJsonUtil::encode($response);
-		exit;
+		$this->showFolderContent();
 	}
 
 
