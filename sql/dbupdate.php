@@ -85,4 +85,11 @@ if (!$ilDB->tableColumnExists('vidm_data', 'hidden')) {
        'notnull' => false,
    ));
 }
+if (!$ilDB->tableColumnExists('vidm_data', 'image_at_second')) {
+    $ilDB->addTableColumn('vidm_data', 'image_at_second', array(
+        'type' => 'integer',
+        'length' => 8,
+        'notnull' => false,
+    ));
+}
 ?>

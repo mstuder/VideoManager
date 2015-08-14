@@ -61,6 +61,10 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI {
 				$tags = new ilTextInputGUI($this->pl->txt('form_tags'), 'tags');
 				$this->addItem($tags);
 
+				$num_input = new ilNumberInputGUI($this->pl->txt('form_image_at_sec'), 'image_at_sec');
+				$num_input->setInfo($this->pl->txt('form_image_at_sec_info'));
+				$this->addItem($num_input);
+
 				$this->addCommandButton('updateVideo', $this->pl->txt('common_save'));
 				$this->addCommandButton('cancel', $this->pl->txt('common_cancel'));
 
@@ -99,6 +103,7 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI {
 			'description' => $this->video->getDescription(),
 			'tags' => implode(self::GLUE, $this->video->getTags()),
 			'suffix' => $this->video->getSuffix(),
+			'image_at_sec' => $this->video->getImageAtSecond(),
 		);
 		$this->setValuesByArray($array);
 	}
@@ -116,20 +121,21 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI {
 		$this->video->setTitle(reset(explode('.', $this->getInput('title'))));
 		$this->video->setDescription($this->getInput('description'));
 		$this->video->setTags(explode(self::GLUE, $this->getInput('tags')));
-
 		return true;
 	}
 
 
 	public function saveObject() {
 		if (! $this->fillObject()) {
-			$response = new stdClass();
-			$response->error = 'Checkinput Failed';
-
-			return $response;
+			return false;
 		}
 
 		if ($this->video->getId()) {
+//			var_dump('' === 0);exit;
+			if (!($this->getInput('image_at_sec') === $this->video->getImageAtSecond())) {
+				$this->video->setImageAtSecond(is_numeric($this->getInput('image_at_sec')) ? $this->getInput('image_at_sec') : -1);
+				$this->video->extractImage();
+			}
 			//rename each file in the directory
 			$dir = scandir($this->video->getPath());
 			foreach ($dir as $file) {
@@ -155,11 +161,12 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI {
 				return $response;
 			}
 
+			$this->video->setImageAtSecond(is_numeric($this->getInput('image_at_sec')) ? $this->getInput('image_at_sec') : -1);
 			$this->video->setTitle(pathinfo($video_file['name'], PATHINFO_FILENAME));
 			$this->video->setSuffix($suffix);
 			$this->video->setCreateDate(date('Y-m-d'));
 			$this->video->create();
-			$this->video->uploadVideo($video_file['tmp_name'], ($this->getInput('image_at_sec') ? $this->getInput('image_at_sec') : -1));
+			$this->video->uploadVideo($video_file['tmp_name']);
 
 			$this->parent_gui->notifyUsers($this->video);
 

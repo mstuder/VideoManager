@@ -68,6 +68,14 @@ class ilVideoManagerObject extends ActiveRecord {
 	 * @var int
 	 *
 	 * @db_has_field        true
+	 * @db_fieldtype        integer
+	 * @db_length           8
+	 */
+	protected $image_at_second;
+	/**
+	 * @var int
+	 *
+	 * @db_has_field        true
 	 * @db_fieldtype        date
 	 * @db_length           4
 	 */
@@ -213,6 +221,25 @@ class ilVideoManagerObject extends ActiveRecord {
 		$this->hidden = $hidden;
 	}
 
+	/**
+	 * @return int
+	 */
+	public function getImageAtSecond()
+	{
+		$video_duration = vmFFmpeg::getDuration($this->getAbsolutePath());
+		if (!is_numeric($this->image_at_second) || $this->image_at_second < 0 || $this->image_at_second > $video_duration){
+			$this->image_at_second = $video_duration / 3;
+		}
+		return (int) $this->image_at_second;
+	}
+
+	/**
+	 * @param int $image_at_second
+	 */
+	public function setImageAtSecond($image_at_second)
+	{
+		$this->image_at_second = $image_at_second;
+	}
 
 	public function getIcon() {
 		if ($this->getType() == self::TYPE_FLD) {

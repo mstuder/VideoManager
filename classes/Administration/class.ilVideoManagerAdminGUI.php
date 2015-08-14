@@ -293,12 +293,11 @@ class ilVideoManagerAdminGUI {
 	protected function create() {
 		$form = new ilVideoManagerVideoFormGUI($this, new ilVideoManagerVideo());
 		$form->setValuesByPost();
-		$response = $form->saveObject();
-		header('Vary: Accept');
-		header('Content-type: text/plain');
-		require_once('./Services/JSON/classes/class.ilJsonUtil.php');
-		echo ilJsonUtil::encode($response);
-		$this->showFolderContent();
+		if(!$form->saveObject()) {
+			$this->addVideo();
+		}else {
+			$this->showFolderContent();
+		}
 	}
 
 
