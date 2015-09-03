@@ -40,6 +40,9 @@ git clone https://github.com/studer-raimann/VideoManager.git
 ```
 As ILIAS administrator go to "Administration->Plugins" and install/activate the plugin.
 
+####Additional Plugins
+[VideoManagerTME](https://github.com/studer-raimann/VideoManagerTME)
+
 ###Contact
 studer + raimann ag
 Waldeggstrasse 72
