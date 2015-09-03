@@ -85,6 +85,8 @@ class ilVideoManagerAdminGUI {
 		$this->toolbar = $ilToolbar;
 		$this->tree = new ilVideoManagerTree(1);
 
+		$this->tpl->addCss('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/css/administration_gui.css');
+
 		$_GET[self::PARAM_NODE_ID] ? $this->object = ilVideoManagerObject::find($_GET[self::PARAM_NODE_ID]) : $this->object = ilVideoManagerObject::__getRootFolder();
 	}
 
