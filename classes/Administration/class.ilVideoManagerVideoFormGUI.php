@@ -132,10 +132,7 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI {
 
 		if ($this->video->getId()) {
 //			var_dump('' === 0);exit;
-			if (!($this->getInput('image_at_sec') === $this->video->getImageAtSecond())) {
-				$this->video->setImageAtSecond(is_numeric($this->getInput('image_at_sec')) ? $this->getInput('image_at_sec') : -1);
-				$this->video->extractImage();
-			}
+
 			//rename each file in the directory
 			$dir = scandir($this->video->getPath());
 			foreach ($dir as $file) {
@@ -149,6 +146,13 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI {
 				}
 				rename($this->video->getPath() . '/' . $file, $this->video->getPath() . '/' . $this->video->getTitle() . $ending . '.' . $suffix);
 			}
+
+			//Extract image if changed
+			if (!($this->getInput('image_at_sec') === $this->video->getImageAtSecond())) {
+				$this->video->setImageAtSecond(is_numeric($this->getInput('image_at_sec')) ? $this->getInput('image_at_sec') : -1);
+				$this->video->extractImage();
+			}
+
 			$this->video->update();
 			$this->ctrl->redirect($this->parent_gui, 'view');
 		} else {

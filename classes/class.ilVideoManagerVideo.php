@@ -146,8 +146,12 @@ class ilVideoManagerVideo extends ilVideoManagerObject {
 	 */
 	public function extractImage()
 	{
-		vmFFmpeg::extractImage($this->getAbsolutePath(), $this->getTitle()
-			. '_poster.png', $this->getPath(), $this->getImageAtSecond());
+		try {
+			vmFFmpeg::extractImage($this->getAbsolutePath(), $this->getTitle()
+				. '_poster.png', $this->getPath(), $this->getImageAtSecond());
+		} catch (ilFFmpegException $e) {
+			ilUtil::sendFailure($e->getMessage(), true);
+		}
 		ilUtil::resizeImage($this->getPoster(), $this->getPreviewImage(), self::A_WIDTH, self::A_HEIGHT, true);
 	}
 } 
