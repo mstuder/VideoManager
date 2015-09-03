@@ -1,15 +1,6 @@
 VideoManager
 ============
 ###Installation
-####Install ActiveRecord
-ILIAS 4.4 does not include ActiveRecord. Therefore please install the latest Version of ActiveRecord before you install the plugin:
-Start at your ILIAS root directory
-```bash
-mkdir -p Customizing/global/plugins/Libraries/
-cd Customizing/global/plugins/Libraries
-git clone https://github.com/studer-raimann/ActiveRecord.git
-```
-
 ####Install MediaConverter
 This plugin requires MediaConverter.
 In order to install the MediaConverter plugin go into ILIAS root folder and use:
