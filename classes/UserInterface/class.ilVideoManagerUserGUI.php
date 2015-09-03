@@ -123,6 +123,7 @@ class ilVideoManagerUserGUI {
 
 	protected function playVideo() {
 		$video_gui = new ilVideoManagerPlayVideoGUI($this);
+		$this->ctrl->setParameter($video_gui, 'node_id', $_GET['node_id']);
 		$video_gui->init();
 	}
 

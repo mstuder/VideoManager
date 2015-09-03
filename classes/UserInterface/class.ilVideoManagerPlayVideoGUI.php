@@ -64,7 +64,6 @@ class ilVideoManagerPlayVideoGUI {
 		}
 //		$this->tpl->addJavaScript('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/js/video_player.js');
 //		$this->tpl->setCurrentBlock('video_player');
-
 		$this->initMediaPlayer();
 		$this->initRelatedVideosTable();
 		$this->initDescription();
@@ -129,7 +128,7 @@ class ilVideoManagerPlayVideoGUI {
 		if (vidmConfig::get(vidmConfig::F_ACTIVATE_SUBSCRIPTION)) {
 			$sub = new vidmSubscriptionButtonGUI();
 			$sub->setSize(vidmSubscriptionButtonGUI::SIZE_SMALL);
-			$this->ctrl->saveParameter($this->parent_gui, 'node_id');
+			$this->ctrl->setParameter($this->parent_gui, 'node_id', $_GET['node_id']);
 			$sub->generate($category, ilVideoManagerUserGUI::CMD_PLAY_VIDEO);
 			$this->tpl->setVariable('SUBSCRIPTION_BUTTON', $sub->getHTML($category));
 		}
