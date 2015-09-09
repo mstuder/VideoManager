@@ -1,7 +1,7 @@
 VideoManager
 ============
 ###Documentation: 
-[Documentation.pdf](https://github.com/studer-raimann/VideoManager/blob/dev/doc/Documentation.pdf)
+[Documentation.pdf](https://github.com/studer-raimann/VideoManager/blob/master/doc/Documentation.pdf)
 
 ###Installation
 ####Install MediaConverter
