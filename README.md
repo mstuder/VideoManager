@@ -1,5 +1,8 @@
 VideoManager
 ============
+###Documentation: 
+[Documentation.pdf](https://github.com/studer-raimann/VideoManager/blob/dev/doc/Documentation.pdf)
+
 ###Installation
 ####Install ActiveRecord
 ILIAS 4.4 does not include ActiveRecord. Therefore please install the latest Version of ActiveRecord before you install the plugin:

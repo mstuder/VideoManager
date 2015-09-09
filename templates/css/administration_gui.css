@@ -1,0 +1,12 @@
+div.navbar-form {
+    margin-top: 9.5px;
+    margin-left: 12px !important;
+}
+
+div.navbar-form a.btn {
+    padding: 3.7px 8px;
+}
+
+div.navbar-text ul.dropdown-menu {
+    min-width: 190px;
+}

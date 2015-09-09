@@ -48,9 +48,7 @@ class ilVideoManagerVideo extends ilVideoManagerObject {
 	 */
 	public function uploadVideo($tmp_path) {
 		move_uploaded_file($tmp_path, $this->getPath() . '/' . $this->getTitle() . '.' . $this->getSuffix());
-		vmFFmpeg::extractImage($this->getAbsolutePath(), $this->getTitle()
-			. '_poster.png', $this->getPath(), (vmFFmpeg::getDuration($this->getAbsolutePath()) / 3));
-		ilUtil::resizeImage($this->getPoster(), $this->getPreviewImage(), self::A_WIDTH, self::A_HEIGHT, true);
+		$this->extractImage();
 
 		return true;
 	}
@@ -141,5 +139,19 @@ class ilVideoManagerVideo extends ilVideoManagerObject {
 		} else {
 			return false;
 		}
+	}
+
+	/**
+	 * @throws ilFFmpegException
+	 */
+	public function extractImage()
+	{
+		try {
+			vmFFmpeg::extractImage($this->getAbsolutePath(), $this->getTitle()
+				. '_poster.png', $this->getPath(), $this->getImageAtSecond());
+		} catch (ilFFmpegException $e) {
+			ilUtil::sendFailure($e->getMessage(), true);
+		}
+		ilUtil::resizeImage($this->getPoster(), $this->getPreviewImage(), self::A_WIDTH, self::A_HEIGHT, true);
 	}
 } 

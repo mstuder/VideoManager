@@ -21,6 +21,7 @@ common_description#:#Description
 common_duration#:#Duration
 common_edit#:#Edit
 common_filesize#:#Filesize
+common_hidden#:#Hide in video portal
 common_less#:#less
 common_more#:#more
 common_move#:#Move
@@ -37,6 +38,8 @@ form_tags#:#Tags
 form_upload_vid#:#Upload Video(s)
 form_vid#:#Video(s)
 form_wrong_filetype#:#Wrong Filetype
+form_image_at_sec#:#Extract image at
+form_image_at_sec_info#:#Amount of seconds, at which point the poster image should be extracted<br>Default: 1/3 of the video's length
 mail_new_upload#:#A new video was uploaded in a category to which you have subscribed: 
 mail_subject#:#New video-upload in category 
 mail_view_video#:#Direct link

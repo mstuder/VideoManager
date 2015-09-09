@@ -75,3 +75,21 @@ vidmConfig::set(vidmConfig::F_ACTIVATE_SUBSCRIPTION, true);
 vidmConfig::set(vidmConfig::F_ACTIVATE_VIEW_LOG, true);
 vidmConfig::set(vidmConfig::F_ROLES, array( 2 ));
 ?>
+<#4>
+<?php
+global $ilDB;
+if (!$ilDB->tableColumnExists('vidm_data', 'hidden')) {
+   $ilDB->addTableColumn('vidm_data', 'hidden', array(
+       'type' => 'integer',
+       'length' => 1,
+       'notnull' => false,
+   ));
+}
+if (!$ilDB->tableColumnExists('vidm_data', 'image_at_second')) {
+    $ilDB->addTableColumn('vidm_data', 'image_at_second', array(
+        'type' => 'integer',
+        'length' => 8,
+        'notnull' => false,
+    ));
+}
+?>

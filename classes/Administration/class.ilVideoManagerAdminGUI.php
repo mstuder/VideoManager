@@ -85,6 +85,8 @@ class ilVideoManagerAdminGUI {
 		$this->toolbar = $ilToolbar;
 		$this->tree = new ilVideoManagerTree(1);
 
+		$this->tpl->addCss('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/VideoManager/templates/css/administration_gui.css');
+
 		$_GET[self::PARAM_NODE_ID] ? $this->object = ilVideoManagerObject::find($_GET[self::PARAM_NODE_ID]) : $this->object = ilVideoManagerObject::__getRootFolder();
 	}
 
@@ -293,12 +295,11 @@ class ilVideoManagerAdminGUI {
 	protected function create() {
 		$form = new ilVideoManagerVideoFormGUI($this, new ilVideoManagerVideo());
 		$form->setValuesByPost();
-		$response = $form->saveObject();
-		header('Vary: Accept');
-		header('Content-type: text/plain');
-		require_once('./Services/JSON/classes/class.ilJsonUtil.php');
-		echo ilJsonUtil::encode($response);
-		exit;
+		if(!$form->saveObject()) {
+			$this->addVideo();
+		}else {
+			$this->showFolderContent();
+		}
 	}
 
 
