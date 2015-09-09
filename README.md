@@ -1,5 +1,8 @@
 VideoManager
 ============
+###Documentation: 
+[Documentation.pdf](https://github.com/studer-raimann/VideoManager/blob/dev/doc/Documentation.pdf)
+
 ###Installation
 ####Install MediaConverter
 This plugin requires MediaConverter.

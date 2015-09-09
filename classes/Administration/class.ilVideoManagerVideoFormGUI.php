@@ -61,6 +61,10 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI {
 				$tags = new ilTextInputGUI($this->pl->txt('form_tags'), 'tags');
 				$this->addItem($tags);
 
+				$num_input = new ilNumberInputGUI($this->pl->txt('form_image_at_sec'), 'image_at_sec');
+				$num_input->setInfo($this->pl->txt('form_image_at_sec_info'));
+				$this->addItem($num_input);
+
 				$this->addCommandButton('updateVideo', $this->pl->txt('common_save'));
 				$this->addCommandButton('cancel', $this->pl->txt('common_cancel'));
 
@@ -74,11 +78,15 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI {
 				$this->setMultipart(true);
 
 				require_once('./Services/Form/classes/class.ilDragDropFileInputGUI.php');
-				$file_input = new ilDragDropFileInputGUI($this->pl->txt('form_vid'), 'suffix');
+				$file_input = new ilFileInputGUI($this->pl->txt('form_vid'), 'video_file');
 				$file_input->setRequired(true);
 				$file_input->setSuffixes(array( '3gp', 'flv', 'mp4', 'webm' ));
-				$file_input->setCommandButtonNames('create', 'cancel');
+
 				$this->addItem($file_input);
+
+				$num_input = new ilNumberInputGUI($this->pl->txt('form_image_at_sec'), 'image_at_sec');
+				$num_input->setInfo($this->pl->txt('form_image_at_sec_info'));
+				$this->addItem($num_input);
 
 				$this->addCommandButton('create', $this->pl->txt('common_add'));
 				$this->addCommandButton('cancel', $this->pl->txt('common_cancel'));
@@ -95,6 +103,7 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI {
 			'description' => $this->video->getDescription(),
 			'tags' => implode(self::GLUE, $this->video->getTags()),
 			'suffix' => $this->video->getSuffix(),
+			'image_at_sec' => $this->video->getImageAtSecond(),
 		);
 		$this->setValuesByArray($array);
 	}
@@ -112,20 +121,18 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI {
 		$this->video->setTitle(reset(explode('.', $this->getInput('title'))));
 		$this->video->setDescription($this->getInput('description'));
 		$this->video->setTags(explode(self::GLUE, $this->getInput('tags')));
-
 		return true;
 	}
 
 
 	public function saveObject() {
 		if (! $this->fillObject()) {
-			$response = new stdClass();
-			$response->error = 'Checkinput Failed';
-
-			return $response;
+			return false;
 		}
 
 		if ($this->video->getId()) {
+//			var_dump('' === 0);exit;
+
 			//rename each file in the directory
 			$dir = scandir($this->video->getPath());
 			foreach ($dir as $file) {
@@ -139,10 +146,18 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI {
 				}
 				rename($this->video->getPath() . '/' . $file, $this->video->getPath() . '/' . $this->video->getTitle() . $ending . '.' . $suffix);
 			}
+
+			//Extract image if changed
+			if (!($this->getInput('image_at_sec') === $this->video->getImageAtSecond())) {
+				$this->video->setImageAtSecond(is_numeric($this->getInput('image_at_sec')) ? $this->getInput('image_at_sec') : -1);
+				$this->video->extractImage();
+			}
+
 			$this->video->update();
 			$this->ctrl->redirect($this->parent_gui, 'view');
 		} else {
-			$suffix = strtolower(end(explode('.', $_FILES['upload_files']['name'])));
+			$video_file = $_FILES['video_file'];
+			$suffix = pathinfo($video_file['name'], PATHINFO_EXTENSION);
 			if (! $this->checkSuffix($suffix)) {
 				$response = new stdClass();
 				$response->error = $this->pl->txt('form_wrong_filetype') . ' (' . $suffix . ')';
@@ -150,10 +165,12 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI {
 				return $response;
 			}
 
+			$this->video->setImageAtSecond(is_numeric($this->getInput('image_at_sec')) ? $this->getInput('image_at_sec') : -1);
+			$this->video->setTitle(pathinfo($video_file['name'], PATHINFO_FILENAME));
 			$this->video->setSuffix($suffix);
 			$this->video->setCreateDate(date('Y-m-d'));
 			$this->video->create();
-			$this->video->uploadVideo($_FILES['upload_files']['tmp_name']);
+			$this->video->uploadVideo($video_file['tmp_name']);
 
 			$this->parent_gui->notifyUsers($this->video);
 
@@ -162,9 +179,9 @@ class ilVideoManagerVideoFormGUI extends ilPropertyFormGUI {
 
 			// create answer object
 			$response = new stdClass();
-			$response->fileName = $_FILES['upload_files']['name'];
-			$response->fileSize = intval($_FILES['upload_files']['size']);
-			$response->fileType = $_FILES['upload_files']['type'];
+			$response->fileName = $video_file['name'];
+			$response->fileSize = intval($video_file['size']);
+			$response->fileType = $video_file['type'];
 			$response->fileUnzipped = '';
 			$response->error = NULL;
 

@@ -1,6 +1,6 @@
 #leftcontent {
     vertical-align: top;
-    width: 45%;
+    width: 80%;
     padding: 0 15px 15px 0;
     display: inline-block;
 }
@@ -14,13 +14,19 @@
 }
 
 #videoplayer {
-    box-shadow: 3px 3px 4px #D0D0D0;
-    height:inherit;
-    width: inherit;
-    max-width:450px;
-    margin-top:50px;
-    display: inline-block;
+	box-shadow: 3px 3px 4px #D0D0D0;
+	width:      inherit;
+	height:     390px;
+	max-width:  720px;
 }
+/*#videoplayer {*/
+    /*box-shadow: 3px 3px 4px #D0D0D0;*/
+    /*height:440px;*/
+    /*width: 100%;*/
+    /*max-width:450px;*/
+    /*margin-top:50px;*/
+    /*display: inline-block;*/
+/*}*/
 
 @media
 only screen and (max-width: 1220px){

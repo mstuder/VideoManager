@@ -47,7 +47,9 @@ class ilVideoManagerFolderFormGUI extends ilPropertyFormGUI{
 
         $description = new ilTextInputGUI($this->pl->txt('common_description'), 'desc');
 
-        $this->setItems(array($title, $description));
+        $hidden = new ilCheckboxInputGUI($this->pl->txt('common_hidden'), 'hidden');
+
+        $this->setItems(array($title, $description, $hidden));
         $this->setValuesByPost();
         $this->ctrl->saveParameterByClass('ilVideoManagerAdminGUI', 'target_id');
         $this->setFormAction($this->ctrl->getFormAction($this->parent_gui));
@@ -76,6 +78,7 @@ class ilVideoManagerFolderFormGUI extends ilPropertyFormGUI{
         $newFolder->setTitle($_POST['title']);
         $newFolder->setDescription($_POST['desc']);
         $newFolder->setCreateDate(date('Y-m-d'));
+        $newFolder->setHidden($_POST['hidden']);
         $newFolder->create();
         ilUtil::sendSuccess($this->pl->txt('msg_fld_created'), true);
         $this->ctrl->setParameterByClass('ilvideomanageradmingui', 'node_id', $newFolder->getId());
@@ -88,6 +91,7 @@ class ilVideoManagerFolderFormGUI extends ilPropertyFormGUI{
         $array = array(
             'title' => $folder->getTitle(),
             'desc' => $folder->getDescription(),
+            'hidden' => $folder->getHidden(),
         );
         $this->setValuesByArray($array);
     }
@@ -101,6 +105,7 @@ class ilVideoManagerFolderFormGUI extends ilPropertyFormGUI{
         $folder = new ilVideoManagerFolder($_GET['target_id']);
         $folder->setTitle($this->getInput('title'));
         $folder->setDescription($this->getInput('desc'));
+        $folder->setHidden($this->getInput('hidden'));
         $folder->update();
 
         return true;

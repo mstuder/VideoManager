@@ -9,8 +9,8 @@ videoman::loadActiveRecord();
  */
 class ilVideoManagerObject extends ActiveRecord {
 
-	const TYPE_FOLDER = 'fld';
-	const TYPE_VIDEO = 'vid';
+	const TYPE_VID = 'vid';
+	const TYPE_FLD = 'fld';
 	/**
 	 * @var int
 	 *
@@ -68,10 +68,26 @@ class ilVideoManagerObject extends ActiveRecord {
 	 * @var int
 	 *
 	 * @db_has_field        true
+	 * @db_fieldtype        integer
+	 * @db_length           8
+	 */
+	protected $image_at_second;
+	/**
+	 * @var int
+	 *
+	 * @db_has_field        true
 	 * @db_fieldtype        date
 	 * @db_length           4
 	 */
 	protected $create_date;
+	/**
+	 * @var int
+	 *
+	 * @db_has_field        true
+	 * @db_fieldtype        integer
+	 * @db_length           1
+	 */
+	protected $hidden;
 
 
 	/**
@@ -189,9 +205,44 @@ class ilVideoManagerObject extends ActiveRecord {
 		return $this->tags;
 	}
 
+	/**
+	 * @return int
+	 */
+	public function getHidden()
+	{
+		return $this->hidden;
+	}
+
+	/**
+	 * @param int $hidden
+	 */
+	public function setHidden($hidden)
+	{
+		$this->hidden = $hidden;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getImageAtSecond()
+	{
+		$video_duration = vmFFmpeg::getDuration($this->getAbsolutePath());
+		if (!is_numeric($this->image_at_second) || $this->image_at_second < 0 || $this->image_at_second > $video_duration){
+			$this->image_at_second = $video_duration / 3;
+		}
+		return (int) $this->image_at_second;
+	}
+
+	/**
+	 * @param int $image_at_second
+	 */
+	public function setImageAtSecond($image_at_second)
+	{
+		$this->image_at_second = $image_at_second;
+	}
 
 	public function getIcon() {
-		if ($this->getType() == 'fld') {
+		if ($this->getType() == self::TYPE_FLD) {
 			$icon = 'icon_cat';
 		} else {
 			$icon = 'icon_mobs';
@@ -201,13 +252,18 @@ class ilVideoManagerObject extends ActiveRecord {
 	}
 
 
+	/**
+	 * @param $id
+	 *
+	 * @return mixed
+	 */
 	public static function __getTypeForId($id) {
 		return ilVideoManagerObject::find($id)->getType();
 	}
 
 
 	/**
-	 * @return ActiveRecord
+	 * @return ilVideoManagerObject
 	 */
 	public static function __getRootFolder() {
 		return parent::find(1);
@@ -225,12 +281,12 @@ class ilVideoManagerObject extends ActiveRecord {
 			$ids = array( $ids );
 		}
 		foreach ($ids as $id) {
-			if (ilVideoManagerObject::__getTypeForId($id) == 'vid') {
+			if (ilVideoManagerObject::__getTypeForId($id) == self::TYPE_VID) {
 				$vid = new ilVideoManagerVideo($id);
 				if ($vid->getStatusConvert() == 1 || $vid->getStatusConvert() == 2) {
 					return false;
 				}
-			} elseif (ilVideoManagerObject::__getTypeForId($id) == 'fld') {
+			} elseif (ilVideoManagerObject::__getTypeForId($id) == self::TYPE_FLD) {
 				$childs = $tree->getSubTreeIds($id);
 				if (! ilVideoManagerObject::__checkConverting($childs)) {
 					return false;
@@ -271,7 +327,7 @@ class ilVideoManagerObject extends ActiveRecord {
 	 */
 	public function getHttpPath() {
 		$path = $this->getTreePath();
-		$this->type == 'vid' ? $video_prefix = 'video_' : $video_prefix = '';
+		$this->type == self::TYPE_VID ? $video_prefix = 'video_' : $video_prefix = '';
 
 		return ilUtil::_getHttpPath() . '/data/' . CLIENT_ID . '/vidm' . $path . '/' . $video_prefix . $this->getId();
 	}
@@ -290,7 +346,7 @@ class ilVideoManagerObject extends ActiveRecord {
 	 */
 	public function getPath() {
 		$path = $this->getTreePath();
-		$this->type == 'vid' ? $video_prefix = 'video_' : $video_prefix = '';
+		$this->type == self::TYPE_VID ? $video_prefix = 'video_' : $video_prefix = '';
 
 		return ILIAS_ABSOLUTE_PATH . '/' . ILIAS_WEB_DIR . '/' . CLIENT_ID . '/vidm' . $path . '/' . $video_prefix . $this->getId();
 	}
@@ -301,6 +357,31 @@ class ilVideoManagerObject extends ActiveRecord {
 	 */
 	public function getAbsolutePath() {
 		return $this->getPath() . '/' . $this->getFileName();
+	}
+
+
+	/**
+	 * @return int
+	 */
+	public function getFolderSize() {
+		$total_size = 0;
+		$files = scandir($this->getPath());
+		$cleanPath = rtrim($this->getPath(), '/') . '/';
+
+		foreach ($files as $t) {
+			if ($t <> "." && $t <> "..") {
+				$currentFile = $cleanPath . $t;
+				if (is_dir($currentFile)) {
+//					$size = foldersize($currentFile);
+//					$total_size += $size;
+				} else {
+					$size = filesize($currentFile);
+					$total_size += $size;
+				}
+			}
+		}
+
+		return $total_size;
 	}
 
 
@@ -332,7 +413,7 @@ class ilVideoManagerObject extends ActiveRecord {
 	 * @return string
 	 */
 	public function getFileName() {
-		if ($this->getType() == 'fld') {
+		if ($this->getType() == self::TYPE_FLD) {
 			return $this->getTitle();
 		}
 
@@ -374,11 +455,12 @@ class ilVideoManagerObject extends ActiveRecord {
 	 * @return null
 	 */
 	public function sleep($field_name) {
-		switch($field_name) {
+		switch ($field_name) {
 			case 'tags':
 				return json_encode($this->{$field_name});
 				break;
 		}
+
 		return NULL;
 	}
 
@@ -390,7 +472,7 @@ class ilVideoManagerObject extends ActiveRecord {
 	 * @return mixed
 	 */
 	public function wakeUp($field_name, $field_value) {
-		switch($field_name) {
+		switch ($field_name) {
 			case 'tags':
 				return json_decode($field_value);
 				break;
