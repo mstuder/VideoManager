@@ -57,38 +57,58 @@ class ilVideoManagerPlugin extends ilUserInterfaceHookPlugin { // implements ilD
 	 */
 	public function beforeActivation() {
 		global $ilPluginAdmin;
-		/**
-		 * @var ilPluginAdmin $ilPluginAdmin
-		 */
+
+		//if CtrlMainMenu Plugin is active and no Video-Manager entry exists, create one
 		if (in_array('CtrlMainMenu', $ilPluginAdmin->getActivePluginsForSlot('Services', 'UIComponent', 'uihk'))) {
+
 			require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CtrlMainMenu/classes/EntryTypes/Dropdown/class.ctrlmmEntryDropdown.php');
 			require_once('./Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/CtrlMainMenu/classes/EntryTypes/Ctrl/class.ctrlmmEntryCtrl.php');
 
-			$dropdown = new ctrlmmEntryDropdown();
-			$dropdown->create();
+			$dropdown_entries = ctrlmmEntryDropdown::get();
 
-			$trans = ctrlmmTranslation::_getInstanceForLanguageKey($dropdown->getId(), 'en');
-			$trans->setTitle('Video-Manager');
-			$trans->store();
+			$create_dropdown = true;
+			foreach ($dropdown_entries as $entry) {
+				$translations = ctrlmmTranslation::_getAllTranslationsAsArray($entry->getId());
+				foreach ($translations as $l => $t) {
+					if ($t == 'Video-Manager'){
+						$create_dropdown = false;
+					}
+				}
+			}
 
-			$admin = new ctrlmmEntryCtrl();
-			$admin->setParent($dropdown->getId());
-			$admin->setGuiClass('ilUIPluginRouterGUI,ilVideoManagerAdminGUI');
-			$admin->create();
+			/**
+			 * @var ilPluginAdmin $ilPluginAdmin
+			 */
+			if ($create_dropdown) {
+				$dropdown = new ctrlmmEntryDropdown();
+				$dropdown->create();
 
-			$trans = ctrlmmTranslation::_getInstanceForLanguageKey($admin->getId(), 'en');
-			$trans->setTitle('Administration');
-			$trans->store();
+				$admin = new ctrlmmEntryCtrl();
+				$admin->setParent($dropdown->getId());
+				$admin->setGuiClass('ilUIPluginRouterGUI,ilVideoManagerAdminGUI');
+				$admin->create();
 
-			$admin = new ctrlmmEntryCtrl();
-			$admin->setParent($dropdown->getId());
-			$admin->setGuiClass('ilUIPluginRouterGUI,ilVideoManagerUserGUI');
-			$admin->create();
+				$channels = new ctrlmmEntryCtrl();
+				$channels->setParent($dropdown->getId());
+				$channels->setGuiClass('ilUIPluginRouterGUI,ilVideoManagerUserGUI');
+				$channels->create();
 
-			$trans = ctrlmmTranslation::_getInstanceForLanguageKey($admin->getId(), 'en');
-			$trans->setTitle('Channels');
-			$trans->store();
+				foreach (array('en', 'de') as $lang) {
+					$trans = ctrlmmTranslation::_getInstanceForLanguageKey($dropdown->getId(), $lang);
+					$trans->setTitle('Video-Manager');
+					$trans->store();
+
+					$trans = ctrlmmTranslation::_getInstanceForLanguageKey($admin->getId(), $lang);
+					$trans->setTitle('Administration');
+					$trans->store();
+
+					$trans = ctrlmmTranslation::_getInstanceForLanguageKey($channels->getId(), $lang);
+					$trans->setTitle('Channels');
+					$trans->store();
+				}
+			}
 		}
+
 
 		return self::checkPreconditions();
 	}
