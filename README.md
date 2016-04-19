@@ -14,6 +14,16 @@ cd Customizing/global/plugins/Services/Cron/CronHook
 git clone https://github.com/studer-raimann/MediaConverter.git
 ```
 
+####Install CtrlMainMenu
+For the VideoManager to work properly, you also need to install the CtrlMainMenu­Plugin. Follow these
+commands:
+
+```bash
+mkdir -p Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/
+cd Customizing/global/plugins/Services/UIComponent/UserInterfaceHook/
+git clone https://github.com/studer-raimann/CtrlMainMenu.git
+```
+
 ####Install ffmpeg
 This plugin requires ffmpeg. If not yet installed (you can test it by typing 'ffmpeg' in a console), download it from: https://www.ffmpeg.org/download.html
 Or, if you're using Ubuntu, you can install ffmpeg by typing the following commands in your terminal:
