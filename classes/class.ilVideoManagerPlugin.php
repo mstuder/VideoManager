@@ -52,6 +52,7 @@ class ilVideoManagerPlugin extends ilUserInterfaceHookPlugin { // implements ilD
 	}
 
 	public static function loadActiveRecord() {
+		require_once('class.videoman.php');
 		if (videoman::is50()) {
 			require_once('./Services/ActiveRecord/class.ActiveRecord.php');
 		} else {
